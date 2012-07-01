@@ -1,0 +1,30 @@
+#######################################
+# Syntax Coloring Map Servo
+#######################################
+
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+
+TouchPin	KEYWORD1
+TouchSlider3	KEYWORD1
+TouchSLider4	KEYWORD1
+Touch   	KEYWORD1
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+TouchPin	KEYWORD2
+getDelta	KEYWORD2
+isPressed	KEYWORD2
+isTouched	KEYWORD2
+registerPin KEYWORD2
+getTouchPin KEYWORD2
+getBits     KEYWORD2
+scheduler   KEYWORD2
+getPos      KEYWORD2
+
+#######################################
+# Constants (LITERAL1)
+#######################################
+
