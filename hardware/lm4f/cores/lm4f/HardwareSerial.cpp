@@ -230,7 +230,7 @@ HardwareSerial::selectModule(unsigned long module)
     ROM_UARTIntDisable(UART_BASE, UART_INT_RX | UART_INT_RT);
     ROM_IntDisable(g_ulUARTInt[uartModule]);
 	uartModule = module;
-	begin(baudRate);
+	begin(9600);
 
 }
 
@@ -383,11 +383,11 @@ void HardwareSerial::UARTIntHandler(void){
             // If there is space in the receive buffer, put the character
             // there, otherwise throw it away.
             //
-            while(RX_BUFFER_FULL);
+            while(RX_BUFFER_FULL) {
             rxBuffer[rxWriteIndex] =
                 (unsigned char)(lChar & 0xFF);
             rxWriteIndex = ((rxWriteIndex) + 1) % SERIAL_BUFFER_SIZE;
-
+	    }
             //
             // If we wrote anything to the transmit buffer, make sure it actually
             // gets transmitted.
@@ -404,5 +404,47 @@ UARTIntHandler(void)
     Serial.UARTIntHandler();
 }
 
-//Preinstantiate Object
-HardwareSerial Serial;
+void
+UARTIntHandler1(void)
+{
+	Serial1.UARTIntHandler();
+}
+
+void
+UARTIntHandler2(void)
+{
+	Serial2.UARTIntHandler();
+}
+ 
+void
+UARTIntHandler3(void)
+{
+	Serial3.UARTIntHandler();
+}
+void
+UARTIntHandler5(void)
+{
+	Serial5.UARTIntHandler();
+}
+void
+UARTIntHandler6(void)
+{
+	Serial6.UARTIntHandler();
+}
+void
+UARTIntHandler7(void)
+{
+	Serial7.UARTIntHandler();
+}
+
+//Preinstantiate Object (must be declared hier and not in sketch)
+HardwareSerial Serial(0);
+HardwareSerial Serial1(1);
+HardwareSerial Serial2(2);
+HardwareSerial Serial3(3);
+HardwareSerial Serial5(5);
+HardwareSerial Serial6(6);
+HardwareSerial Serial7(7);
+
+
+
