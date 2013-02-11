@@ -52,7 +52,7 @@ import javax.swing.border.TitledBorder;
  */
 public class Sketch {
   static private File tempBuildFolder;
-
+  private String lastPrimaryClassName;
   private Editor editor;
 
   /** main pde file for this sketch. */
@@ -1375,6 +1375,9 @@ public class Sketch {
     for (SketchCode sc : code) {
       if (sc.isExtension("ino") || sc.isExtension("pde")) {
         sc.setPreprocOffset(bigCount);
+        // These #line directives help the compiler report errors with
+        // correct the filename and line number (issue 281 & 907)
+        bigCode.append("#line 1 \"" + sc.getFileName() + "\"\n");
         bigCode.append(sc.getProgram());
         bigCode.append('\n');
         bigCount += sc.getLineCount();
@@ -1620,6 +1623,7 @@ public class Sketch {
     // run the preprocessor
     editor.status.progressUpdate(20);
     String primaryClassName = preprocess(buildPath);
+    lastPrimaryClassName = primaryClassName;
 
     // compile the program. errors will happen as a RunnerException
     // that will bubble up to whomever called build().
@@ -1720,7 +1724,29 @@ public class Sketch {
 
     return success ? suggestedClassName : null;
   }
-
+  
+  /**
+   * Uses last primary class name to try to get the hex file path.
+   */
+  public String getSketchHexFilePath(boolean verifyFileExists)
+  {
+  	String s = "";
+  	
+  	if(lastPrimaryClassName!=null)
+	  	if(lastPrimaryClassName.length()>0)
+	  		s = tempBuildFolder.getAbsolutePath() + File.separator + lastPrimaryClassName + ".hex";
+	  	
+  	return s;
+  }
+  
+  /**
+   * Retrieves the temporal build folder
+   */
+  public File getTempBuildFolder()
+  {
+  	return tempBuildFolder.getAbsoluteFile();
+  }
+  
   /**
    * Replace all commented portions of a given String as spaces.
    * Utility function used here and in the preprocessor.

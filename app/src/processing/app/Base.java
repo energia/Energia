@@ -26,7 +26,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
 import java.util.*;
-
+import java.util.regex.*;
 import javax.swing.*;
 
 import processing.app.debug.Compiler;
@@ -560,7 +560,10 @@ public class Base {
 
     // Make an empty pde file
     File newbieFile = new File(newbieDir, newbieName + ".ino");
-    new FileOutputStream(newbieFile);  // create the file
+    FileOutputStream f = new FileOutputStream(newbieFile);  // create the file
+    f.write(("void setup()\n{\n  // This code will only run once, after each powerup or reset of the board\n  "+
+    	"\n}\n\nvoid loop()\n{\n  // This code will loops consecutively\n  \n}").getBytes());
+    f.close();
     return newbieFile.getAbsolutePath();
   }
 
@@ -583,6 +586,49 @@ public class Base {
     }
   }
 
+  private void findInsertPoint(Editor editor)
+  {
+    // Find the start point
+    String t = editor.getText();
+    
+    try {
+		Pattern regex = Pattern.compile("void\\s+setup\\s*\\(\\s*\\)");
+		Matcher regexMatcher = regex.matcher(t);
+		while (regexMatcher.find()) 
+		{
+			int totalLeftBracketsOpened = 0;
+			
+			for(int i = regexMatcher.end(); i<t.length(); i++)
+			{
+				// Search the closing bracket
+				if(t.charAt(i)=='{')
+					totalLeftBracketsOpened++;
+				else
+					if(t.charAt(i)=='}')
+					{
+						if(--totalLeftBracketsOpened==0)
+						{
+							// Find input point here
+							for(int j = i-1; j > regexMatcher.end();j--)
+							{
+								int c = t.charAt(j);
+								
+								if(c!=10 && c!=13)
+								{
+									editor.setSelection(++j,j);
+									break;
+								}
+							}
+							break;
+						}
+					}
+			}
+			break;
+		} 
+	} catch (PatternSyntaxException ex) {
+		// Syntax error in the regular expression
+	}
+  }
 
   /**
    * Replace the sketch in the current window with a new untitled document.
@@ -604,6 +650,7 @@ public class Base {
       String path = createNewUntitled();
       if (path != null) {
         activeEditor.handleOpenInternal(path);
+        findInsertPoint(activeEditor);
         activeEditor.untitled = true;
       }
 //      return true;
@@ -627,6 +674,7 @@ public class Base {
     activeEditor.internalCloseRunner();
 
     boolean loaded = activeEditor.handleOpenInternal(path);
+    findInsertPoint(activeEditor);
     if (!loaded) {
       // replace the document without checking if that's ok
       handleNewReplaceImpl();
@@ -751,7 +799,7 @@ public class Base {
     editor.setVisible(true);
 
 //    System.err.println("exiting handleOpen");
-
+	findInsertPoint(editor);
     return editor;
   }
 
@@ -904,7 +952,7 @@ public class Base {
   }
 
 
-  protected void rebuildToolbarMenu(JMenu menu) {
+  protected int rebuildToolbarMenu(JMenu menu) {
     JMenuItem item;
     menu.removeAll();
 
@@ -930,15 +978,25 @@ public class Base {
 
     //System.out.println("rebuilding examples menu");
     // Add each of the subfolders of examples directly to the menu
+    int n = 0;
     try {
-      boolean found = addSketches(menu, examplesFolder, true);
-      if (found) menu.addSeparator();
-      found = addSketches(menu, getSketchbookLibrariesFolder(), true);
-      if (found) menu.addSeparator();
-      addSketches(menu, librariesFolder, true);
+      JMenu temp = new JMenu("Examples");
+      boolean found = addSketches(temp, examplesFolder, true);
+      if (found) {menu.add(temp); n++;};
+
+	  temp = new JMenu("Contributed Libraries");
+      found = addSketches(temp, getSketchbookLibrariesFolder(), true);
+      if (found) {menu.add(temp); n++;};
+      
+      temp = new JMenu("Libraries");
+      addSketches(temp, librariesFolder, true);
+      menu.add(temp);
+      n++;
     } catch (IOException e) {
       e.printStackTrace();
     }
+    
+    return n;
   }
 
 
@@ -955,7 +1013,7 @@ public class Base {
   }
 
 
-  public void rebuildImportMenu(JMenu importMenu) {
+  public int rebuildImportMenu(JMenu importMenu) {
     //System.out.println("rebuilding import menu");
     importMenu.removeAll();
 
@@ -977,14 +1035,15 @@ public class Base {
       File sketchbookLibraries = getSketchbookLibrariesFolder();
       boolean found = addLibraries(importMenu, sketchbookLibraries);
       if (found) {
-        JMenuItem contrib = new JMenuItem(_("Contributed"));
+        /*JMenuItem contrib = new JMenuItem(_("Contributed"));
         contrib.setEnabled(false);
-        importMenu.insert(contrib, separatorIndex);
+        importMenu.insert(contrib, separatorIndex);*/
         importMenu.insertSeparator(separatorIndex);
       }
     } catch (IOException e) {
       e.printStackTrace();
     }
+    return separatorIndex;
   }
 
 
@@ -1130,10 +1189,11 @@ public class Base {
     //menu.addActionListener(listener);
 
     boolean ifound = false;
+	boolean skipLibraryFolder = folder.equals((Base.getSketchbookFolder()));
 
     for (int i = 0; i < list.length; i++) {
-      if ((list[i].charAt(0) == '.') ||
-          list[i].equals("CVS")) continue;
+      if ((list[i].charAt(0) == '.') || list[i].startsWith("__disabled_") || list[i].equals("CVS") || 
+      	(skipLibraryFolder && list[i].compareToIgnoreCase("libraries")==0)) continue;
 
       File subfolder = new File(folder, list[i]);
       if (!subfolder.isDirectory()) continue;
@@ -1197,6 +1257,7 @@ public class Base {
       public boolean accept(File dir, String name) {
         // skip .DS_Store files, .svn folders, etc
         if (name.charAt(0) == '.') return false;
+        if (name.startsWith("__disabled_")) return false;
         if (name.equals("CVS")) return false;
         return (new File(dir, name).isDirectory());
       }
@@ -1817,8 +1878,17 @@ public class Base {
     // already have the right icon from the .app file.
     if (Base.isMacOS()) return;
     
-    Image image = Toolkit.getDefaultToolkit().createImage(PApplet.ICON_IMAGE);
-    frame.setIconImage(image);
+    ArrayList<Image> images = new ArrayList<Image>();
+    images.add(createImageFromLib("energia_16.png"));
+    images.add(createImageFromLib("energia_24.png"));
+    images.add(createImageFromLib("energia_32.png"));
+    images.add(createImageFromLib("energia_48.png"));
+    frame.setIconImages(images);
+  }
+  
+  static private Image createImageFromLib(String filename)
+  {
+  	return Toolkit.getDefaultToolkit().createImage(new File("lib/" + filename).getAbsolutePath());
   }
 
 
