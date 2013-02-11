@@ -1375,6 +1375,9 @@ public class Sketch {
     for (SketchCode sc : code) {
       if (sc.isExtension("ino") || sc.isExtension("pde")) {
         sc.setPreprocOffset(bigCount);
+        // These #line directives help the compiler report errors with
+        // correct the filename and line number (issue 281 & 907)
+        bigCode.append("#line 1 \"" + sc.getFileName() + "\"\n");
         bigCode.append(sc.getProgram());
         bigCode.append('\n');
         bigCount += sc.getLineCount();
