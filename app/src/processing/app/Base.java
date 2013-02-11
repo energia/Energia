@@ -26,7 +26,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
 import java.util.*;
-
+import java.util.regex.*;
 import javax.swing.*;
 
 import processing.app.debug.Compiler;
@@ -560,7 +560,10 @@ public class Base {
 
     // Make an empty pde file
     File newbieFile = new File(newbieDir, newbieName + ".ino");
-    new FileOutputStream(newbieFile);  // create the file
+    FileOutputStream f = new FileOutputStream(newbieFile);  // create the file
+    f.write(("void setup()\n{\n  // This code will only run once, after each powerup or reset of the board\n  "+
+    	"\n}\n\nvoid loop()\n{\n  // This code will loops consecutively\n  \n}").getBytes());
+    f.close();
     return newbieFile.getAbsolutePath();
   }
 
@@ -583,6 +586,49 @@ public class Base {
     }
   }
 
+  private void findInsertPoint(Editor editor)
+  {
+    // Find the start point
+    String t = editor.getText();
+    
+    try {
+		Pattern regex = Pattern.compile("void\\s+setup\\s*\\(\\s*\\)");
+		Matcher regexMatcher = regex.matcher(t);
+		while (regexMatcher.find()) 
+		{
+			int totalLeftBracketsOpened = 0;
+			
+			for(int i = regexMatcher.end(); i<t.length(); i++)
+			{
+				// Search the closing bracket
+				if(t.charAt(i)=='{')
+					totalLeftBracketsOpened++;
+				else
+					if(t.charAt(i)=='}')
+					{
+						if(--totalLeftBracketsOpened==0)
+						{
+							// Find input point here
+							for(int j = i-1; j > regexMatcher.end();j--)
+							{
+								int c = t.charAt(j);
+								
+								if(c!=10 && c!=13)
+								{
+									editor.setSelection(++j,j);
+									break;
+								}
+							}
+							break;
+						}
+					}
+			}
+			break;
+		} 
+	} catch (PatternSyntaxException ex) {
+		// Syntax error in the regular expression
+	}
+  }
 
   /**
    * Replace the sketch in the current window with a new untitled document.
@@ -604,6 +650,7 @@ public class Base {
       String path = createNewUntitled();
       if (path != null) {
         activeEditor.handleOpenInternal(path);
+        findInsertPoint(activeEditor);
         activeEditor.untitled = true;
       }
 //      return true;
@@ -627,6 +674,7 @@ public class Base {
     activeEditor.internalCloseRunner();
 
     boolean loaded = activeEditor.handleOpenInternal(path);
+    findInsertPoint(activeEditor);
     if (!loaded) {
       // replace the document without checking if that's ok
       handleNewReplaceImpl();
@@ -751,7 +799,7 @@ public class Base {
     editor.setVisible(true);
 
 //    System.err.println("exiting handleOpen");
-
+	findInsertPoint(editor);
     return editor;
   }
 
@@ -1817,8 +1865,17 @@ public class Base {
     // already have the right icon from the .app file.
     if (Base.isMacOS()) return;
     
-    Image image = Toolkit.getDefaultToolkit().createImage(PApplet.ICON_IMAGE);
-    frame.setIconImage(image);
+    ArrayList<Image> images = new ArrayList<Image>();
+    images.add(createImageFromLib("energia_16.png"));
+    images.add(createImageFromLib("energia_24.png"));
+    images.add(createImageFromLib("energia_32.png"));
+    images.add(createImageFromLib("energia_48.png"));
+    frame.setIconImages(images);
+  }
+  
+  static private Image createImageFromLib(String filename)
+  {
+  	return Toolkit.getDefaultToolkit().createImage(new File("lib/" + filename).getAbsolutePath());
   }
 
 
