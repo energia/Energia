@@ -88,12 +88,12 @@ editor.window.height.min = 290
 
 
 # font size for editor
-editor.font=Monospaced,plain,12
+editor.font=Consolas,plain,12
 # Monaco is nicer on Mac OS X, so use that explicitly
 editor.font.macosx = Monaco,plain,10
 
 # anti-aliased text, turned off by default
-editor.antialias=false
+editor.antialias=true
 
 # color to be used for background when 'external editor' enabled
 editor.external=false
