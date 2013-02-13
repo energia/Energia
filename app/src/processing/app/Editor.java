@@ -610,6 +610,10 @@ public class Editor extends JFrame implements RunnerListener {
     return fileMenu;
   }
   
+  private void rebuildImportMenu(){
+  	MenuScroller.setScrollerFor(importMenu,-1,-1,base.rebuildImportMenu(importMenu)+1,0);
+  }
+
   private void rebuildExamplesMenu(){
       base.rebuildExamplesMenu(examplesMenu);
 
@@ -692,7 +696,7 @@ public class Editor extends JFrame implements RunnerListener {
 
     if (importMenu == null) {
       importMenu = new JMenu(_("Import Library..."));
-      base.rebuildImportMenu(importMenu);
+      rebuildImportMenu();
     }
     sketchMenu.add(importMenu);
 
@@ -717,8 +721,7 @@ public class Editor extends JFrame implements RunnerListener {
 
     if (importMenu == null) {
       importMenu = new JMenu(_("Import Library"));
-      int n = base.rebuildImportMenu(importMenu);
-      MenuScroller.setScrollerFor(importMenu,-1,-1,n+1,0);
+      rebuildImportMenu();
     }
     sketchMenu.add(importMenu);
     
@@ -748,7 +751,7 @@ public class Editor extends JFrame implements RunnerListener {
 						catch (Throwable t) {
 						}
 						
-						base.rebuildImportMenu(importMenu);
+						rebuildImportMenu();
 						rebuildExamplesMenu();
 						base.rebuildToolbarMenu(toolbarMenu);
 					}})).start(); 
@@ -2777,8 +2780,8 @@ public class Editor extends JFrame implements RunnerListener {
 
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
   protected void onArchChanged() {
-      base.rebuildImportMenu(importMenu);
-      base.rebuildExamplesMenu(examplesMenu);
+      rebuildImportMenu();
+      rebuildExamplesMenu();
   }
   
   protected void onBoardOrPortChange() {
