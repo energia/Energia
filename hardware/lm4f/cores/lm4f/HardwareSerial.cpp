@@ -48,6 +48,7 @@
 #include "driverlib/uart.h"
 #include "HardwareSerial.h"
 
+
 #define TX_BUFFER_EMPTY    (txReadIndex == txWriteIndex)
 #define TX_BUFFER_FULL     (((txWriteIndex + 1) % SERIAL_BUFFER_SIZE) == txReadIndex)
 
@@ -86,7 +87,7 @@ static const unsigned long g_ulUARTPeriph[8] =
 };
 //*****************************************************************************
 //
-// The list of UART GPIO configurations.
+// The list of UART gpio configurations.
 //
 //*****************************************************************************
 static const unsigned long g_ulUARTConfig[8][2] =
@@ -103,6 +104,11 @@ static const unsigned long g_ulUARTPort[8] =
 	GPIO_PORTC_BASE, GPIO_PORTE_BASE, GPIO_PORTD_BASE, GPIO_PORTE_BASE
 };
 
+//*****************************************************************************
+//
+// The list of i2c gpio configurations.
+//
+//*****************************************************************************
 static const unsigned long g_ulUARTPins[8] =
 {
     GPIO_PIN_0 | GPIO_PIN_1, GPIO_PIN_4 | GPIO_PIN_5,
@@ -219,30 +225,13 @@ HardwareSerial::begin(unsigned long baud)
 }
 
 void
-HardwareSerial::setModule(unsigned long module)
+HardwareSerial::selectModule(unsigned long module)
 {
     ROM_UARTIntDisable(UART_BASE, UART_INT_RX | UART_INT_RT);
     ROM_IntDisable(g_ulUARTInt[uartModule]);
 	uartModule = module;
 	begin(baudRate);
 
-}
-void 
-HardwareSerial::setPins(unsigned long pins)
-{
-	if(pins == UART1_PORTB)
-	{
-		ROM_GPIOPinConfigure(GPIO_PB0_U1RX);
-		ROM_GPIOPinConfigure(GPIO_PB1_U1TX);
-		ROM_GPIOPinTypeUART(GPIO_PORTB_BASE, GPIO_PIN_0 | GPIO_PIN_1);
-	}
-	else
-	{
-		//Default UART1 Pin Muxing
-		ROM_GPIOPinConfigure(g_ulUARTConfig[1][0]);
-		ROM_GPIOPinConfigure(g_ulUARTConfig[1][1]);
-		ROM_GPIOPinTypeUART(g_ulUARTPort[1], g_ulUARTPins[1]);
-	}
 }
 
 void HardwareSerial::end()
@@ -315,8 +304,7 @@ size_t HardwareSerial::write(uint8_t c)
     // Check for valid arguments.
     //
     ASSERT(c != 0);
-/*
-    //this is not necessary: https://github.com/energia/Energia/issues/225
+
     //
     // If the character to the UART is \n, then add a \r before it so that
     // \n is translated to \n\r in the output.
@@ -332,7 +320,7 @@ size_t HardwareSerial::write(uint8_t c)
 		txWriteIndex = (txWriteIndex + 1) % SERIAL_BUFFER_SIZE;
         numTransmit ++;
     }
-*/
+
     //
     // Send the character to the UART output.
     //
@@ -395,9 +383,7 @@ void HardwareSerial::UARTIntHandler(void){
             // If there is space in the receive buffer, put the character
             // there, otherwise throw it away.
             //
-            uint8_t volatile full = RX_BUFFER_FULL;
-            if(full) break;
-
+            while(RX_BUFFER_FULL);
             rxBuffer[rxWriteIndex] =
                 (unsigned char)(lChar & 0xFF);
             rxWriteIndex = ((rxWriteIndex) + 1) % SERIAL_BUFFER_SIZE;
@@ -418,82 +404,5 @@ UARTIntHandler(void)
     Serial.UARTIntHandler();
 }
 
-void
-UARTIntHandler1(void)
-{
-    Serial1.UARTIntHandler();
-}
-
-void
-UARTIntHandler2(void)
-{
-    Serial2.UARTIntHandler();
-}
-
-void
-UARTIntHandler3(void)
-{
-    Serial3.UARTIntHandler();
-}
-
-void
-UARTIntHandler4(void)
-{
-    Serial4.UARTIntHandler();
-}
-
-void
-UARTIntHandler5(void)
-{
-    Serial5.UARTIntHandler();
-}
-
-void
-UARTIntHandler6(void)
-{
-    Serial6.UARTIntHandler();
-}
-
-void
-UARTIntHandler7(void)
-{
-    Serial7.UARTIntHandler();
-}
-
-void serialEvent() __attribute__((weak));
-void serialEvent() {}
-void serialEvent1() __attribute__((weak));
-void serialEvent1() {}
-void serialEvent2() __attribute__((weak));
-void serialEvent2() {}
-void serialEvent3() __attribute__((weak));
-void serialEvent3() {}
-void serialEvent4() __attribute__((weak));
-void serialEvent4() {}
-void serialEvent5() __attribute__((weak));
-void serialEvent5() {}
-void serialEvent6() __attribute__((weak));
-void serialEvent6() {}
-void serialEvent7() __attribute__((weak));
-void serialEvent7() {}
-
-void serialEventRun(void)
-{
-    if (Serial.available()) serialEvent();
-    if (Serial1.available()) serialEvent1();
-    if (Serial2.available()) serialEvent2();
-    if (Serial3.available()) serialEvent3();
-    if (Serial4.available()) serialEvent4();
-    if (Serial5.available()) serialEvent5();
-    if (Serial6.available()) serialEvent6();
-    if (Serial7.available()) serialEvent7();
-}
-
+//Preinstantiate Object
 HardwareSerial Serial;
-HardwareSerial Serial1(1);
-HardwareSerial Serial2(2);
-HardwareSerial Serial3(3);
-HardwareSerial Serial4(4);
-HardwareSerial Serial5(5);
-HardwareSerial Serial6(6);
-HardwareSerial Serial7(7);

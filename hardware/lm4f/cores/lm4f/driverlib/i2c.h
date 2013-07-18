@@ -2,7 +2,7 @@
 //
 // i2c.h - Prototypes for the I2C Driver.
 //
-// Copyright (c) 2005-2012 Texas Instruments Incorporated.  All rights reserved.
+// Copyright (c) 2005-2013 Texas Instruments Incorporated.  All rights reserved.
 // Software License Agreement
 // 
 //   Redistribution and use in source and binary forms, with or without
@@ -33,7 +33,7 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 // 
-// This is part of revision 9453 of the Stellaris Peripheral Driver Library.
+// This is part of revision 1.0 of the Tiva Peripheral Driver Library.
 //
 //*****************************************************************************
 
@@ -77,7 +77,7 @@ extern "C"
 #define I2C_MASTER_CMD_BURST_SEND_START                                       \
                                 0x00000003
 #define I2C_MASTER_CMD_BURST_SEND_CONT                                        \
-                                0x00000001                                
+                                0x00000001
 #define I2C_MASTER_CMD_BURST_SEND_FINISH                                      \
                                 0x00000005
 #define I2C_MASTER_CMD_BURST_SEND_STOP                                        \
@@ -95,7 +95,7 @@ extern "C"
 #define I2C_MASTER_CMD_QUICK_COMMAND                                          \
                                 0x00000027
 #define I2C_MASTER_CMD_HS_MASTER_CODE_SEND                                    \
-                                0x00000011      
+                                0x00000013
 
 //*****************************************************************************
 //
@@ -120,7 +120,7 @@ extern "C"
 #define I2C_SLAVE_ACT_OWN2SEL   0x00000008  // Master requested secondary slave
 #define I2C_SLAVE_ACT_QCMD      0x00000010  // Master has sent a Quick Command
 #define I2C_SLAVE_ACT_QCMD_DATA 0x00000020  // Master Quick Command value
-                                
+
 //*****************************************************************************
 //
 // Miscellaneous I2C driver definitions.
@@ -133,84 +133,72 @@ extern "C"
 // I2C Master interrupts.
 //
 //*****************************************************************************
-#define I2C_MASTER_INT_TIMEOUT          0x00000002  // Clock Timeout Interrupt.
-#define I2C_MASTER_INT_DATA             0x00000001  // Data Interrupt.
+#define I2C_MASTER_INT_TIMEOUT  0x00000002  // Clock Timeout Interrupt
+#define I2C_MASTER_INT_DATA     0x00000001  // Data Interrupt
 
 //*****************************************************************************
 //
 // I2C Slave interrupts.
 //
 //*****************************************************************************
-#define I2C_SLAVE_INT_STOP          0x00000004  // Stop Condition Interrupt.
-#define I2C_SLAVE_INT_START         0x00000002  // Start Condition Interrupt.
-#define I2C_SLAVE_INT_DATA          0x00000001  // Data Interrupt.
+#define I2C_SLAVE_INT_STOP      0x00000004  // Stop Condition Interrupt
+#define I2C_SLAVE_INT_START     0x00000002  // Start Condition Interrupt
+#define I2C_SLAVE_INT_DATA      0x00000001  // Data Interrupt
 
 //*****************************************************************************
 //
 // Prototypes for the APIs.
 //
 //*****************************************************************************
-extern void I2CIntRegister(unsigned long ulBase, void(fnHandler)(void));
-extern void I2CIntUnregister(unsigned long ulBase);
-extern tBoolean I2CMasterBusBusy(unsigned long ulBase);
-extern tBoolean I2CMasterBusy(unsigned long ulBase);
-extern void I2CMasterControl(unsigned long ulBase, unsigned long ulCmd);
-extern unsigned long I2CMasterDataGet(unsigned long ulBase);
-extern void I2CMasterDataPut(unsigned long ulBase, unsigned char ucData);
-extern void I2CMasterDisable(unsigned long ulBase);
-extern void I2CMasterEnable(unsigned long ulBase);
-extern unsigned long I2CMasterErr(unsigned long ulBase);
-extern void I2CMasterInitExpClk(unsigned long ulBase, unsigned long ulI2CClk,
-                                tBoolean bFast);
-extern void I2CMasterIntClear(unsigned long ulBase);
-extern void I2CMasterIntDisable(unsigned long ulBase);
-extern void I2CMasterIntEnable(unsigned long ulBase);
-extern tBoolean I2CMasterIntStatus(unsigned long ulBase, tBoolean bMasked);
-extern void I2CMasterIntEnableEx(unsigned long ulBase,
-                                 unsigned long ulIntFlags);
-extern void I2CMasterIntDisableEx(unsigned long ulBase,
-                                  unsigned long ulIntFlags);
-extern unsigned long I2CMasterIntStatusEx(unsigned long ulBase,
-                                          tBoolean bMasked);
-extern void I2CMasterIntClearEx(unsigned long ulBase,
-                                unsigned long ulIntFlags);
-extern void I2CMasterTimeoutSet(unsigned long ulBase, unsigned long ulValue);
-extern void I2CSlaveACKOverride(unsigned long ulBase, tBoolean bEnable);
-extern void I2CSlaveACKValueSet(unsigned long ulBase, tBoolean bACK);
-extern unsigned long I2CMasterLineStateGet(unsigned long ulBase);
-extern void I2CMasterSlaveAddrSet(unsigned long ulBase,
-                                  unsigned char ucSlaveAddr,
-                                  tBoolean bReceive);
-extern unsigned long I2CSlaveDataGet(unsigned long ulBase);
-extern void I2CSlaveDataPut(unsigned long ulBase, unsigned char ucData);
-extern void I2CSlaveDisable(unsigned long ulBase);
-extern void I2CSlaveEnable(unsigned long ulBase);
-extern void I2CSlaveInit(unsigned long ulBase, unsigned char ucSlaveAddr);
-extern void I2CSlaveAddressSet(unsigned long ulBase, unsigned char ucAddrNum,
-                               unsigned char ucSlaveAddr);
-extern void I2CSlaveIntClear(unsigned long ulBase);
-extern void I2CSlaveIntDisable(unsigned long ulBase);
-extern void I2CSlaveIntEnable(unsigned long ulBase);
-extern void I2CSlaveIntClearEx(unsigned long ulBase, unsigned long ulIntFlags);
-extern void I2CSlaveIntDisableEx(unsigned long ulBase,
-                                 unsigned long ulIntFlags);
-extern void I2CSlaveIntEnableEx(unsigned long ulBase, unsigned long ulIntFlags);
-extern tBoolean I2CSlaveIntStatus(unsigned long ulBase, tBoolean bMasked);
-extern unsigned long I2CSlaveIntStatusEx(unsigned long ulBase,
-                                         tBoolean bMasked);
-extern unsigned long I2CSlaveStatus(unsigned long ulBase);
-
-//*****************************************************************************
-//
-// Several I2C APIs have been renamed, with the original function name being
-// deprecated.  These defines provide backward compatibility.
-//
-//*****************************************************************************
-#ifndef DEPRECATED
-#include "driverlib/sysctl.h"
-#define I2CMasterInit(a, b)                         \
-        I2CMasterInitExpClk(a, SysCtlClockGet(), b)
-#endif
+extern void I2CIntRegister(uint32_t ui32Base, void(pfnHandler)(void));
+extern void I2CIntUnregister(uint32_t ui32Base);
+extern bool I2CMasterBusBusy(uint32_t ui32Base);
+extern bool I2CMasterBusy(uint32_t ui32Base);
+extern void I2CMasterControl(uint32_t ui32Base, uint32_t ui32Cmd);
+extern uint32_t I2CMasterDataGet(uint32_t ui32Base);
+extern void I2CMasterDataPut(uint32_t ui32Base, uint8_t ui8Data);
+extern void I2CMasterDisable(uint32_t ui32Base);
+extern void I2CMasterEnable(uint32_t ui32Base);
+extern uint32_t I2CMasterErr(uint32_t ui32Base);
+extern void I2CMasterInitExpClk(uint32_t ui32Base, uint32_t ui32I2CClk,
+                                bool bFast);
+extern void I2CMasterIntClear(uint32_t ui32Base);
+extern void I2CMasterIntDisable(uint32_t ui32Base);
+extern void I2CMasterIntEnable(uint32_t ui32Base);
+extern bool I2CMasterIntStatus(uint32_t ui32Base, bool bMasked);
+extern void I2CMasterIntEnableEx(uint32_t ui32Base,
+                                 uint32_t ui32IntFlags);
+extern void I2CMasterIntDisableEx(uint32_t ui32Base,
+                                  uint32_t ui32IntFlags);
+extern uint32_t I2CMasterIntStatusEx(uint32_t ui32Base,
+                                       bool bMasked);
+extern void I2CMasterIntClearEx(uint32_t ui32Base,
+                                uint32_t ui32IntFlags);
+extern void I2CMasterTimeoutSet(uint32_t ui32Base, uint32_t ui32Value);
+extern void I2CSlaveACKOverride(uint32_t ui32Base, bool bEnable);
+extern void I2CSlaveACKValueSet(uint32_t ui32Base, bool bACK);
+extern uint32_t I2CMasterLineStateGet(uint32_t ui32Base);
+extern void I2CMasterSlaveAddrSet(uint32_t ui32Base,
+                                  uint8_t ui8SlaveAddr,
+                                  bool bReceive);
+extern uint32_t I2CSlaveDataGet(uint32_t ui32Base);
+extern void I2CSlaveDataPut(uint32_t ui32Base, uint8_t ui8Data);
+extern void I2CSlaveDisable(uint32_t ui32Base);
+extern void I2CSlaveEnable(uint32_t ui32Base);
+extern void I2CSlaveInit(uint32_t ui32Base, uint8_t ui8SlaveAddr);
+extern void I2CSlaveAddressSet(uint32_t ui32Base, uint8_t ui8AddrNum,
+                                 uint8_t ui8SlaveAddr);
+extern void I2CSlaveIntClear(uint32_t ui32Base);
+extern void I2CSlaveIntDisable(uint32_t ui32Base);
+extern void I2CSlaveIntEnable(uint32_t ui32Base);
+extern void I2CSlaveIntClearEx(uint32_t ui32Base, uint32_t ui32IntFlags);
+extern void I2CSlaveIntDisableEx(uint32_t ui32Base,
+                                 uint32_t ui32IntFlags);
+extern void I2CSlaveIntEnableEx(uint32_t ui32Base, uint32_t ui32IntFlags);
+extern bool I2CSlaveIntStatus(uint32_t ui32Base, bool bMasked);
+extern uint32_t I2CSlaveIntStatusEx(uint32_t ui32Base,
+                                      bool bMasked);
+extern uint32_t I2CSlaveStatus(uint32_t ui32Base);
 
 //*****************************************************************************
 //

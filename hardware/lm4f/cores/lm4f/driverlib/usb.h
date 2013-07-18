@@ -2,7 +2,7 @@
 //
 // usb.h - Prototypes for the USB Interface Driver.
 //
-// Copyright (c) 2007-2012 Texas Instruments Incorporated.  All rights reserved.
+// Copyright (c) 2007-2013 Texas Instruments Incorporated.  All rights reserved.
 // Software License Agreement
 // 
 //   Redistribution and use in source and binary forms, with or without
@@ -33,7 +33,7 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 // 
-// This is part of revision 9453 of the Stellaris Peripheral Driver Library.
+// This is part of revision 1.0 of the Tiva Peripheral Driver Library.
 //
 //*****************************************************************************
 
@@ -54,7 +54,7 @@ extern "C"
 //*****************************************************************************
 //
 // The following are values that can be passed to USBIntEnableControl() and
-// USBIntDisableControl() as the ulFlags parameter, and are returned from
+// USBIntDisableControl() as the ui32Flags parameter, and are returned from
 // USBIntStatusControl().
 //
 //*****************************************************************************
@@ -76,7 +76,7 @@ extern "C"
 //*****************************************************************************
 //
 // The following are values that can be passed to USBIntEnableEndpoint() and
-// USBIntDisableEndpoint() as the ulFlags parameter, and are returned from
+// USBIntDisableEndpoint() as the ui32Flags parameter, and are returned from
 // USBIntStatusEndpoint().
 //
 //*****************************************************************************
@@ -168,8 +168,8 @@ extern "C"
 //
 //*****************************************************************************
 #define USB_HOST_IN_STATUS      0xFFFF0000  // Mask of all host IN interrupts
-#define USB_HOST_IN_PID_ERROR   0x01000000  // Stall on this endpoint received
-#define USB_HOST_IN_NOT_COMP    0x00100000  // Device failed to respond
+#define USB_HOST_IN_PID_ERROR   0x10000000  // Stall on this endpoint received
+#define USB_HOST_IN_NOT_COMP    0x01000000  // Device failed to respond
 #define USB_HOST_IN_STALL       0x00400000  // Stall on this endpoint received
 #define USB_HOST_IN_DATA_ERROR  0x00080000  // CRC or bit-stuff error
                                             // (ISOC Mode)
@@ -196,6 +196,8 @@ extern "C"
                                             // device
 #define USB_HOST_EP0_RX_STALL   0x00000004  // Stall on this endpoint received
 #define USB_HOST_EP0_RXPKTRDY   0x00000001  // Receive data packet ready
+#define USB_DEV_RX_PID_ERROR    0x01000000  // PID error in isochronous
+                                            // transfer
 #define USB_DEV_RX_SENT_STALL   0x00400000  // Stall was sent on this endpoint
 #define USB_DEV_RX_DATA_ERROR   0x00080000  // CRC error on the data
 #define USB_DEV_RX_OVERRUN      0x00040000  // OUT packet was not loaded due to
@@ -217,7 +219,7 @@ extern "C"
 //*****************************************************************************
 //
 // The following are values that can be passed to USBHostEndpointConfig() and
-// USBDevEndpointConfigSet() as the ulFlags parameter.
+// USBDevEndpointConfigSet() as the ui32Flags parameter.
 //
 //*****************************************************************************
 #define USB_EP_AUTO_SET         0x00000001  // Auto set feature enabled
@@ -239,8 +241,8 @@ extern "C"
 
 //*****************************************************************************
 //
-// The following are values that can be passed to USBHostPwrConfig() as
-// the ulFlags parameter.
+// The following are values that can be passed to USBHostPwrConfig() as the
+// ui32Flags parameter.
 //
 //*****************************************************************************
 #define USB_HOST_PWRFLT_LOW     0x00000010
@@ -249,12 +251,6 @@ extern "C"
 #define USB_HOST_PWRFLT_EP_TRI  0x00000140
 #define USB_HOST_PWRFLT_EP_LOW  0x00000240
 #define USB_HOST_PWRFLT_EP_HIGH 0x00000340
-#ifndef DEPRECATED
-#define USB_HOST_PWREN_LOW      0x00000002
-#define USB_HOST_PWREN_HIGH     0x00000003
-#define USB_HOST_PWREN_VBLOW    0x00000002
-#define USB_HOST_PWREN_VBHIGH   0x00000003
-#endif
 #define USB_HOST_PWREN_MAN_LOW  0x00000000
 #define USB_HOST_PWREN_MAN_HIGH 0x00000001
 #define USB_HOST_PWREN_AUTOLOW  0x00000002
@@ -264,7 +260,7 @@ extern "C"
 //*****************************************************************************
 //
 // The following are special values that can be passed to
-// USBHostEndpointConfig() as the ulNAKPollInterval parameter.
+// USBHostEndpointConfig() as the ui32NAKPollInterval parameter.
 //
 //*****************************************************************************
 #define MAX_NAK_LIMIT           31          // Maximum NAK interval
@@ -291,15 +287,7 @@ extern "C"
 #define USB_EP_5                0x00000050  // Endpoint 5
 #define USB_EP_6                0x00000060  // Endpoint 6
 #define USB_EP_7                0x00000070  // Endpoint 7
-#define USB_EP_8                0x00000080  // Endpoint 8
-#define USB_EP_9                0x00000090  // Endpoint 9
-#define USB_EP_10               0x000000A0  // Endpoint 10
-#define USB_EP_11               0x000000B0  // Endpoint 11
-#define USB_EP_12               0x000000C0  // Endpoint 12
-#define USB_EP_13               0x000000D0  // Endpoint 13
-#define USB_EP_14               0x000000E0  // Endpoint 14
-#define USB_EP_15               0x000000F0  // Endpoint 15
-#define NUM_USB_EP              16          // Number of supported endpoints
+#define NUM_USB_EP              8           // Number of supported endpoints
 
 //*****************************************************************************
 //
@@ -307,13 +295,13 @@ extern "C"
 // USB_EP_x values required when calling various USB APIs.
 //
 //*****************************************************************************
-#define INDEX_TO_USB_EP(x)      ((x) << 4)
-#define USB_EP_TO_INDEX(x)      ((x) >> 4)
+#define IndexToUSBEP(x)         ((x) << 4)
+#define USBEPToIndex(x)         ((x) >> 4)
 
 //*****************************************************************************
 //
 // The following are values that can be passed to USBFIFOConfigSet() as the
-// ulFIFOSize parameter.
+// ui32FIFOSize parameter.
 //
 //*****************************************************************************
 #define USB_FIFO_SZ_8           0x00000000  // 8 byte FIFO
@@ -325,25 +313,6 @@ extern "C"
 #define USB_FIFO_SZ_512         0x00000006  // 512 byte FIFO
 #define USB_FIFO_SZ_1024        0x00000007  // 1024 byte FIFO
 #define USB_FIFO_SZ_2048        0x00000008  // 2048 byte FIFO
-#define USB_FIFO_SZ_4096        0x00000009  // 4096 byte FIFO
-#define USB_FIFO_SZ_8_DB        0x00000010  // 8 byte double buffered FIFO
-                                            // (occupying 16 bytes)
-#define USB_FIFO_SZ_16_DB       0x00000011  // 16 byte double buffered FIFO
-                                            // (occupying 32 bytes)
-#define USB_FIFO_SZ_32_DB       0x00000012  // 32 byte double buffered FIFO
-                                            // (occupying 64 bytes)
-#define USB_FIFO_SZ_64_DB       0x00000013  // 64 byte double buffered FIFO
-                                            // (occupying 128 bytes)
-#define USB_FIFO_SZ_128_DB      0x00000014  // 128 byte double buffered FIFO
-                                            // (occupying 256 bytes)
-#define USB_FIFO_SZ_256_DB      0x00000015  // 256 byte double buffered FIFO
-                                            // (occupying 512 bytes)
-#define USB_FIFO_SZ_512_DB      0x00000016  // 512 byte double buffered FIFO
-                                            // (occupying 1024 bytes)
-#define USB_FIFO_SZ_1024_DB     0x00000017  // 1024 byte double buffered FIFO
-                                            // (occupying 2048 bytes)
-#define USB_FIFO_SZ_2048_DB     0x00000018  // 2048 byte double buffered FIFO
-                                            // (occupying 4096 bytes)
 
 //*****************************************************************************
 //
@@ -351,14 +320,12 @@ extern "C"
 // a number of bytes
 //
 //*****************************************************************************
-#define USB_FIFO_SIZE_DB_FLAG  0x00000010
-#define USB_FIFO_SZ_TO_BYTES(x) ((8 << ((x) & ~ USB_FIFO_SIZE_DB_FLAG)) * \
-                                 (((x) & USB_FIFO_SIZE_DB_FLAG) ? 2 : 1))
+#define USBFIFOSizeToBytes(x)   (8 << (x))
 
 //*****************************************************************************
 //
 // The following are values that can be passed to USBEndpointDataSend() as the
-// ulTransType parameter.
+// ui32TransType parameter.
 //
 //*****************************************************************************
 #define USB_TRANS_OUT           0x00000102  // Normal OUT transaction
@@ -404,176 +371,103 @@ extern "C"
 // Prototypes for the APIs.
 //
 //*****************************************************************************
-extern unsigned long USBDevAddrGet(unsigned long ulBase);
-extern void USBDevAddrSet(unsigned long ulBase, unsigned long ulAddress);
-extern void USBDevConnect(unsigned long ulBase);
-extern void USBDevDisconnect(unsigned long ulBase);
-extern void USBDevEndpointConfigSet(unsigned long ulBase,
-                                    unsigned long ulEndpoint,
-                                    unsigned long ulMaxPacketSize,
-                                    unsigned long ulFlags);
-extern void USBDevEndpointConfigGet(unsigned long ulBase,
-                                    unsigned long ulEndpoint,
-                                    unsigned long *pulMaxPacketSize,
-                                    unsigned long *pulFlags);
-extern void USBDevEndpointDataAck(unsigned long ulBase,
-                                  unsigned long ulEndpoint,
-                                  tBoolean bIsLastPacket);
-extern void USBDevEndpointStall(unsigned long ulBase, unsigned long ulEndpoint,
-                                unsigned long ulFlags);
-extern void USBDevEndpointStallClear(unsigned long ulBase,
-                                     unsigned long ulEndpoint,
-                                     unsigned long ulFlags);
-extern void USBDevEndpointStatusClear(unsigned long ulBase,
-                                      unsigned long ulEndpoint,
-                                      unsigned long ulFlags);
-extern unsigned long USBEndpointDataAvail(unsigned long ulBase,
-                                          unsigned long ulEndpoint);
-extern void USBEndpointDMAEnable(unsigned long ulBase, unsigned long ulEndpoint,
-                                 unsigned long ulFlags);
-extern void USBEndpointDMADisable(unsigned long ulBase,
-                                  unsigned long ulEndpoint,
-                                  unsigned long ulFlags);
-extern long USBEndpointDataGet(unsigned long ulBase, unsigned long ulEndpoint,
-                               unsigned char *pucData, unsigned long *pulSize);
-extern long USBEndpointDataPut(unsigned long ulBase, unsigned long ulEndpoint,
-                               unsigned char *pucData, unsigned long ulSize);
-extern long USBEndpointDataSend(unsigned long ulBase, unsigned long ulEndpoint,
-                                unsigned long ulTransType);
-extern void USBEndpointDataToggleClear(unsigned long ulBase,
-                                       unsigned long ulEndpoint,
-                                       unsigned long ulFlags);
-extern unsigned long USBEndpointStatus(unsigned long ulBase,
-                                       unsigned long ulEndpoint);
-extern unsigned long USBFIFOAddrGet(unsigned long ulBase,
-                                    unsigned long ulEndpoint);
-extern void USBFIFOConfigGet(unsigned long ulBase, unsigned long ulEndpoint,
-                             unsigned long *pulFIFOAddress,
-                             unsigned long *pulFIFOSize,
-                             unsigned long ulFlags);
-extern void USBFIFOConfigSet(unsigned long ulBase, unsigned long ulEndpoint,
-                             unsigned long ulFIFOAddress,
-                             unsigned long ulFIFOSize, unsigned long ulFlags);
-extern void USBFIFOFlush(unsigned long ulBase, unsigned long ulEndpoint,
-                         unsigned long ulFlags);
-extern unsigned long USBFrameNumberGet(unsigned long ulBase);
-extern unsigned long USBHostAddrGet(unsigned long ulBase,
-                                    unsigned long ulEndpoint,
-                                    unsigned long ulFlags);
-extern void USBHostAddrSet(unsigned long ulBase, unsigned long ulEndpoint,
-                           unsigned long ulAddr, unsigned long ulFlags);
-extern void USBHostEndpointConfig(unsigned long ulBase,
-                                  unsigned long ulEndpoint,
-                                  unsigned long ulMaxPacketSize,
-                                  unsigned long ulNAKPollInterval,
-                                  unsigned long ulTargetEndpoint,
-                                  unsigned long ulFlags);
-extern void USBHostEndpointDataAck(unsigned long ulBase,
-                                   unsigned long ulEndpoint);
-extern void USBHostEndpointDataToggle(unsigned long ulBase,
-                                      unsigned long ulEndpoint,
-                                      tBoolean bDataToggle,
-                                      unsigned long ulFlags);
-extern void USBHostEndpointStatusClear(unsigned long ulBase,
-                                       unsigned long ulEndpoint,
-                                       unsigned long ulFlags);
-extern unsigned long USBHostHubAddrGet(unsigned long ulBase,
-                                       unsigned long ulEndpoint,
-                                       unsigned long ulFlags);
-extern void USBHostHubAddrSet(unsigned long ulBase, unsigned long ulEndpoint,
-                              unsigned long ulAddr, unsigned long ulFlags);
-extern void USBHostPwrDisable(unsigned long ulBase);
-extern void USBHostPwrEnable(unsigned long ulBase);
-extern void USBHostPwrConfig(unsigned long ulBase, unsigned long ulFlags);
-#ifndef DEPRECATED
-#define USBHostPwrFaultConfig   USBHostPwrConfig
-#endif
-extern void USBHostPwrFaultDisable(unsigned long ulBase);
-extern void USBHostPwrFaultEnable(unsigned long ulBase);
-extern void USBHostRequestIN(unsigned long ulBase, unsigned long ulEndpoint);
-extern void USBHostRequestINClear(unsigned long ulBase,
-                                  unsigned long ulEndpoint);
-extern void USBHostRequestStatus(unsigned long ulBase);
-extern void USBHostReset(unsigned long ulBase, tBoolean bStart);
-extern void USBHostResume(unsigned long ulBase, tBoolean bStart);
-extern unsigned long USBHostSpeedGet(unsigned long ulBase);
-extern void USBHostSuspend(unsigned long ulBase);
-extern void USBIntDisableControl(unsigned long ulBase,
-                                 unsigned long ulIntFlags);
-extern void USBIntEnableControl(unsigned long ulBase,
-                                unsigned long ulIntFlags);
-extern unsigned long USBIntStatusControl(unsigned long ulBase);
-extern void USBIntDisableEndpoint(unsigned long ulBase,
-                                  unsigned long ulIntFlags);
-extern void USBIntEnableEndpoint(unsigned long ulBase,
-                                 unsigned long ulIntFlags);
-extern unsigned long USBIntStatusEndpoint(unsigned long ulBase);
-extern void USBIntRegister(unsigned long ulBase, void(*pfnHandler)(void));
-extern void USBIntUnregister(unsigned long ulBase);
-extern void USBOTGSessionRequest(unsigned long ulBase, tBoolean bStart);
-extern unsigned long USBModeGet(unsigned long ulBase);
-extern void USBEndpointDMAChannel(unsigned long ulBase,
-                                  unsigned long ulEndpoint,
-                                  unsigned long ulChannel);
-extern void USBHostMode(unsigned long ulBase);
-extern void USBDevMode(unsigned long ulBase);
-extern void USBOTGMode(unsigned long ulBase);
-extern void USBPHYPowerOff(unsigned long ulBase);
-extern void USBPHYPowerOn(unsigned long ulBase);
-extern unsigned long USBNumEndpointsGet(unsigned long ulBase);
-
-//*****************************************************************************
-//
-// Several USB APIs have been renamed, with the original function name being
-// deprecated.  These defines and function prototypes provide backward
-// compatibility.
-//
-//*****************************************************************************
-#ifndef DEPRECATED
-//*****************************************************************************
-//
-// The following are values that can be passed to USBIntEnable() and
-// USBIntDisable() as the ulIntFlags parameter, and are returned from
-// USBIntStatus().
-//
-//*****************************************************************************
-#define USB_INT_ALL             0xFF030E0F  // All Interrupt sources
-#define USB_INT_STATUS          0xFF000000  // Status Interrupts
-#define USB_INT_VBUS_ERR        0x80000000  // VBUS Error
-#define USB_INT_SESSION_START   0x40000000  // Session Start Detected
-#define USB_INT_SESSION_END     0x20000000  // Session End Detected
-#define USB_INT_DISCONNECT      0x20000000  // Disconnect Detected
-#define USB_INT_CONNECT         0x10000000  // Device Connect Detected
-#define USB_INT_SOF             0x08000000  // Start of Frame Detected
-#define USB_INT_BABBLE          0x04000000  // Babble signaled
-#define USB_INT_RESET           0x04000000  // Reset signaled
-#define USB_INT_RESUME          0x02000000  // Resume detected
-#define USB_INT_SUSPEND         0x01000000  // Suspend detected
-#define USB_INT_MODE_DETECT     0x00020000  // Mode value valid
-#define USB_INT_POWER_FAULT     0x00010000  // Power Fault detected
-#define USB_INT_HOST_IN         0x00000E00  // Host IN Interrupts
-#define USB_INT_DEV_OUT         0x00000E00  // Device OUT Interrupts
-#define USB_INT_HOST_IN_EP3     0x00000800  // Endpoint 3 Host IN Interrupt
-#define USB_INT_HOST_IN_EP2     0x00000400  // Endpoint 2 Host IN Interrupt
-#define USB_INT_HOST_IN_EP1     0x00000200  // Endpoint 1 Host IN Interrupt
-#define USB_INT_DEV_OUT_EP3     0x00000800  // Endpoint 3 Device OUT Interrupt
-#define USB_INT_DEV_OUT_EP2     0x00000400  // Endpoint 2 Device OUT Interrupt
-#define USB_INT_DEV_OUT_EP1     0x00000200  // Endpoint 1 Device OUT Interrupt
-#define USB_INT_HOST_OUT        0x0000000E  // Host OUT Interrupts
-#define USB_INT_DEV_IN          0x0000000E  // Device IN Interrupts
-#define USB_INT_HOST_OUT_EP3    0x00000008  // Endpoint 3 HOST_OUT Interrupt
-#define USB_INT_HOST_OUT_EP2    0x00000004  // Endpoint 2 HOST_OUT Interrupt
-#define USB_INT_HOST_OUT_EP1    0x00000002  // Endpoint 1 HOST_OUT Interrupt
-#define USB_INT_DEV_IN_EP3      0x00000008  // Endpoint 3 DEV_IN Interrupt
-#define USB_INT_DEV_IN_EP2      0x00000004  // Endpoint 2 DEV_IN Interrupt
-#define USB_INT_DEV_IN_EP1      0x00000002  // Endpoint 1 DEV_IN Interrupt
-#define USB_INT_EP0             0x00000001  // Endpoint 0 Interrupt
-
-#define USBDevEndpointConfig    USBDevEndpointConfigSet
-extern void USBIntDisable(unsigned long ulBase, unsigned long ulIntFlags);
-extern void USBIntEnable(unsigned long ulBase, unsigned long ulIntFlags);
-extern unsigned long USBIntStatus(unsigned long ulBase);
-#endif
+extern uint32_t USBDevAddrGet(uint32_t ui32Base);
+extern void USBDevAddrSet(uint32_t ui32Base, uint32_t ui32Address);
+extern void USBDevConnect(uint32_t ui32Base);
+extern void USBDevDisconnect(uint32_t ui32Base);
+extern void USBDevEndpointConfigSet(uint32_t ui32Base, uint32_t ui32Endpoint,
+                                    uint32_t ui32MaxPacketSize,
+                                    uint32_t ui32Flags);
+extern void USBDevEndpointConfigGet(uint32_t ui32Base, uint32_t ui32Endpoint,
+                                    uint32_t *pui32MaxPacketSize,
+                                    uint32_t *pui32Flags);
+extern void USBDevEndpointDataAck(uint32_t ui32Base, uint32_t ui32Endpoint,
+                                  bool bIsLastPacket);
+extern void USBDevEndpointStall(uint32_t ui32Base, uint32_t ui32Endpoint,
+                                uint32_t ui32Flags);
+extern void USBDevEndpointStallClear(uint32_t ui32Base, uint32_t ui32Endpoint,
+                                     uint32_t ui32Flags);
+extern void USBDevEndpointStatusClear(uint32_t ui32Base, uint32_t ui32Endpoint,
+                                      uint32_t ui32Flags);
+extern uint32_t USBEndpointDataAvail(uint32_t ui32Base, uint32_t ui32Endpoint);
+extern void USBEndpointDMAEnable(uint32_t ui32Base, uint32_t ui32Endpoint,
+                                 uint32_t ui32Flags);
+extern void USBEndpointDMADisable(uint32_t ui32Base, uint32_t ui32Endpoint,
+                                  uint32_t ui32Flags);
+extern void USBEndpointDMAConfigSet(uint32_t ui32Base, uint32_t ui32Endpoint,
+                                    uint32_t ui32Config);
+extern int32_t USBEndpointDataGet(uint32_t ui32Base, uint32_t ui32Endpoint,
+                                  uint8_t *pui8Data, uint32_t *pui32Size);
+extern int32_t USBEndpointDataPut(uint32_t ui32Base, uint32_t ui32Endpoint,
+                                  uint8_t *pui8Data, uint32_t ui32Size);
+extern int32_t USBEndpointDataSend(uint32_t ui32Base, uint32_t ui32Endpoint,
+                                   uint32_t ui32TransType);
+extern void USBEndpointDataToggleClear(uint32_t ui32Base,
+                                       uint32_t ui32Endpoint,
+                                       uint32_t ui32Flags);
+extern void USBEndpointPacketCountSet(uint32_t ui32Base, uint32_t ui32Endpoint,
+                                      uint32_t ui32Count);
+extern uint32_t USBEndpointStatus(uint32_t ui32Base, uint32_t ui32Endpoint);
+extern uint32_t USBFIFOAddrGet(uint32_t ui32Base, uint32_t ui32Endpoint);
+extern void USBFIFOConfigGet(uint32_t ui32Base, uint32_t ui32Endpoint,
+                             uint32_t *pui32FIFOAddress,
+                             uint32_t *pui32FIFOSize, uint32_t ui32Flags);
+extern void USBFIFOConfigSet(uint32_t ui32Base, uint32_t ui32Endpoint,
+                             uint32_t ui32FIFOAddress, uint32_t ui32FIFOSize,
+                             uint32_t ui32Flags);
+extern void USBFIFOFlush(uint32_t ui32Base, uint32_t ui32Endpoint,
+                         uint32_t ui32Flags);
+extern uint32_t USBFrameNumberGet(uint32_t ui32Base);
+extern uint32_t USBHostAddrGet(uint32_t ui32Base, uint32_t ui32Endpoint,
+                               uint32_t ui32Flags);
+extern void USBHostAddrSet(uint32_t ui32Base, uint32_t ui32Endpoint,
+                           uint32_t ui32Addr, uint32_t ui32Flags);
+extern void USBHostEndpointConfig(uint32_t ui32Base, uint32_t ui32Endpoint,
+                                  uint32_t ui32MaxPacketSize,
+                                  uint32_t ui32NAKPollInterval,
+                                  uint32_t ui32TargetEndpoint,
+                                  uint32_t ui32Flags);
+extern void USBHostEndpointDataAck(uint32_t ui32Base,
+                                   uint32_t ui32Endpoint);
+extern void USBHostEndpointDataToggle(uint32_t ui32Base, uint32_t ui32Endpoint,
+                                      bool bDataToggle, uint32_t ui32Flags);
+extern void USBHostEndpointStatusClear(uint32_t ui32Base,
+                                       uint32_t ui32Endpoint,
+                                       uint32_t ui32Flags);
+extern uint32_t USBHostHubAddrGet(uint32_t ui32Base, uint32_t ui32Endpoint,
+                                  uint32_t ui32Flags);
+extern void USBHostHubAddrSet(uint32_t ui32Base, uint32_t ui32Endpoint,
+                              uint32_t ui32Addr, uint32_t ui32Flags);
+extern void USBHostPwrDisable(uint32_t ui32Base);
+extern void USBHostPwrEnable(uint32_t ui32Base);
+extern void USBHostPwrConfig(uint32_t ui32Base, uint32_t ui32Flags);
+extern void USBHostPwrFaultDisable(uint32_t ui32Base);
+extern void USBHostPwrFaultEnable(uint32_t ui32Base);
+extern void USBHostRequestIN(uint32_t ui32Base, uint32_t ui32Endpoint);
+extern void USBHostRequestINClear(uint32_t ui32Base, uint32_t ui32Endpoint);
+extern void USBHostRequestStatus(uint32_t ui32Base);
+extern void USBHostReset(uint32_t ui32Base, bool bStart);
+extern void USBHostResume(uint32_t ui32Base, bool bStart);
+extern uint32_t USBHostSpeedGet(uint32_t ui32Base);
+extern void USBHostSuspend(uint32_t ui32Base);
+extern void USBIntDisableControl(uint32_t ui32Base, uint32_t ui32IntFlags);
+extern void USBIntEnableControl(uint32_t ui32Base, uint32_t ui32IntFlags);
+extern uint32_t USBIntStatusControl(uint32_t ui32Base);
+extern void USBIntDisableEndpoint(uint32_t ui32Base, uint32_t ui32IntFlags);
+extern void USBIntEnableEndpoint(uint32_t ui32Base, uint32_t ui32IntFlags);
+extern uint32_t USBIntStatusEndpoint(uint32_t ui32Base);
+extern void USBIntRegister(uint32_t ui32Base, void (*pfnHandler)(void));
+extern void USBIntUnregister(uint32_t ui32Base);
+extern void USBOTGSessionRequest(uint32_t ui32Base, bool bStart);
+extern uint32_t USBModeGet(uint32_t ui32Base);
+extern void USBEndpointDMAChannel(uint32_t ui32Base, uint32_t ui32Endpoint,
+                                  uint32_t ui32Channel);
+extern void USBHostMode(uint32_t ui32Base);
+extern void USBDevMode(uint32_t ui32Base);
+extern void USBOTGMode(uint32_t ui32Base);
+extern void USBPHYPowerOff(uint32_t ui32Base);
+extern void USBPHYPowerOn(uint32_t ui32Base);
+extern uint32_t USBNumEndpointsGet(uint32_t ui32Base);
 
 //*****************************************************************************
 //

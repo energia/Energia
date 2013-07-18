@@ -2,7 +2,7 @@
 //
 // hw_usb.h - Macros for use in accessing the USB registers.
 //
-// Copyright (c) 2007-2012 Texas Instruments Incorporated.  All rights reserved.
+// Copyright (c) 2007-2013 Texas Instruments Incorporated.  All rights reserved.
 // Software License Agreement
 // 
 //   Redistribution and use in source and binary forms, with or without
@@ -33,7 +33,7 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 // 
-// This is part of revision 9453 of the Stellaris Firmware Development Package.
+// This is part of revision 1.0 of the Tiva Firmware Development Package.
 //
 //*****************************************************************************
 
@@ -64,19 +64,12 @@
 #define USB_O_FIFO5             0x00000034  // USB FIFO Endpoint 5
 #define USB_O_FIFO6             0x00000038  // USB FIFO Endpoint 6
 #define USB_O_FIFO7             0x0000003C  // USB FIFO Endpoint 7
-#define USB_O_FIFO8             0x00000040  // USB FIFO Endpoint 8
-#define USB_O_FIFO9             0x00000044  // USB FIFO Endpoint 9
-#define USB_O_FIFO10            0x00000048  // USB FIFO Endpoint 10
-#define USB_O_FIFO11            0x0000004C  // USB FIFO Endpoint 11
-#define USB_O_FIFO12            0x00000050  // USB FIFO Endpoint 12
-#define USB_O_FIFO13            0x00000054  // USB FIFO Endpoint 13
-#define USB_O_FIFO14            0x00000058  // USB FIFO Endpoint 14
-#define USB_O_FIFO15            0x0000005C  // USB FIFO Endpoint 15
 #define USB_O_DEVCTL            0x00000060  // USB Device Control
 #define USB_O_TXFIFOSZ          0x00000062  // USB Transmit Dynamic FIFO Sizing
 #define USB_O_RXFIFOSZ          0x00000063  // USB Receive Dynamic FIFO Sizing
 #define USB_O_TXFIFOADD         0x00000064  // USB Transmit FIFO Start Address
 #define USB_O_RXFIFOADD         0x00000066  // USB Receive FIFO Start Address
+#define USB_O_EPINFO            0x00000078  // USB Endpoint Information
 #define USB_O_CONTIM            0x0000007A  // USB Connect Timing
 #define USB_O_VPLEN             0x0000007B  // USB OTG VBUS Pulse Timing
 #define USB_O_FSEOF             0x0000007D  // USB Full-Speed Last Transaction
@@ -158,92 +151,6 @@
 #define USB_O_RXHUBADDR7        0x000000BE  // USB Receive Hub Address Endpoint
                                             // 7
 #define USB_O_RXHUBPORT7        0x000000BF  // USB Receive Hub Port Endpoint 7
-#define USB_O_TXFUNCADDR8       0x000000C0  // USB Transmit Functional Address
-                                            // Endpoint 8
-#define USB_O_TXHUBADDR8        0x000000C2  // USB Transmit Hub Address
-                                            // Endpoint 8
-#define USB_O_TXHUBPORT8        0x000000C3  // USB Transmit Hub Port Endpoint 8
-#define USB_O_RXFUNCADDR8       0x000000C4  // USB Receive Functional Address
-                                            // Endpoint 8
-#define USB_O_RXHUBADDR8        0x000000C6  // USB Receive Hub Address Endpoint
-                                            // 8
-#define USB_O_RXHUBPORT8        0x000000C7  // USB Receive Hub Port Endpoint 8
-#define USB_O_TXFUNCADDR9       0x000000C8  // USB Transmit Functional Address
-                                            // Endpoint 9
-#define USB_O_TXHUBADDR9        0x000000CA  // USB Transmit Hub Address
-                                            // Endpoint 9
-#define USB_O_TXHUBPORT9        0x000000CB  // USB Transmit Hub Port Endpoint 9
-#define USB_O_RXFUNCADDR9       0x000000CC  // USB Receive Functional Address
-                                            // Endpoint 9
-#define USB_O_RXHUBADDR9        0x000000CE  // USB Receive Hub Address Endpoint
-                                            // 9
-#define USB_O_RXHUBPORT9        0x000000CF  // USB Receive Hub Port Endpoint 9
-#define USB_O_TXFUNCADDR10      0x000000D0  // USB Transmit Functional Address
-                                            // Endpoint 10
-#define USB_O_TXHUBADDR10       0x000000D2  // USB Transmit Hub Address
-                                            // Endpoint 10
-#define USB_O_TXHUBPORT10       0x000000D3  // USB Transmit Hub Port Endpoint
-                                            // 10
-#define USB_O_RXFUNCADDR10      0x000000D4  // USB Receive Functional Address
-                                            // Endpoint 10
-#define USB_O_RXHUBADDR10       0x000000D6  // USB Receive Hub Address Endpoint
-                                            // 10
-#define USB_O_RXHUBPORT10       0x000000D7  // USB Receive Hub Port Endpoint 10
-#define USB_O_TXFUNCADDR11      0x000000D8  // USB Transmit Functional Address
-                                            // Endpoint 11
-#define USB_O_TXHUBADDR11       0x000000DA  // USB Transmit Hub Address
-                                            // Endpoint 11
-#define USB_O_TXHUBPORT11       0x000000DB  // USB Transmit Hub Port Endpoint
-                                            // 11
-#define USB_O_RXFUNCADDR11      0x000000DC  // USB Receive Functional Address
-                                            // Endpoint 11
-#define USB_O_RXHUBADDR11       0x000000DE  // USB Receive Hub Address Endpoint
-                                            // 11
-#define USB_O_RXHUBPORT11       0x000000DF  // USB Receive Hub Port Endpoint 11
-#define USB_O_TXFUNCADDR12      0x000000E0  // USB Transmit Functional Address
-                                            // Endpoint 12
-#define USB_O_TXHUBADDR12       0x000000E2  // USB Transmit Hub Address
-                                            // Endpoint 12
-#define USB_O_TXHUBPORT12       0x000000E3  // USB Transmit Hub Port Endpoint
-                                            // 12
-#define USB_O_RXFUNCADDR12      0x000000E4  // USB Receive Functional Address
-                                            // Endpoint 12
-#define USB_O_RXHUBADDR12       0x000000E6  // USB Receive Hub Address Endpoint
-                                            // 12
-#define USB_O_RXHUBPORT12       0x000000E7  // USB Receive Hub Port Endpoint 12
-#define USB_O_TXFUNCADDR13      0x000000E8  // USB Transmit Functional Address
-                                            // Endpoint 13
-#define USB_O_TXHUBADDR13       0x000000EA  // USB Transmit Hub Address
-                                            // Endpoint 13
-#define USB_O_TXHUBPORT13       0x000000EB  // USB Transmit Hub Port Endpoint
-                                            // 13
-#define USB_O_RXFUNCADDR13      0x000000EC  // USB Receive Functional Address
-                                            // Endpoint 13
-#define USB_O_RXHUBADDR13       0x000000EE  // USB Receive Hub Address Endpoint
-                                            // 13
-#define USB_O_RXHUBPORT13       0x000000EF  // USB Receive Hub Port Endpoint 13
-#define USB_O_TXFUNCADDR14      0x000000F0  // USB Transmit Functional Address
-                                            // Endpoint 14
-#define USB_O_TXHUBADDR14       0x000000F2  // USB Transmit Hub Address
-                                            // Endpoint 14
-#define USB_O_TXHUBPORT14       0x000000F3  // USB Transmit Hub Port Endpoint
-                                            // 14
-#define USB_O_RXFUNCADDR14      0x000000F4  // USB Receive Functional Address
-                                            // Endpoint 14
-#define USB_O_RXHUBADDR14       0x000000F6  // USB Receive Hub Address Endpoint
-                                            // 14
-#define USB_O_RXHUBPORT14       0x000000F7  // USB Receive Hub Port Endpoint 14
-#define USB_O_TXFUNCADDR15      0x000000F8  // USB Transmit Functional Address
-                                            // Endpoint 15
-#define USB_O_TXHUBADDR15       0x000000FA  // USB Transmit Hub Address
-                                            // Endpoint 15
-#define USB_O_TXHUBPORT15       0x000000FB  // USB Transmit Hub Port Endpoint
-                                            // 15
-#define USB_O_RXFUNCADDR15      0x000000FC  // USB Receive Functional Address
-                                            // Endpoint 15
-#define USB_O_RXHUBADDR15       0x000000FE  // USB Receive Hub Address Endpoint
-                                            // 15
-#define USB_O_RXHUBPORT15       0x000000FF  // USB Receive Hub Port Endpoint 15
 #define USB_O_CSRL0             0x00000102  // USB Control and Status Endpoint
                                             // 0 Low
 #define USB_O_CSRH0             0x00000103  // USB Control and Status Endpoint
@@ -406,182 +313,6 @@
                                             // Endpoint 7
 #define USB_O_RXINTERVAL7       0x0000017D  // USB Host Receive Polling
                                             // Interval Endpoint 7
-#define USB_O_TXMAXP8           0x00000180  // USB Maximum Transmit Data
-                                            // Endpoint 8
-#define USB_O_TXCSRL8           0x00000182  // USB Transmit Control and Status
-                                            // Endpoint 8 Low
-#define USB_O_TXCSRH8           0x00000183  // USB Transmit Control and Status
-                                            // Endpoint 8 High
-#define USB_O_RXMAXP8           0x00000184  // USB Maximum Receive Data
-                                            // Endpoint 8
-#define USB_O_RXCSRL8           0x00000186  // USB Receive Control and Status
-                                            // Endpoint 8 Low
-#define USB_O_RXCSRH8           0x00000187  // USB Receive Control and Status
-                                            // Endpoint 8 High
-#define USB_O_RXCOUNT8          0x00000188  // USB Receive Byte Count Endpoint
-                                            // 8
-#define USB_O_TXTYPE8           0x0000018A  // USB Host Transmit Configure Type
-                                            // Endpoint 8
-#define USB_O_TXINTERVAL8       0x0000018B  // USB Host Transmit Interval
-                                            // Endpoint 8
-#define USB_O_RXTYPE8           0x0000018C  // USB Host Configure Receive Type
-                                            // Endpoint 8
-#define USB_O_RXINTERVAL8       0x0000018D  // USB Host Receive Polling
-                                            // Interval Endpoint 8
-#define USB_O_TXMAXP9           0x00000190  // USB Maximum Transmit Data
-                                            // Endpoint 9
-#define USB_O_TXCSRL9           0x00000192  // USB Transmit Control and Status
-                                            // Endpoint 9 Low
-#define USB_O_TXCSRH9           0x00000193  // USB Transmit Control and Status
-                                            // Endpoint 9 High
-#define USB_O_RXMAXP9           0x00000194  // USB Maximum Receive Data
-                                            // Endpoint 9
-#define USB_O_RXCSRL9           0x00000196  // USB Receive Control and Status
-                                            // Endpoint 9 Low
-#define USB_O_RXCSRH9           0x00000197  // USB Receive Control and Status
-                                            // Endpoint 9 High
-#define USB_O_RXCOUNT9          0x00000198  // USB Receive Byte Count Endpoint
-                                            // 9
-#define USB_O_TXTYPE9           0x0000019A  // USB Host Transmit Configure Type
-                                            // Endpoint 9
-#define USB_O_TXINTERVAL9       0x0000019B  // USB Host Transmit Interval
-                                            // Endpoint 9
-#define USB_O_RXTYPE9           0x0000019C  // USB Host Configure Receive Type
-                                            // Endpoint 9
-#define USB_O_RXINTERVAL9       0x0000019D  // USB Host Receive Polling
-                                            // Interval Endpoint 9
-#define USB_O_TXMAXP10          0x000001A0  // USB Maximum Transmit Data
-                                            // Endpoint 10
-#define USB_O_TXCSRL10          0x000001A2  // USB Transmit Control and Status
-                                            // Endpoint 10 Low
-#define USB_O_TXCSRH10          0x000001A3  // USB Transmit Control and Status
-                                            // Endpoint 10 High
-#define USB_O_RXMAXP10          0x000001A4  // USB Maximum Receive Data
-                                            // Endpoint 10
-#define USB_O_RXCSRL10          0x000001A6  // USB Receive Control and Status
-                                            // Endpoint 10 Low
-#define USB_O_RXCSRH10          0x000001A7  // USB Receive Control and Status
-                                            // Endpoint 10 High
-#define USB_O_RXCOUNT10         0x000001A8  // USB Receive Byte Count Endpoint
-                                            // 10
-#define USB_O_TXTYPE10          0x000001AA  // USB Host Transmit Configure Type
-                                            // Endpoint 10
-#define USB_O_TXINTERVAL10      0x000001AB  // USB Host Transmit Interval
-                                            // Endpoint 10
-#define USB_O_RXTYPE10          0x000001AC  // USB Host Configure Receive Type
-                                            // Endpoint 10
-#define USB_O_RXINTERVAL10      0x000001AD  // USB Host Receive Polling
-                                            // Interval Endpoint 10
-#define USB_O_TXMAXP11          0x000001B0  // USB Maximum Transmit Data
-                                            // Endpoint 11
-#define USB_O_TXCSRL11          0x000001B2  // USB Transmit Control and Status
-                                            // Endpoint 11 Low
-#define USB_O_TXCSRH11          0x000001B3  // USB Transmit Control and Status
-                                            // Endpoint 11 High
-#define USB_O_RXMAXP11          0x000001B4  // USB Maximum Receive Data
-                                            // Endpoint 11
-#define USB_O_RXCSRL11          0x000001B6  // USB Receive Control and Status
-                                            // Endpoint 11 Low
-#define USB_O_RXCSRH11          0x000001B7  // USB Receive Control and Status
-                                            // Endpoint 11 High
-#define USB_O_RXCOUNT11         0x000001B8  // USB Receive Byte Count Endpoint
-                                            // 11
-#define USB_O_TXTYPE11          0x000001BA  // USB Host Transmit Configure Type
-                                            // Endpoint 11
-#define USB_O_TXINTERVAL11      0x000001BB  // USB Host Transmit Interval
-                                            // Endpoint 11
-#define USB_O_RXTYPE11          0x000001BC  // USB Host Configure Receive Type
-                                            // Endpoint 11
-#define USB_O_RXINTERVAL11      0x000001BD  // USB Host Receive Polling
-                                            // Interval Endpoint 11
-#define USB_O_TXMAXP12          0x000001C0  // USB Maximum Transmit Data
-                                            // Endpoint 12
-#define USB_O_TXCSRL12          0x000001C2  // USB Transmit Control and Status
-                                            // Endpoint 12 Low
-#define USB_O_TXCSRH12          0x000001C3  // USB Transmit Control and Status
-                                            // Endpoint 12 High
-#define USB_O_RXMAXP12          0x000001C4  // USB Maximum Receive Data
-                                            // Endpoint 12
-#define USB_O_RXCSRL12          0x000001C6  // USB Receive Control and Status
-                                            // Endpoint 12 Low
-#define USB_O_RXCSRH12          0x000001C7  // USB Receive Control and Status
-                                            // Endpoint 12 High
-#define USB_O_RXCOUNT12         0x000001C8  // USB Receive Byte Count Endpoint
-                                            // 12
-#define USB_O_TXTYPE12          0x000001CA  // USB Host Transmit Configure Type
-                                            // Endpoint 12
-#define USB_O_TXINTERVAL12      0x000001CB  // USB Host Transmit Interval
-                                            // Endpoint 12
-#define USB_O_RXTYPE12          0x000001CC  // USB Host Configure Receive Type
-                                            // Endpoint 12
-#define USB_O_RXINTERVAL12      0x000001CD  // USB Host Receive Polling
-                                            // Interval Endpoint 12
-#define USB_O_TXMAXP13          0x000001D0  // USB Maximum Transmit Data
-                                            // Endpoint 13
-#define USB_O_TXCSRL13          0x000001D2  // USB Transmit Control and Status
-                                            // Endpoint 13 Low
-#define USB_O_TXCSRH13          0x000001D3  // USB Transmit Control and Status
-                                            // Endpoint 13 High
-#define USB_O_RXMAXP13          0x000001D4  // USB Maximum Receive Data
-                                            // Endpoint 13
-#define USB_O_RXCSRL13          0x000001D6  // USB Receive Control and Status
-                                            // Endpoint 13 Low
-#define USB_O_RXCSRH13          0x000001D7  // USB Receive Control and Status
-                                            // Endpoint 13 High
-#define USB_O_RXCOUNT13         0x000001D8  // USB Receive Byte Count Endpoint
-                                            // 13
-#define USB_O_TXTYPE13          0x000001DA  // USB Host Transmit Configure Type
-                                            // Endpoint 13
-#define USB_O_TXINTERVAL13      0x000001DB  // USB Host Transmit Interval
-                                            // Endpoint 13
-#define USB_O_RXTYPE13          0x000001DC  // USB Host Configure Receive Type
-                                            // Endpoint 13
-#define USB_O_RXINTERVAL13      0x000001DD  // USB Host Receive Polling
-                                            // Interval Endpoint 13
-#define USB_O_TXMAXP14          0x000001E0  // USB Maximum Transmit Data
-                                            // Endpoint 14
-#define USB_O_TXCSRL14          0x000001E2  // USB Transmit Control and Status
-                                            // Endpoint 14 Low
-#define USB_O_TXCSRH14          0x000001E3  // USB Transmit Control and Status
-                                            // Endpoint 14 High
-#define USB_O_RXMAXP14          0x000001E4  // USB Maximum Receive Data
-                                            // Endpoint 14
-#define USB_O_RXCSRL14          0x000001E6  // USB Receive Control and Status
-                                            // Endpoint 14 Low
-#define USB_O_RXCSRH14          0x000001E7  // USB Receive Control and Status
-                                            // Endpoint 14 High
-#define USB_O_RXCOUNT14         0x000001E8  // USB Receive Byte Count Endpoint
-                                            // 14
-#define USB_O_TXTYPE14          0x000001EA  // USB Host Transmit Configure Type
-                                            // Endpoint 14
-#define USB_O_TXINTERVAL14      0x000001EB  // USB Host Transmit Interval
-                                            // Endpoint 14
-#define USB_O_RXTYPE14          0x000001EC  // USB Host Configure Receive Type
-                                            // Endpoint 14
-#define USB_O_RXINTERVAL14      0x000001ED  // USB Host Receive Polling
-                                            // Interval Endpoint 14
-#define USB_O_TXMAXP15          0x000001F0  // USB Maximum Transmit Data
-                                            // Endpoint 15
-#define USB_O_TXCSRL15          0x000001F2  // USB Transmit Control and Status
-                                            // Endpoint 15 Low
-#define USB_O_TXCSRH15          0x000001F3  // USB Transmit Control and Status
-                                            // Endpoint 15 High
-#define USB_O_RXMAXP15          0x000001F4  // USB Maximum Receive Data
-                                            // Endpoint 15
-#define USB_O_RXCSRL15          0x000001F6  // USB Receive Control and Status
-                                            // Endpoint 15 Low
-#define USB_O_RXCSRH15          0x000001F7  // USB Receive Control and Status
-                                            // Endpoint 15 High
-#define USB_O_RXCOUNT15         0x000001F8  // USB Receive Byte Count Endpoint
-                                            // 15
-#define USB_O_TXTYPE15          0x000001FA  // USB Host Transmit Configure Type
-                                            // Endpoint 15
-#define USB_O_TXINTERVAL15      0x000001FB  // USB Host Transmit Interval
-                                            // Endpoint 15
-#define USB_O_RXTYPE15          0x000001FC  // USB Host Configure Receive Type
-                                            // Endpoint 15
-#define USB_O_RXINTERVAL15      0x000001FD  // USB Host Receive Polling
-                                            // Interval Endpoint 15
 #define USB_O_RQPKTCOUNT1       0x00000304  // USB Request Packet Count in
                                             // Block Transfer Endpoint 1
 #define USB_O_RQPKTCOUNT2       0x00000308  // USB Request Packet Count in
@@ -596,22 +327,6 @@
                                             // Block Transfer Endpoint 6
 #define USB_O_RQPKTCOUNT7       0x0000031C  // USB Request Packet Count in
                                             // Block Transfer Endpoint 7
-#define USB_O_RQPKTCOUNT8       0x00000320  // USB Request Packet Count in
-                                            // Block Transfer Endpoint 8
-#define USB_O_RQPKTCOUNT9       0x00000324  // USB Request Packet Count in
-                                            // Block Transfer Endpoint 9
-#define USB_O_RQPKTCOUNT10      0x00000328  // USB Request Packet Count in
-                                            // Block Transfer Endpoint 10
-#define USB_O_RQPKTCOUNT11      0x0000032C  // USB Request Packet Count in
-                                            // Block Transfer Endpoint 11
-#define USB_O_RQPKTCOUNT12      0x00000330  // USB Request Packet Count in
-                                            // Block Transfer Endpoint 12
-#define USB_O_RQPKTCOUNT13      0x00000334  // USB Request Packet Count in
-                                            // Block Transfer Endpoint 13
-#define USB_O_RQPKTCOUNT14      0x00000338  // USB Request Packet Count in
-                                            // Block Transfer Endpoint 14
-#define USB_O_RQPKTCOUNT15      0x0000033C  // USB Request Packet Count in
-                                            // Block Transfer Endpoint 15
 #define USB_O_RXDPKTBUFDIS      0x00000340  // USB Receive Double Packet Buffer
                                             // Disable
 #define USB_O_TXDPKTBUFDIS      0x00000342  // USB Transmit Double Packet
@@ -671,14 +386,6 @@
 // The following are defines for the bit fields in the USB_O_TXIS register.
 //
 //*****************************************************************************
-#define USB_TXIS_EP15           0x00008000  // TX Endpoint 15 Interrupt
-#define USB_TXIS_EP14           0x00004000  // TX Endpoint 14 Interrupt
-#define USB_TXIS_EP13           0x00002000  // TX Endpoint 13 Interrupt
-#define USB_TXIS_EP12           0x00001000  // TX Endpoint 12 Interrupt
-#define USB_TXIS_EP11           0x00000800  // TX Endpoint 11 Interrupt
-#define USB_TXIS_EP10           0x00000400  // TX Endpoint 10 Interrupt
-#define USB_TXIS_EP9            0x00000200  // TX Endpoint 9 Interrupt
-#define USB_TXIS_EP8            0x00000100  // TX Endpoint 8 Interrupt
 #define USB_TXIS_EP7            0x00000080  // TX Endpoint 7 Interrupt
 #define USB_TXIS_EP6            0x00000040  // TX Endpoint 6 Interrupt
 #define USB_TXIS_EP5            0x00000020  // TX Endpoint 5 Interrupt
@@ -693,14 +400,6 @@
 // The following are defines for the bit fields in the USB_O_RXIS register.
 //
 //*****************************************************************************
-#define USB_RXIS_EP15           0x00008000  // RX Endpoint 15 Interrupt
-#define USB_RXIS_EP14           0x00004000  // RX Endpoint 14 Interrupt
-#define USB_RXIS_EP13           0x00002000  // RX Endpoint 13 Interrupt
-#define USB_RXIS_EP12           0x00001000  // RX Endpoint 12 Interrupt
-#define USB_RXIS_EP11           0x00000800  // RX Endpoint 11 Interrupt
-#define USB_RXIS_EP10           0x00000400  // RX Endpoint 10 Interrupt
-#define USB_RXIS_EP9            0x00000200  // RX Endpoint 9 Interrupt
-#define USB_RXIS_EP8            0x00000100  // RX Endpoint 8 Interrupt
 #define USB_RXIS_EP7            0x00000080  // RX Endpoint 7 Interrupt
 #define USB_RXIS_EP6            0x00000040  // RX Endpoint 6 Interrupt
 #define USB_RXIS_EP5            0x00000020  // RX Endpoint 5 Interrupt
@@ -714,14 +413,6 @@
 // The following are defines for the bit fields in the USB_O_TXIE register.
 //
 //*****************************************************************************
-#define USB_TXIE_EP15           0x00008000  // TX Endpoint 15 Interrupt Enable
-#define USB_TXIE_EP14           0x00004000  // TX Endpoint 14 Interrupt Enable
-#define USB_TXIE_EP13           0x00002000  // TX Endpoint 13 Interrupt Enable
-#define USB_TXIE_EP12           0x00001000  // TX Endpoint 12 Interrupt Enable
-#define USB_TXIE_EP11           0x00000800  // TX Endpoint 11 Interrupt Enable
-#define USB_TXIE_EP10           0x00000400  // TX Endpoint 10 Interrupt Enable
-#define USB_TXIE_EP9            0x00000200  // TX Endpoint 9 Interrupt Enable
-#define USB_TXIE_EP8            0x00000100  // TX Endpoint 8 Interrupt Enable
 #define USB_TXIE_EP7            0x00000080  // TX Endpoint 7 Interrupt Enable
 #define USB_TXIE_EP6            0x00000040  // TX Endpoint 6 Interrupt Enable
 #define USB_TXIE_EP5            0x00000020  // TX Endpoint 5 Interrupt Enable
@@ -737,14 +428,6 @@
 // The following are defines for the bit fields in the USB_O_RXIE register.
 //
 //*****************************************************************************
-#define USB_RXIE_EP15           0x00008000  // RX Endpoint 15 Interrupt Enable
-#define USB_RXIE_EP14           0x00004000  // RX Endpoint 14 Interrupt Enable
-#define USB_RXIE_EP13           0x00002000  // RX Endpoint 13 Interrupt Enable
-#define USB_RXIE_EP12           0x00001000  // RX Endpoint 12 Interrupt Enable
-#define USB_RXIE_EP11           0x00000800  // RX Endpoint 11 Interrupt Enable
-#define USB_RXIE_EP10           0x00000400  // RX Endpoint 10 Interrupt Enable
-#define USB_RXIE_EP9            0x00000200  // RX Endpoint 9 Interrupt Enable
-#define USB_RXIE_EP8            0x00000100  // RX Endpoint 8 Interrupt Enable
 #define USB_RXIE_EP7            0x00000080  // RX Endpoint 7 Interrupt Enable
 #define USB_RXIE_EP6            0x00000040  // RX Endpoint 6 Interrupt Enable
 #define USB_RXIE_EP5            0x00000020  // RX Endpoint 5 Interrupt Enable
@@ -874,70 +557,6 @@
 
 //*****************************************************************************
 //
-// The following are defines for the bit fields in the USB_O_FIFO8 register.
-//
-//*****************************************************************************
-#define USB_FIFO8_EPDATA_M      0xFFFFFFFF  // Endpoint Data
-#define USB_FIFO8_EPDATA_S      0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the USB_O_FIFO9 register.
-//
-//*****************************************************************************
-#define USB_FIFO9_EPDATA_M      0xFFFFFFFF  // Endpoint Data
-#define USB_FIFO9_EPDATA_S      0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the USB_O_FIFO10 register.
-//
-//*****************************************************************************
-#define USB_FIFO10_EPDATA_M     0xFFFFFFFF  // Endpoint Data
-#define USB_FIFO10_EPDATA_S     0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the USB_O_FIFO11 register.
-//
-//*****************************************************************************
-#define USB_FIFO11_EPDATA_M     0xFFFFFFFF  // Endpoint Data
-#define USB_FIFO11_EPDATA_S     0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the USB_O_FIFO12 register.
-//
-//*****************************************************************************
-#define USB_FIFO12_EPDATA_M     0xFFFFFFFF  // Endpoint Data
-#define USB_FIFO12_EPDATA_S     0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the USB_O_FIFO13 register.
-//
-//*****************************************************************************
-#define USB_FIFO13_EPDATA_M     0xFFFFFFFF  // Endpoint Data
-#define USB_FIFO13_EPDATA_S     0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the USB_O_FIFO14 register.
-//
-//*****************************************************************************
-#define USB_FIFO14_EPDATA_M     0xFFFFFFFF  // Endpoint Data
-#define USB_FIFO14_EPDATA_S     0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the USB_O_FIFO15 register.
-//
-//*****************************************************************************
-#define USB_FIFO15_EPDATA_M     0xFFFFFFFF  // Endpoint Data
-#define USB_FIFO15_EPDATA_S     0
-
-//*****************************************************************************
-//
 // The following are defines for the bit fields in the USB_O_DEVCTL register.
 //
 //*****************************************************************************
@@ -1004,6 +623,16 @@
 //*****************************************************************************
 #define USB_RXFIFOADD_ADDR_M    0x000001FF  // Transmit/Receive Start Address
 #define USB_RXFIFOADD_ADDR_S    0
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the USB_O_EPINFO register.
+//
+//*****************************************************************************
+#define USB_EPINFO_RXEP_M       0x000000F0  // RX Endpoints
+#define USB_EPINFO_TXEP_M       0x0000000F  // TX Endpoints
+#define USB_EPINFO_RXEP_S       4
+#define USB_EPINFO_TXEP_S       0
 
 //*****************************************************************************
 //
@@ -1446,438 +1075,6 @@
 
 //*****************************************************************************
 //
-// The following are defines for the bit fields in the USB_O_TXFUNCADDR8
-// register.
-//
-//*****************************************************************************
-#define USB_TXFUNCADDR8_ADDR_M  0x0000007F  // Device Address
-#define USB_TXFUNCADDR8_ADDR_S  0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the USB_O_TXHUBADDR8
-// register.
-//
-//*****************************************************************************
-#define USB_TXHUBADDR8_ADDR_M   0x0000007F  // Hub Address
-#define USB_TXHUBADDR8_ADDR_S   0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the USB_O_TXHUBPORT8
-// register.
-//
-//*****************************************************************************
-#define USB_TXHUBPORT8_PORT_M   0x0000007F  // Hub Port
-#define USB_TXHUBPORT8_PORT_S   0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the USB_O_RXFUNCADDR8
-// register.
-//
-//*****************************************************************************
-#define USB_RXFUNCADDR8_ADDR_M  0x0000007F  // Device Address
-#define USB_RXFUNCADDR8_ADDR_S  0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the USB_O_RXHUBADDR8
-// register.
-//
-//*****************************************************************************
-#define USB_RXHUBADDR8_ADDR_M   0x0000007F  // Hub Address
-#define USB_RXHUBADDR8_ADDR_S   0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the USB_O_RXHUBPORT8
-// register.
-//
-//*****************************************************************************
-#define USB_RXHUBPORT8_PORT_M   0x0000007F  // Hub Port
-#define USB_RXHUBPORT8_PORT_S   0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the USB_O_TXFUNCADDR9
-// register.
-//
-//*****************************************************************************
-#define USB_TXFUNCADDR9_ADDR_M  0x0000007F  // Device Address
-#define USB_TXFUNCADDR9_ADDR_S  0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the USB_O_TXHUBADDR9
-// register.
-//
-//*****************************************************************************
-#define USB_TXHUBADDR9_ADDR_M   0x0000007F  // Hub Address
-#define USB_TXHUBADDR9_ADDR_S   0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the USB_O_TXHUBPORT9
-// register.
-//
-//*****************************************************************************
-#define USB_TXHUBPORT9_PORT_M   0x0000007F  // Hub Port
-#define USB_TXHUBPORT9_PORT_S   0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the USB_O_RXFUNCADDR9
-// register.
-//
-//*****************************************************************************
-#define USB_RXFUNCADDR9_ADDR_M  0x0000007F  // Device Address
-#define USB_RXFUNCADDR9_ADDR_S  0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the USB_O_RXHUBADDR9
-// register.
-//
-//*****************************************************************************
-#define USB_RXHUBADDR9_ADDR_M   0x0000007F  // Hub Address
-#define USB_RXHUBADDR9_ADDR_S   0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the USB_O_RXHUBPORT9
-// register.
-//
-//*****************************************************************************
-#define USB_RXHUBPORT9_PORT_M   0x0000007F  // Hub Port
-#define USB_RXHUBPORT9_PORT_S   0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the USB_O_TXFUNCADDR10
-// register.
-//
-//*****************************************************************************
-#define USB_TXFUNCADDR10_ADDR_M 0x0000007F  // Device Address
-#define USB_TXFUNCADDR10_ADDR_S 0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the USB_O_TXHUBADDR10
-// register.
-//
-//*****************************************************************************
-#define USB_TXHUBADDR10_ADDR_M  0x0000007F  // Hub Address
-#define USB_TXHUBADDR10_ADDR_S  0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the USB_O_TXHUBPORT10
-// register.
-//
-//*****************************************************************************
-#define USB_TXHUBPORT10_PORT_M  0x0000007F  // Hub Port
-#define USB_TXHUBPORT10_PORT_S  0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the USB_O_RXFUNCADDR10
-// register.
-//
-//*****************************************************************************
-#define USB_RXFUNCADDR10_ADDR_M 0x0000007F  // Device Address
-#define USB_RXFUNCADDR10_ADDR_S 0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the USB_O_RXHUBADDR10
-// register.
-//
-//*****************************************************************************
-#define USB_RXHUBADDR10_ADDR_M  0x0000007F  // Hub Address
-#define USB_RXHUBADDR10_ADDR_S  0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the USB_O_RXHUBPORT10
-// register.
-//
-//*****************************************************************************
-#define USB_RXHUBPORT10_PORT_M  0x0000007F  // Hub Port
-#define USB_RXHUBPORT10_PORT_S  0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the USB_O_TXFUNCADDR11
-// register.
-//
-//*****************************************************************************
-#define USB_TXFUNCADDR11_ADDR_M 0x0000007F  // Device Address
-#define USB_TXFUNCADDR11_ADDR_S 0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the USB_O_TXHUBADDR11
-// register.
-//
-//*****************************************************************************
-#define USB_TXHUBADDR11_ADDR_M  0x0000007F  // Hub Address
-#define USB_TXHUBADDR11_ADDR_S  0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the USB_O_TXHUBPORT11
-// register.
-//
-//*****************************************************************************
-#define USB_TXHUBPORT11_PORT_M  0x0000007F  // Hub Port
-#define USB_TXHUBPORT11_PORT_S  0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the USB_O_RXFUNCADDR11
-// register.
-//
-//*****************************************************************************
-#define USB_RXFUNCADDR11_ADDR_M 0x0000007F  // Device Address
-#define USB_RXFUNCADDR11_ADDR_S 0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the USB_O_RXHUBADDR11
-// register.
-//
-//*****************************************************************************
-#define USB_RXHUBADDR11_ADDR_M  0x0000007F  // Hub Address
-#define USB_RXHUBADDR11_ADDR_S  0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the USB_O_RXHUBPORT11
-// register.
-//
-//*****************************************************************************
-#define USB_RXHUBPORT11_PORT_M  0x0000007F  // Hub Port
-#define USB_RXHUBPORT11_PORT_S  0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the USB_O_TXFUNCADDR12
-// register.
-//
-//*****************************************************************************
-#define USB_TXFUNCADDR12_ADDR_M 0x0000007F  // Device Address
-#define USB_TXFUNCADDR12_ADDR_S 0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the USB_O_TXHUBADDR12
-// register.
-//
-//*****************************************************************************
-#define USB_TXHUBADDR12_ADDR_M  0x0000007F  // Hub Address
-#define USB_TXHUBADDR12_ADDR_S  0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the USB_O_TXHUBPORT12
-// register.
-//
-//*****************************************************************************
-#define USB_TXHUBPORT12_PORT_M  0x0000007F  // Hub Port
-#define USB_TXHUBPORT12_PORT_S  0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the USB_O_RXFUNCADDR12
-// register.
-//
-//*****************************************************************************
-#define USB_RXFUNCADDR12_ADDR_M 0x0000007F  // Device Address
-#define USB_RXFUNCADDR12_ADDR_S 0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the USB_O_RXHUBADDR12
-// register.
-//
-//*****************************************************************************
-#define USB_RXHUBADDR12_ADDR_M  0x0000007F  // Hub Address
-#define USB_RXHUBADDR12_ADDR_S  0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the USB_O_RXHUBPORT12
-// register.
-//
-//*****************************************************************************
-#define USB_RXHUBPORT12_PORT_M  0x0000007F  // Hub Port
-#define USB_RXHUBPORT12_PORT_S  0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the USB_O_TXFUNCADDR13
-// register.
-//
-//*****************************************************************************
-#define USB_TXFUNCADDR13_ADDR_M 0x0000007F  // Device Address
-#define USB_TXFUNCADDR13_ADDR_S 0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the USB_O_TXHUBADDR13
-// register.
-//
-//*****************************************************************************
-#define USB_TXHUBADDR13_ADDR_M  0x0000007F  // Hub Address
-#define USB_TXHUBADDR13_ADDR_S  0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the USB_O_TXHUBPORT13
-// register.
-//
-//*****************************************************************************
-#define USB_TXHUBPORT13_PORT_M  0x0000007F  // Hub Port
-#define USB_TXHUBPORT13_PORT_S  0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the USB_O_RXFUNCADDR13
-// register.
-//
-//*****************************************************************************
-#define USB_RXFUNCADDR13_ADDR_M 0x0000007F  // Device Address
-#define USB_RXFUNCADDR13_ADDR_S 0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the USB_O_RXHUBADDR13
-// register.
-//
-//*****************************************************************************
-#define USB_RXHUBADDR13_ADDR_M  0x0000007F  // Hub Address
-#define USB_RXHUBADDR13_ADDR_S  0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the USB_O_RXHUBPORT13
-// register.
-//
-//*****************************************************************************
-#define USB_RXHUBPORT13_PORT_M  0x0000007F  // Hub Port
-#define USB_RXHUBPORT13_PORT_S  0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the USB_O_TXFUNCADDR14
-// register.
-//
-//*****************************************************************************
-#define USB_TXFUNCADDR14_ADDR_M 0x0000007F  // Device Address
-#define USB_TXFUNCADDR14_ADDR_S 0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the USB_O_TXHUBADDR14
-// register.
-//
-//*****************************************************************************
-#define USB_TXHUBADDR14_ADDR_M  0x0000007F  // Hub Address
-#define USB_TXHUBADDR14_ADDR_S  0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the USB_O_TXHUBPORT14
-// register.
-//
-//*****************************************************************************
-#define USB_TXHUBPORT14_PORT_M  0x0000007F  // Hub Port
-#define USB_TXHUBPORT14_PORT_S  0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the USB_O_RXFUNCADDR14
-// register.
-//
-//*****************************************************************************
-#define USB_RXFUNCADDR14_ADDR_M 0x0000007F  // Device Address
-#define USB_RXFUNCADDR14_ADDR_S 0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the USB_O_RXHUBADDR14
-// register.
-//
-//*****************************************************************************
-#define USB_RXHUBADDR14_ADDR_M  0x0000007F  // Hub Address
-#define USB_RXHUBADDR14_ADDR_S  0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the USB_O_RXHUBPORT14
-// register.
-//
-//*****************************************************************************
-#define USB_RXHUBPORT14_PORT_M  0x0000007F  // Hub Port
-#define USB_RXHUBPORT14_PORT_S  0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the USB_O_TXFUNCADDR15
-// register.
-//
-//*****************************************************************************
-#define USB_TXFUNCADDR15_ADDR_M 0x0000007F  // Device Address
-#define USB_TXFUNCADDR15_ADDR_S 0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the USB_O_TXHUBADDR15
-// register.
-//
-//*****************************************************************************
-#define USB_TXHUBADDR15_ADDR_M  0x0000007F  // Hub Address
-#define USB_TXHUBADDR15_ADDR_S  0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the USB_O_TXHUBPORT15
-// register.
-//
-//*****************************************************************************
-#define USB_TXHUBPORT15_PORT_M  0x0000007F  // Hub Port
-#define USB_TXHUBPORT15_PORT_S  0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the USB_O_RXFUNCADDR15
-// register.
-//
-//*****************************************************************************
-#define USB_RXFUNCADDR15_ADDR_M 0x0000007F  // Device Address
-#define USB_RXFUNCADDR15_ADDR_S 0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the USB_O_RXHUBADDR15
-// register.
-//
-//*****************************************************************************
-#define USB_RXHUBADDR15_ADDR_M  0x0000007F  // Hub Address
-#define USB_RXHUBADDR15_ADDR_S  0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the USB_O_RXHUBPORT15
-// register.
-//
-//*****************************************************************************
-#define USB_RXHUBPORT15_PORT_M  0x0000007F  // Hub Port
-#define USB_RXHUBPORT15_PORT_S  0
-
-//*****************************************************************************
-//
 // The following are defines for the bit fields in the USB_O_CSRL0 register.
 //
 //*****************************************************************************
@@ -2038,13 +1235,13 @@
 // register.
 //
 //*****************************************************************************
-#define USB_TXINTERVAL1_NAKLMT_M \
+#define USB_TXINTERVAL1_NAKLMT_M                                              \
                                 0x000000FF  // NAK Limit
-#define USB_TXINTERVAL1_TXPOLL_M \
+#define USB_TXINTERVAL1_TXPOLL_M                                              \
                                 0x000000FF  // TX Polling
-#define USB_TXINTERVAL1_TXPOLL_S \
+#define USB_TXINTERVAL1_TXPOLL_S                                              \
                                 0
-#define USB_TXINTERVAL1_NAKLMT_S \
+#define USB_TXINTERVAL1_NAKLMT_S                                              \
                                 0
 
 //*****************************************************************************
@@ -2070,13 +1267,13 @@
 // register.
 //
 //*****************************************************************************
-#define USB_RXINTERVAL1_TXPOLL_M \
+#define USB_RXINTERVAL1_TXPOLL_M                                              \
                                 0x000000FF  // RX Polling
-#define USB_RXINTERVAL1_NAKLMT_M \
+#define USB_RXINTERVAL1_NAKLMT_M                                              \
                                 0x000000FF  // NAK Limit
-#define USB_RXINTERVAL1_TXPOLL_S \
+#define USB_RXINTERVAL1_TXPOLL_S                                              \
                                 0
-#define USB_RXINTERVAL1_NAKLMT_S \
+#define USB_RXINTERVAL1_NAKLMT_S                                              \
                                 0
 
 //*****************************************************************************
@@ -2188,13 +1385,13 @@
 // register.
 //
 //*****************************************************************************
-#define USB_TXINTERVAL2_TXPOLL_M \
+#define USB_TXINTERVAL2_TXPOLL_M                                              \
                                 0x000000FF  // TX Polling
-#define USB_TXINTERVAL2_NAKLMT_M \
+#define USB_TXINTERVAL2_NAKLMT_M                                              \
                                 0x000000FF  // NAK Limit
-#define USB_TXINTERVAL2_NAKLMT_S \
+#define USB_TXINTERVAL2_NAKLMT_S                                              \
                                 0
-#define USB_TXINTERVAL2_TXPOLL_S \
+#define USB_TXINTERVAL2_TXPOLL_S                                              \
                                 0
 
 //*****************************************************************************
@@ -2220,13 +1417,13 @@
 // register.
 //
 //*****************************************************************************
-#define USB_RXINTERVAL2_TXPOLL_M \
+#define USB_RXINTERVAL2_TXPOLL_M                                              \
                                 0x000000FF  // RX Polling
-#define USB_RXINTERVAL2_NAKLMT_M \
+#define USB_RXINTERVAL2_NAKLMT_M                                              \
                                 0x000000FF  // NAK Limit
-#define USB_RXINTERVAL2_TXPOLL_S \
+#define USB_RXINTERVAL2_TXPOLL_S                                              \
                                 0
-#define USB_RXINTERVAL2_NAKLMT_S \
+#define USB_RXINTERVAL2_NAKLMT_S                                              \
                                 0
 
 //*****************************************************************************
@@ -2338,13 +1535,13 @@
 // register.
 //
 //*****************************************************************************
-#define USB_TXINTERVAL3_TXPOLL_M \
+#define USB_TXINTERVAL3_TXPOLL_M                                              \
                                 0x000000FF  // TX Polling
-#define USB_TXINTERVAL3_NAKLMT_M \
+#define USB_TXINTERVAL3_NAKLMT_M                                              \
                                 0x000000FF  // NAK Limit
-#define USB_TXINTERVAL3_TXPOLL_S \
+#define USB_TXINTERVAL3_TXPOLL_S                                              \
                                 0
-#define USB_TXINTERVAL3_NAKLMT_S \
+#define USB_TXINTERVAL3_NAKLMT_S                                              \
                                 0
 
 //*****************************************************************************
@@ -2370,13 +1567,13 @@
 // register.
 //
 //*****************************************************************************
-#define USB_RXINTERVAL3_TXPOLL_M \
+#define USB_RXINTERVAL3_TXPOLL_M                                              \
                                 0x000000FF  // RX Polling
-#define USB_RXINTERVAL3_NAKLMT_M \
+#define USB_RXINTERVAL3_NAKLMT_M                                              \
                                 0x000000FF  // NAK Limit
-#define USB_RXINTERVAL3_TXPOLL_S \
+#define USB_RXINTERVAL3_TXPOLL_S                                              \
                                 0
-#define USB_RXINTERVAL3_NAKLMT_S \
+#define USB_RXINTERVAL3_NAKLMT_S                                              \
                                 0
 
 //*****************************************************************************
@@ -2488,13 +1685,13 @@
 // register.
 //
 //*****************************************************************************
-#define USB_TXINTERVAL4_TXPOLL_M \
+#define USB_TXINTERVAL4_TXPOLL_M                                              \
                                 0x000000FF  // TX Polling
-#define USB_TXINTERVAL4_NAKLMT_M \
+#define USB_TXINTERVAL4_NAKLMT_M                                              \
                                 0x000000FF  // NAK Limit
-#define USB_TXINTERVAL4_NAKLMT_S \
+#define USB_TXINTERVAL4_NAKLMT_S                                              \
                                 0
-#define USB_TXINTERVAL4_TXPOLL_S \
+#define USB_TXINTERVAL4_TXPOLL_S                                              \
                                 0
 
 //*****************************************************************************
@@ -2520,13 +1717,13 @@
 // register.
 //
 //*****************************************************************************
-#define USB_RXINTERVAL4_TXPOLL_M \
+#define USB_RXINTERVAL4_TXPOLL_M                                              \
                                 0x000000FF  // RX Polling
-#define USB_RXINTERVAL4_NAKLMT_M \
+#define USB_RXINTERVAL4_NAKLMT_M                                              \
                                 0x000000FF  // NAK Limit
-#define USB_RXINTERVAL4_NAKLMT_S \
+#define USB_RXINTERVAL4_NAKLMT_S                                              \
                                 0
-#define USB_RXINTERVAL4_TXPOLL_S \
+#define USB_RXINTERVAL4_TXPOLL_S                                              \
                                 0
 
 //*****************************************************************************
@@ -2638,13 +1835,13 @@
 // register.
 //
 //*****************************************************************************
-#define USB_TXINTERVAL5_TXPOLL_M \
+#define USB_TXINTERVAL5_TXPOLL_M                                              \
                                 0x000000FF  // TX Polling
-#define USB_TXINTERVAL5_NAKLMT_M \
+#define USB_TXINTERVAL5_NAKLMT_M                                              \
                                 0x000000FF  // NAK Limit
-#define USB_TXINTERVAL5_NAKLMT_S \
+#define USB_TXINTERVAL5_NAKLMT_S                                              \
                                 0
-#define USB_TXINTERVAL5_TXPOLL_S \
+#define USB_TXINTERVAL5_TXPOLL_S                                              \
                                 0
 
 //*****************************************************************************
@@ -2670,13 +1867,13 @@
 // register.
 //
 //*****************************************************************************
-#define USB_RXINTERVAL5_TXPOLL_M \
+#define USB_RXINTERVAL5_TXPOLL_M                                              \
                                 0x000000FF  // RX Polling
-#define USB_RXINTERVAL5_NAKLMT_M \
+#define USB_RXINTERVAL5_NAKLMT_M                                              \
                                 0x000000FF  // NAK Limit
-#define USB_RXINTERVAL5_TXPOLL_S \
+#define USB_RXINTERVAL5_TXPOLL_S                                              \
                                 0
-#define USB_RXINTERVAL5_NAKLMT_S \
+#define USB_RXINTERVAL5_NAKLMT_S                                              \
                                 0
 
 //*****************************************************************************
@@ -2788,13 +1985,13 @@
 // register.
 //
 //*****************************************************************************
-#define USB_TXINTERVAL6_TXPOLL_M \
+#define USB_TXINTERVAL6_TXPOLL_M                                              \
                                 0x000000FF  // TX Polling
-#define USB_TXINTERVAL6_NAKLMT_M \
+#define USB_TXINTERVAL6_NAKLMT_M                                              \
                                 0x000000FF  // NAK Limit
-#define USB_TXINTERVAL6_TXPOLL_S \
+#define USB_TXINTERVAL6_TXPOLL_S                                              \
                                 0
-#define USB_TXINTERVAL6_NAKLMT_S \
+#define USB_TXINTERVAL6_NAKLMT_S                                              \
                                 0
 
 //*****************************************************************************
@@ -2820,13 +2017,13 @@
 // register.
 //
 //*****************************************************************************
-#define USB_RXINTERVAL6_TXPOLL_M \
+#define USB_RXINTERVAL6_TXPOLL_M                                              \
                                 0x000000FF  // RX Polling
-#define USB_RXINTERVAL6_NAKLMT_M \
+#define USB_RXINTERVAL6_NAKLMT_M                                              \
                                 0x000000FF  // NAK Limit
-#define USB_RXINTERVAL6_NAKLMT_S \
+#define USB_RXINTERVAL6_NAKLMT_S                                              \
                                 0
-#define USB_RXINTERVAL6_TXPOLL_S \
+#define USB_RXINTERVAL6_TXPOLL_S                                              \
                                 0
 
 //*****************************************************************************
@@ -2938,13 +2135,13 @@
 // register.
 //
 //*****************************************************************************
-#define USB_TXINTERVAL7_TXPOLL_M \
+#define USB_TXINTERVAL7_TXPOLL_M                                              \
                                 0x000000FF  // TX Polling
-#define USB_TXINTERVAL7_NAKLMT_M \
+#define USB_TXINTERVAL7_NAKLMT_M                                              \
                                 0x000000FF  // NAK Limit
-#define USB_TXINTERVAL7_NAKLMT_S \
+#define USB_TXINTERVAL7_NAKLMT_S                                              \
                                 0
-#define USB_TXINTERVAL7_TXPOLL_S \
+#define USB_TXINTERVAL7_TXPOLL_S                                              \
                                 0
 
 //*****************************************************************************
@@ -2970,1219 +2167,13 @@
 // register.
 //
 //*****************************************************************************
-#define USB_RXINTERVAL7_TXPOLL_M \
+#define USB_RXINTERVAL7_TXPOLL_M                                              \
                                 0x000000FF  // RX Polling
-#define USB_RXINTERVAL7_NAKLMT_M \
+#define USB_RXINTERVAL7_NAKLMT_M                                              \
                                 0x000000FF  // NAK Limit
-#define USB_RXINTERVAL7_NAKLMT_S \
+#define USB_RXINTERVAL7_NAKLMT_S                                              \
                                 0
-#define USB_RXINTERVAL7_TXPOLL_S \
-                                0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the USB_O_TXMAXP8 register.
-//
-//*****************************************************************************
-#define USB_TXMAXP8_MAXLOAD_M   0x000007FF  // Maximum Payload
-#define USB_TXMAXP8_MAXLOAD_S   0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the USB_O_TXCSRL8 register.
-//
-//*****************************************************************************
-#define USB_TXCSRL8_NAKTO       0x00000080  // NAK Timeout
-#define USB_TXCSRL8_CLRDT       0x00000040  // Clear Data Toggle
-#define USB_TXCSRL8_STALLED     0x00000020  // Endpoint Stalled
-#define USB_TXCSRL8_STALL       0x00000010  // Send STALL
-#define USB_TXCSRL8_SETUP       0x00000010  // Setup Packet
-#define USB_TXCSRL8_FLUSH       0x00000008  // Flush FIFO
-#define USB_TXCSRL8_ERROR       0x00000004  // Error
-#define USB_TXCSRL8_UNDRN       0x00000004  // Underrun
-#define USB_TXCSRL8_FIFONE      0x00000002  // FIFO Not Empty
-#define USB_TXCSRL8_TXRDY       0x00000001  // Transmit Packet Ready
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the USB_O_TXCSRH8 register.
-//
-//*****************************************************************************
-#define USB_TXCSRH8_AUTOSET     0x00000080  // Auto Set
-#define USB_TXCSRH8_ISO         0x00000040  // Isochronous Transfers
-#define USB_TXCSRH8_MODE        0x00000020  // Mode
-#define USB_TXCSRH8_DMAEN       0x00000010  // DMA Request Enable
-#define USB_TXCSRH8_FDT         0x00000008  // Force Data Toggle
-#define USB_TXCSRH8_DMAMOD      0x00000004  // DMA Request Mode
-#define USB_TXCSRH8_DTWE        0x00000002  // Data Toggle Write Enable
-#define USB_TXCSRH8_DT          0x00000001  // Data Toggle
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the USB_O_RXMAXP8 register.
-//
-//*****************************************************************************
-#define USB_RXMAXP8_MAXLOAD_M   0x000007FF  // Maximum Payload
-#define USB_RXMAXP8_MAXLOAD_S   0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the USB_O_RXCSRL8 register.
-//
-//*****************************************************************************
-#define USB_RXCSRL8_CLRDT       0x00000080  // Clear Data Toggle
-#define USB_RXCSRL8_STALLED     0x00000040  // Endpoint Stalled
-#define USB_RXCSRL8_STALL       0x00000020  // Send STALL
-#define USB_RXCSRL8_REQPKT      0x00000020  // Request Packet
-#define USB_RXCSRL8_FLUSH       0x00000010  // Flush FIFO
-#define USB_RXCSRL8_NAKTO       0x00000008  // NAK Timeout
-#define USB_RXCSRL8_DATAERR     0x00000008  // Data Error
-#define USB_RXCSRL8_OVER        0x00000004  // Overrun
-#define USB_RXCSRL8_ERROR       0x00000004  // Error
-#define USB_RXCSRL8_FULL        0x00000002  // FIFO Full
-#define USB_RXCSRL8_RXRDY       0x00000001  // Receive Packet Ready
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the USB_O_RXCSRH8 register.
-//
-//*****************************************************************************
-#define USB_RXCSRH8_AUTOCL      0x00000080  // Auto Clear
-#define USB_RXCSRH8_AUTORQ      0x00000040  // Auto Request
-#define USB_RXCSRH8_ISO         0x00000040  // Isochronous Transfers
-#define USB_RXCSRH8_DMAEN       0x00000020  // DMA Request Enable
-#define USB_RXCSRH8_DISNYET     0x00000010  // Disable NYET
-#define USB_RXCSRH8_PIDERR      0x00000010  // PID Error
-#define USB_RXCSRH8_DMAMOD      0x00000008  // DMA Request Mode
-#define USB_RXCSRH8_DTWE        0x00000004  // Data Toggle Write Enable
-#define USB_RXCSRH8_DT          0x00000002  // Data Toggle
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the USB_O_RXCOUNT8 register.
-//
-//*****************************************************************************
-#define USB_RXCOUNT8_COUNT_M    0x00001FFF  // Receive Packet Count
-#define USB_RXCOUNT8_COUNT_S    0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the USB_O_TXTYPE8 register.
-//
-//*****************************************************************************
-#define USB_TXTYPE8_SPEED_M     0x000000C0  // Operating Speed
-#define USB_TXTYPE8_SPEED_DFLT  0x00000000  // Default
-#define USB_TXTYPE8_SPEED_FULL  0x00000080  // Full
-#define USB_TXTYPE8_SPEED_LOW   0x000000C0  // Low
-#define USB_TXTYPE8_PROTO_M     0x00000030  // Protocol
-#define USB_TXTYPE8_PROTO_CTRL  0x00000000  // Control
-#define USB_TXTYPE8_PROTO_ISOC  0x00000010  // Isochronous
-#define USB_TXTYPE8_PROTO_BULK  0x00000020  // Bulk
-#define USB_TXTYPE8_PROTO_INT   0x00000030  // Interrupt
-#define USB_TXTYPE8_TEP_M       0x0000000F  // Target Endpoint Number
-#define USB_TXTYPE8_TEP_S       0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the USB_O_TXINTERVAL8
-// register.
-//
-//*****************************************************************************
-#define USB_TXINTERVAL8_TXPOLL_M \
-                                0x000000FF  // TX Polling
-#define USB_TXINTERVAL8_NAKLMT_M \
-                                0x000000FF  // NAK Limit
-#define USB_TXINTERVAL8_NAKLMT_S \
-                                0
-#define USB_TXINTERVAL8_TXPOLL_S \
-                                0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the USB_O_RXTYPE8 register.
-//
-//*****************************************************************************
-#define USB_RXTYPE8_SPEED_M     0x000000C0  // Operating Speed
-#define USB_RXTYPE8_SPEED_DFLT  0x00000000  // Default
-#define USB_RXTYPE8_SPEED_FULL  0x00000080  // Full
-#define USB_RXTYPE8_SPEED_LOW   0x000000C0  // Low
-#define USB_RXTYPE8_PROTO_M     0x00000030  // Protocol
-#define USB_RXTYPE8_PROTO_CTRL  0x00000000  // Control
-#define USB_RXTYPE8_PROTO_ISOC  0x00000010  // Isochronous
-#define USB_RXTYPE8_PROTO_BULK  0x00000020  // Bulk
-#define USB_RXTYPE8_PROTO_INT   0x00000030  // Interrupt
-#define USB_RXTYPE8_TEP_M       0x0000000F  // Target Endpoint Number
-#define USB_RXTYPE8_TEP_S       0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the USB_O_RXINTERVAL8
-// register.
-//
-//*****************************************************************************
-#define USB_RXINTERVAL8_NAKLMT_M \
-                                0x000000FF  // NAK Limit
-#define USB_RXINTERVAL8_TXPOLL_M \
-                                0x000000FF  // RX Polling
-#define USB_RXINTERVAL8_NAKLMT_S \
-                                0
-#define USB_RXINTERVAL8_TXPOLL_S \
-                                0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the USB_O_TXMAXP9 register.
-//
-//*****************************************************************************
-#define USB_TXMAXP9_MAXLOAD_M   0x000007FF  // Maximum Payload
-#define USB_TXMAXP9_MAXLOAD_S   0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the USB_O_TXCSRL9 register.
-//
-//*****************************************************************************
-#define USB_TXCSRL9_NAKTO       0x00000080  // NAK Timeout
-#define USB_TXCSRL9_CLRDT       0x00000040  // Clear Data Toggle
-#define USB_TXCSRL9_STALLED     0x00000020  // Endpoint Stalled
-#define USB_TXCSRL9_SETUP       0x00000010  // Setup Packet
-#define USB_TXCSRL9_STALL       0x00000010  // Send STALL
-#define USB_TXCSRL9_FLUSH       0x00000008  // Flush FIFO
-#define USB_TXCSRL9_ERROR       0x00000004  // Error
-#define USB_TXCSRL9_UNDRN       0x00000004  // Underrun
-#define USB_TXCSRL9_FIFONE      0x00000002  // FIFO Not Empty
-#define USB_TXCSRL9_TXRDY       0x00000001  // Transmit Packet Ready
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the USB_O_TXCSRH9 register.
-//
-//*****************************************************************************
-#define USB_TXCSRH9_AUTOSET     0x00000080  // Auto Set
-#define USB_TXCSRH9_ISO         0x00000040  // Isochronous Transfers
-#define USB_TXCSRH9_MODE        0x00000020  // Mode
-#define USB_TXCSRH9_DMAEN       0x00000010  // DMA Request Enable
-#define USB_TXCSRH9_FDT         0x00000008  // Force Data Toggle
-#define USB_TXCSRH9_DMAMOD      0x00000004  // DMA Request Mode
-#define USB_TXCSRH9_DTWE        0x00000002  // Data Toggle Write Enable
-#define USB_TXCSRH9_DT          0x00000001  // Data Toggle
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the USB_O_RXMAXP9 register.
-//
-//*****************************************************************************
-#define USB_RXMAXP9_MAXLOAD_M   0x000007FF  // Maximum Payload
-#define USB_RXMAXP9_MAXLOAD_S   0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the USB_O_RXCSRL9 register.
-//
-//*****************************************************************************
-#define USB_RXCSRL9_CLRDT       0x00000080  // Clear Data Toggle
-#define USB_RXCSRL9_STALLED     0x00000040  // Endpoint Stalled
-#define USB_RXCSRL9_STALL       0x00000020  // Send STALL
-#define USB_RXCSRL9_REQPKT      0x00000020  // Request Packet
-#define USB_RXCSRL9_FLUSH       0x00000010  // Flush FIFO
-#define USB_RXCSRL9_DATAERR     0x00000008  // Data Error
-#define USB_RXCSRL9_NAKTO       0x00000008  // NAK Timeout
-#define USB_RXCSRL9_ERROR       0x00000004  // Error
-#define USB_RXCSRL9_OVER        0x00000004  // Overrun
-#define USB_RXCSRL9_FULL        0x00000002  // FIFO Full
-#define USB_RXCSRL9_RXRDY       0x00000001  // Receive Packet Ready
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the USB_O_RXCSRH9 register.
-//
-//*****************************************************************************
-#define USB_RXCSRH9_AUTOCL      0x00000080  // Auto Clear
-#define USB_RXCSRH9_ISO         0x00000040  // Isochronous Transfers
-#define USB_RXCSRH9_AUTORQ      0x00000040  // Auto Request
-#define USB_RXCSRH9_DMAEN       0x00000020  // DMA Request Enable
-#define USB_RXCSRH9_PIDERR      0x00000010  // PID Error
-#define USB_RXCSRH9_DISNYET     0x00000010  // Disable NYET
-#define USB_RXCSRH9_DMAMOD      0x00000008  // DMA Request Mode
-#define USB_RXCSRH9_DTWE        0x00000004  // Data Toggle Write Enable
-#define USB_RXCSRH9_DT          0x00000002  // Data Toggle
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the USB_O_RXCOUNT9 register.
-//
-//*****************************************************************************
-#define USB_RXCOUNT9_COUNT_M    0x00001FFF  // Receive Packet Count
-#define USB_RXCOUNT9_COUNT_S    0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the USB_O_TXTYPE9 register.
-//
-//*****************************************************************************
-#define USB_TXTYPE9_SPEED_M     0x000000C0  // Operating Speed
-#define USB_TXTYPE9_SPEED_DFLT  0x00000000  // Default
-#define USB_TXTYPE9_SPEED_FULL  0x00000080  // Full
-#define USB_TXTYPE9_SPEED_LOW   0x000000C0  // Low
-#define USB_TXTYPE9_PROTO_M     0x00000030  // Protocol
-#define USB_TXTYPE9_PROTO_CTRL  0x00000000  // Control
-#define USB_TXTYPE9_PROTO_ISOC  0x00000010  // Isochronous
-#define USB_TXTYPE9_PROTO_BULK  0x00000020  // Bulk
-#define USB_TXTYPE9_PROTO_INT   0x00000030  // Interrupt
-#define USB_TXTYPE9_TEP_M       0x0000000F  // Target Endpoint Number
-#define USB_TXTYPE9_TEP_S       0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the USB_O_TXINTERVAL9
-// register.
-//
-//*****************************************************************************
-#define USB_TXINTERVAL9_TXPOLL_M \
-                                0x000000FF  // TX Polling
-#define USB_TXINTERVAL9_NAKLMT_M \
-                                0x000000FF  // NAK Limit
-#define USB_TXINTERVAL9_TXPOLL_S \
-                                0
-#define USB_TXINTERVAL9_NAKLMT_S \
-                                0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the USB_O_RXTYPE9 register.
-//
-//*****************************************************************************
-#define USB_RXTYPE9_SPEED_M     0x000000C0  // Operating Speed
-#define USB_RXTYPE9_SPEED_DFLT  0x00000000  // Default
-#define USB_RXTYPE9_SPEED_FULL  0x00000080  // Full
-#define USB_RXTYPE9_SPEED_LOW   0x000000C0  // Low
-#define USB_RXTYPE9_PROTO_M     0x00000030  // Protocol
-#define USB_RXTYPE9_PROTO_CTRL  0x00000000  // Control
-#define USB_RXTYPE9_PROTO_ISOC  0x00000010  // Isochronous
-#define USB_RXTYPE9_PROTO_BULK  0x00000020  // Bulk
-#define USB_RXTYPE9_PROTO_INT   0x00000030  // Interrupt
-#define USB_RXTYPE9_TEP_M       0x0000000F  // Target Endpoint Number
-#define USB_RXTYPE9_TEP_S       0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the USB_O_RXINTERVAL9
-// register.
-//
-//*****************************************************************************
-#define USB_RXINTERVAL9_TXPOLL_M \
-                                0x000000FF  // RX Polling
-#define USB_RXINTERVAL9_NAKLMT_M \
-                                0x000000FF  // NAK Limit
-#define USB_RXINTERVAL9_NAKLMT_S \
-                                0
-#define USB_RXINTERVAL9_TXPOLL_S \
-                                0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the USB_O_TXMAXP10 register.
-//
-//*****************************************************************************
-#define USB_TXMAXP10_MAXLOAD_M  0x000007FF  // Maximum Payload
-#define USB_TXMAXP10_MAXLOAD_S  0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the USB_O_TXCSRL10 register.
-//
-//*****************************************************************************
-#define USB_TXCSRL10_NAKTO      0x00000080  // NAK Timeout
-#define USB_TXCSRL10_CLRDT      0x00000040  // Clear Data Toggle
-#define USB_TXCSRL10_STALLED    0x00000020  // Endpoint Stalled
-#define USB_TXCSRL10_SETUP      0x00000010  // Setup Packet
-#define USB_TXCSRL10_STALL      0x00000010  // Send STALL
-#define USB_TXCSRL10_FLUSH      0x00000008  // Flush FIFO
-#define USB_TXCSRL10_UNDRN      0x00000004  // Underrun
-#define USB_TXCSRL10_ERROR      0x00000004  // Error
-#define USB_TXCSRL10_FIFONE     0x00000002  // FIFO Not Empty
-#define USB_TXCSRL10_TXRDY      0x00000001  // Transmit Packet Ready
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the USB_O_TXCSRH10 register.
-//
-//*****************************************************************************
-#define USB_TXCSRH10_AUTOSET    0x00000080  // Auto Set
-#define USB_TXCSRH10_ISO        0x00000040  // Isochronous Transfers
-#define USB_TXCSRH10_MODE       0x00000020  // Mode
-#define USB_TXCSRH10_DMAEN      0x00000010  // DMA Request Enable
-#define USB_TXCSRH10_FDT        0x00000008  // Force Data Toggle
-#define USB_TXCSRH10_DMAMOD     0x00000004  // DMA Request Mode
-#define USB_TXCSRH10_DTWE       0x00000002  // Data Toggle Write Enable
-#define USB_TXCSRH10_DT         0x00000001  // Data Toggle
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the USB_O_RXMAXP10 register.
-//
-//*****************************************************************************
-#define USB_RXMAXP10_MAXLOAD_M  0x000007FF  // Maximum Payload
-#define USB_RXMAXP10_MAXLOAD_S  0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the USB_O_RXCSRL10 register.
-//
-//*****************************************************************************
-#define USB_RXCSRL10_CLRDT      0x00000080  // Clear Data Toggle
-#define USB_RXCSRL10_STALLED    0x00000040  // Endpoint Stalled
-#define USB_RXCSRL10_STALL      0x00000020  // Send STALL
-#define USB_RXCSRL10_REQPKT     0x00000020  // Request Packet
-#define USB_RXCSRL10_FLUSH      0x00000010  // Flush FIFO
-#define USB_RXCSRL10_NAKTO      0x00000008  // NAK Timeout
-#define USB_RXCSRL10_DATAERR    0x00000008  // Data Error
-#define USB_RXCSRL10_OVER       0x00000004  // Overrun
-#define USB_RXCSRL10_ERROR      0x00000004  // Error
-#define USB_RXCSRL10_FULL       0x00000002  // FIFO Full
-#define USB_RXCSRL10_RXRDY      0x00000001  // Receive Packet Ready
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the USB_O_RXCSRH10 register.
-//
-//*****************************************************************************
-#define USB_RXCSRH10_AUTOCL     0x00000080  // Auto Clear
-#define USB_RXCSRH10_AUTORQ     0x00000040  // Auto Request
-#define USB_RXCSRH10_ISO        0x00000040  // Isochronous Transfers
-#define USB_RXCSRH10_DMAEN      0x00000020  // DMA Request Enable
-#define USB_RXCSRH10_PIDERR     0x00000010  // PID Error
-#define USB_RXCSRH10_DISNYET    0x00000010  // Disable NYET
-#define USB_RXCSRH10_DMAMOD     0x00000008  // DMA Request Mode
-#define USB_RXCSRH10_DTWE       0x00000004  // Data Toggle Write Enable
-#define USB_RXCSRH10_DT         0x00000002  // Data Toggle
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the USB_O_RXCOUNT10
-// register.
-//
-//*****************************************************************************
-#define USB_RXCOUNT10_COUNT_M   0x00001FFF  // Receive Packet Count
-#define USB_RXCOUNT10_COUNT_S   0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the USB_O_TXTYPE10 register.
-//
-//*****************************************************************************
-#define USB_TXTYPE10_SPEED_M    0x000000C0  // Operating Speed
-#define USB_TXTYPE10_SPEED_DFLT 0x00000000  // Default
-#define USB_TXTYPE10_SPEED_FULL 0x00000080  // Full
-#define USB_TXTYPE10_SPEED_LOW  0x000000C0  // Low
-#define USB_TXTYPE10_PROTO_M    0x00000030  // Protocol
-#define USB_TXTYPE10_PROTO_CTRL 0x00000000  // Control
-#define USB_TXTYPE10_PROTO_ISOC 0x00000010  // Isochronous
-#define USB_TXTYPE10_PROTO_BULK 0x00000020  // Bulk
-#define USB_TXTYPE10_PROTO_INT  0x00000030  // Interrupt
-#define USB_TXTYPE10_TEP_M      0x0000000F  // Target Endpoint Number
-#define USB_TXTYPE10_TEP_S      0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the USB_O_TXINTERVAL10
-// register.
-//
-//*****************************************************************************
-#define USB_TXINTERVAL10_NAKLMT_M \
-                                0x000000FF  // NAK Limit
-#define USB_TXINTERVAL10_TXPOLL_M \
-                                0x000000FF  // TX Polling
-#define USB_TXINTERVAL10_TXPOLL_S \
-                                0
-#define USB_TXINTERVAL10_NAKLMT_S \
-                                0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the USB_O_RXTYPE10 register.
-//
-//*****************************************************************************
-#define USB_RXTYPE10_SPEED_M    0x000000C0  // Operating Speed
-#define USB_RXTYPE10_SPEED_DFLT 0x00000000  // Default
-#define USB_RXTYPE10_SPEED_FULL 0x00000080  // Full
-#define USB_RXTYPE10_SPEED_LOW  0x000000C0  // Low
-#define USB_RXTYPE10_PROTO_M    0x00000030  // Protocol
-#define USB_RXTYPE10_PROTO_CTRL 0x00000000  // Control
-#define USB_RXTYPE10_PROTO_ISOC 0x00000010  // Isochronous
-#define USB_RXTYPE10_PROTO_BULK 0x00000020  // Bulk
-#define USB_RXTYPE10_PROTO_INT  0x00000030  // Interrupt
-#define USB_RXTYPE10_TEP_M      0x0000000F  // Target Endpoint Number
-#define USB_RXTYPE10_TEP_S      0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the USB_O_RXINTERVAL10
-// register.
-//
-//*****************************************************************************
-#define USB_RXINTERVAL10_NAKLMT_M \
-                                0x000000FF  // NAK Limit
-#define USB_RXINTERVAL10_TXPOLL_M \
-                                0x000000FF  // RX Polling
-#define USB_RXINTERVAL10_TXPOLL_S \
-                                0
-#define USB_RXINTERVAL10_NAKLMT_S \
-                                0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the USB_O_TXMAXP11 register.
-//
-//*****************************************************************************
-#define USB_TXMAXP11_MAXLOAD_M  0x000007FF  // Maximum Payload
-#define USB_TXMAXP11_MAXLOAD_S  0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the USB_O_TXCSRL11 register.
-//
-//*****************************************************************************
-#define USB_TXCSRL11_NAKTO      0x00000080  // NAK Timeout
-#define USB_TXCSRL11_CLRDT      0x00000040  // Clear Data Toggle
-#define USB_TXCSRL11_STALLED    0x00000020  // Endpoint Stalled
-#define USB_TXCSRL11_STALL      0x00000010  // Send STALL
-#define USB_TXCSRL11_SETUP      0x00000010  // Setup Packet
-#define USB_TXCSRL11_FLUSH      0x00000008  // Flush FIFO
-#define USB_TXCSRL11_ERROR      0x00000004  // Error
-#define USB_TXCSRL11_UNDRN      0x00000004  // Underrun
-#define USB_TXCSRL11_FIFONE     0x00000002  // FIFO Not Empty
-#define USB_TXCSRL11_TXRDY      0x00000001  // Transmit Packet Ready
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the USB_O_TXCSRH11 register.
-//
-//*****************************************************************************
-#define USB_TXCSRH11_AUTOSET    0x00000080  // Auto Set
-#define USB_TXCSRH11_ISO        0x00000040  // Isochronous Transfers
-#define USB_TXCSRH11_MODE       0x00000020  // Mode
-#define USB_TXCSRH11_DMAEN      0x00000010  // DMA Request Enable
-#define USB_TXCSRH11_FDT        0x00000008  // Force Data Toggle
-#define USB_TXCSRH11_DMAMOD     0x00000004  // DMA Request Mode
-#define USB_TXCSRH11_DTWE       0x00000002  // Data Toggle Write Enable
-#define USB_TXCSRH11_DT         0x00000001  // Data Toggle
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the USB_O_RXMAXP11 register.
-//
-//*****************************************************************************
-#define USB_RXMAXP11_MAXLOAD_M  0x000007FF  // Maximum Payload
-#define USB_RXMAXP11_MAXLOAD_S  0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the USB_O_RXCSRL11 register.
-//
-//*****************************************************************************
-#define USB_RXCSRL11_CLRDT      0x00000080  // Clear Data Toggle
-#define USB_RXCSRL11_STALLED    0x00000040  // Endpoint Stalled
-#define USB_RXCSRL11_STALL      0x00000020  // Send STALL
-#define USB_RXCSRL11_REQPKT     0x00000020  // Request Packet
-#define USB_RXCSRL11_FLUSH      0x00000010  // Flush FIFO
-#define USB_RXCSRL11_DATAERR    0x00000008  // Data Error
-#define USB_RXCSRL11_NAKTO      0x00000008  // NAK Timeout
-#define USB_RXCSRL11_OVER       0x00000004  // Overrun
-#define USB_RXCSRL11_ERROR      0x00000004  // Error
-#define USB_RXCSRL11_FULL       0x00000002  // FIFO Full
-#define USB_RXCSRL11_RXRDY      0x00000001  // Receive Packet Ready
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the USB_O_RXCSRH11 register.
-//
-//*****************************************************************************
-#define USB_RXCSRH11_AUTOCL     0x00000080  // Auto Clear
-#define USB_RXCSRH11_ISO        0x00000040  // Isochronous Transfers
-#define USB_RXCSRH11_AUTORQ     0x00000040  // Auto Request
-#define USB_RXCSRH11_DMAEN      0x00000020  // DMA Request Enable
-#define USB_RXCSRH11_DISNYET    0x00000010  // Disable NYET
-#define USB_RXCSRH11_PIDERR     0x00000010  // PID Error
-#define USB_RXCSRH11_DMAMOD     0x00000008  // DMA Request Mode
-#define USB_RXCSRH11_DTWE       0x00000004  // Data Toggle Write Enable
-#define USB_RXCSRH11_DT         0x00000002  // Data Toggle
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the USB_O_RXCOUNT11
-// register.
-//
-//*****************************************************************************
-#define USB_RXCOUNT11_COUNT_M   0x00001FFF  // Receive Packet Count
-#define USB_RXCOUNT11_COUNT_S   0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the USB_O_TXTYPE11 register.
-//
-//*****************************************************************************
-#define USB_TXTYPE11_SPEED_M    0x000000C0  // Operating Speed
-#define USB_TXTYPE11_SPEED_DFLT 0x00000000  // Default
-#define USB_TXTYPE11_SPEED_FULL 0x00000080  // Full
-#define USB_TXTYPE11_SPEED_LOW  0x000000C0  // Low
-#define USB_TXTYPE11_PROTO_M    0x00000030  // Protocol
-#define USB_TXTYPE11_PROTO_CTRL 0x00000000  // Control
-#define USB_TXTYPE11_PROTO_ISOC 0x00000010  // Isochronous
-#define USB_TXTYPE11_PROTO_BULK 0x00000020  // Bulk
-#define USB_TXTYPE11_PROTO_INT  0x00000030  // Interrupt
-#define USB_TXTYPE11_TEP_M      0x0000000F  // Target Endpoint Number
-#define USB_TXTYPE11_TEP_S      0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the USB_O_TXINTERVAL11
-// register.
-//
-//*****************************************************************************
-#define USB_TXINTERVAL11_TXPOLL_M \
-                                0x000000FF  // TX Polling
-#define USB_TXINTERVAL11_NAKLMT_M \
-                                0x000000FF  // NAK Limit
-#define USB_TXINTERVAL11_NAKLMT_S \
-                                0
-#define USB_TXINTERVAL11_TXPOLL_S \
-                                0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the USB_O_RXTYPE11 register.
-//
-//*****************************************************************************
-#define USB_RXTYPE11_SPEED_M    0x000000C0  // Operating Speed
-#define USB_RXTYPE11_SPEED_DFLT 0x00000000  // Default
-#define USB_RXTYPE11_SPEED_FULL 0x00000080  // Full
-#define USB_RXTYPE11_SPEED_LOW  0x000000C0  // Low
-#define USB_RXTYPE11_PROTO_M    0x00000030  // Protocol
-#define USB_RXTYPE11_PROTO_CTRL 0x00000000  // Control
-#define USB_RXTYPE11_PROTO_ISOC 0x00000010  // Isochronous
-#define USB_RXTYPE11_PROTO_BULK 0x00000020  // Bulk
-#define USB_RXTYPE11_PROTO_INT  0x00000030  // Interrupt
-#define USB_RXTYPE11_TEP_M      0x0000000F  // Target Endpoint Number
-#define USB_RXTYPE11_TEP_S      0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the USB_O_RXINTERVAL11
-// register.
-//
-//*****************************************************************************
-#define USB_RXINTERVAL11_NAKLMT_M \
-                                0x000000FF  // NAK Limit
-#define USB_RXINTERVAL11_TXPOLL_M \
-                                0x000000FF  // RX Polling
-#define USB_RXINTERVAL11_TXPOLL_S \
-                                0
-#define USB_RXINTERVAL11_NAKLMT_S \
-                                0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the USB_O_TXMAXP12 register.
-//
-//*****************************************************************************
-#define USB_TXMAXP12_MAXLOAD_M  0x000007FF  // Maximum Payload
-#define USB_TXMAXP12_MAXLOAD_S  0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the USB_O_TXCSRL12 register.
-//
-//*****************************************************************************
-#define USB_TXCSRL12_NAKTO      0x00000080  // NAK Timeout
-#define USB_TXCSRL12_CLRDT      0x00000040  // Clear Data Toggle
-#define USB_TXCSRL12_STALLED    0x00000020  // Endpoint Stalled
-#define USB_TXCSRL12_SETUP      0x00000010  // Setup Packet
-#define USB_TXCSRL12_STALL      0x00000010  // Send STALL
-#define USB_TXCSRL12_FLUSH      0x00000008  // Flush FIFO
-#define USB_TXCSRL12_UNDRN      0x00000004  // Underrun
-#define USB_TXCSRL12_ERROR      0x00000004  // Error
-#define USB_TXCSRL12_FIFONE     0x00000002  // FIFO Not Empty
-#define USB_TXCSRL12_TXRDY      0x00000001  // Transmit Packet Ready
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the USB_O_TXCSRH12 register.
-//
-//*****************************************************************************
-#define USB_TXCSRH12_AUTOSET    0x00000080  // Auto Set
-#define USB_TXCSRH12_ISO        0x00000040  // Isochronous Transfers
-#define USB_TXCSRH12_MODE       0x00000020  // Mode
-#define USB_TXCSRH12_DMAEN      0x00000010  // DMA Request Enable
-#define USB_TXCSRH12_FDT        0x00000008  // Force Data Toggle
-#define USB_TXCSRH12_DMAMOD     0x00000004  // DMA Request Mode
-#define USB_TXCSRH12_DTWE       0x00000002  // Data Toggle Write Enable
-#define USB_TXCSRH12_DT         0x00000001  // Data Toggle
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the USB_O_RXMAXP12 register.
-//
-//*****************************************************************************
-#define USB_RXMAXP12_MAXLOAD_M  0x000007FF  // Maximum Payload
-#define USB_RXMAXP12_MAXLOAD_S  0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the USB_O_RXCSRL12 register.
-//
-//*****************************************************************************
-#define USB_RXCSRL12_CLRDT      0x00000080  // Clear Data Toggle
-#define USB_RXCSRL12_STALLED    0x00000040  // Endpoint Stalled
-#define USB_RXCSRL12_STALL      0x00000020  // Send STALL
-#define USB_RXCSRL12_REQPKT     0x00000020  // Request Packet
-#define USB_RXCSRL12_FLUSH      0x00000010  // Flush FIFO
-#define USB_RXCSRL12_NAKTO      0x00000008  // NAK Timeout
-#define USB_RXCSRL12_DATAERR    0x00000008  // Data Error
-#define USB_RXCSRL12_ERROR      0x00000004  // Error
-#define USB_RXCSRL12_OVER       0x00000004  // Overrun
-#define USB_RXCSRL12_FULL       0x00000002  // FIFO Full
-#define USB_RXCSRL12_RXRDY      0x00000001  // Receive Packet Ready
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the USB_O_RXCSRH12 register.
-//
-//*****************************************************************************
-#define USB_RXCSRH12_AUTOCL     0x00000080  // Auto Clear
-#define USB_RXCSRH12_ISO        0x00000040  // Isochronous Transfers
-#define USB_RXCSRH12_AUTORQ     0x00000040  // Auto Request
-#define USB_RXCSRH12_DMAEN      0x00000020  // DMA Request Enable
-#define USB_RXCSRH12_PIDERR     0x00000010  // PID Error
-#define USB_RXCSRH12_DISNYET    0x00000010  // Disable NYET
-#define USB_RXCSRH12_DMAMOD     0x00000008  // DMA Request Mode
-#define USB_RXCSRH12_DTWE       0x00000004  // Data Toggle Write Enable
-#define USB_RXCSRH12_DT         0x00000002  // Data Toggle
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the USB_O_RXCOUNT12
-// register.
-//
-//*****************************************************************************
-#define USB_RXCOUNT12_COUNT_M   0x00001FFF  // Receive Packet Count
-#define USB_RXCOUNT12_COUNT_S   0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the USB_O_TXTYPE12 register.
-//
-//*****************************************************************************
-#define USB_TXTYPE12_SPEED_M    0x000000C0  // Operating Speed
-#define USB_TXTYPE12_SPEED_DFLT 0x00000000  // Default
-#define USB_TXTYPE12_SPEED_FULL 0x00000080  // Full
-#define USB_TXTYPE12_SPEED_LOW  0x000000C0  // Low
-#define USB_TXTYPE12_PROTO_M    0x00000030  // Protocol
-#define USB_TXTYPE12_PROTO_CTRL 0x00000000  // Control
-#define USB_TXTYPE12_PROTO_ISOC 0x00000010  // Isochronous
-#define USB_TXTYPE12_PROTO_BULK 0x00000020  // Bulk
-#define USB_TXTYPE12_PROTO_INT  0x00000030  // Interrupt
-#define USB_TXTYPE12_TEP_M      0x0000000F  // Target Endpoint Number
-#define USB_TXTYPE12_TEP_S      0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the USB_O_TXINTERVAL12
-// register.
-//
-//*****************************************************************************
-#define USB_TXINTERVAL12_TXPOLL_M \
-                                0x000000FF  // TX Polling
-#define USB_TXINTERVAL12_NAKLMT_M \
-                                0x000000FF  // NAK Limit
-#define USB_TXINTERVAL12_TXPOLL_S \
-                                0
-#define USB_TXINTERVAL12_NAKLMT_S \
-                                0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the USB_O_RXTYPE12 register.
-//
-//*****************************************************************************
-#define USB_RXTYPE12_SPEED_M    0x000000C0  // Operating Speed
-#define USB_RXTYPE12_SPEED_DFLT 0x00000000  // Default
-#define USB_RXTYPE12_SPEED_FULL 0x00000080  // Full
-#define USB_RXTYPE12_SPEED_LOW  0x000000C0  // Low
-#define USB_RXTYPE12_PROTO_M    0x00000030  // Protocol
-#define USB_RXTYPE12_PROTO_CTRL 0x00000000  // Control
-#define USB_RXTYPE12_PROTO_ISOC 0x00000010  // Isochronous
-#define USB_RXTYPE12_PROTO_BULK 0x00000020  // Bulk
-#define USB_RXTYPE12_PROTO_INT  0x00000030  // Interrupt
-#define USB_RXTYPE12_TEP_M      0x0000000F  // Target Endpoint Number
-#define USB_RXTYPE12_TEP_S      0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the USB_O_RXINTERVAL12
-// register.
-//
-//*****************************************************************************
-#define USB_RXINTERVAL12_NAKLMT_M \
-                                0x000000FF  // NAK Limit
-#define USB_RXINTERVAL12_TXPOLL_M \
-                                0x000000FF  // RX Polling
-#define USB_RXINTERVAL12_NAKLMT_S \
-                                0
-#define USB_RXINTERVAL12_TXPOLL_S \
-                                0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the USB_O_TXMAXP13 register.
-//
-//*****************************************************************************
-#define USB_TXMAXP13_MAXLOAD_M  0x000007FF  // Maximum Payload
-#define USB_TXMAXP13_MAXLOAD_S  0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the USB_O_TXCSRL13 register.
-//
-//*****************************************************************************
-#define USB_TXCSRL13_NAKTO      0x00000080  // NAK Timeout
-#define USB_TXCSRL13_CLRDT      0x00000040  // Clear Data Toggle
-#define USB_TXCSRL13_STALLED    0x00000020  // Endpoint Stalled
-#define USB_TXCSRL13_SETUP      0x00000010  // Setup Packet
-#define USB_TXCSRL13_STALL      0x00000010  // Send STALL
-#define USB_TXCSRL13_FLUSH      0x00000008  // Flush FIFO
-#define USB_TXCSRL13_UNDRN      0x00000004  // Underrun
-#define USB_TXCSRL13_ERROR      0x00000004  // Error
-#define USB_TXCSRL13_FIFONE     0x00000002  // FIFO Not Empty
-#define USB_TXCSRL13_TXRDY      0x00000001  // Transmit Packet Ready
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the USB_O_TXCSRH13 register.
-//
-//*****************************************************************************
-#define USB_TXCSRH13_AUTOSET    0x00000080  // Auto Set
-#define USB_TXCSRH13_ISO        0x00000040  // Isochronous Transfers
-#define USB_TXCSRH13_MODE       0x00000020  // Mode
-#define USB_TXCSRH13_DMAEN      0x00000010  // DMA Request Enable
-#define USB_TXCSRH13_FDT        0x00000008  // Force Data Toggle
-#define USB_TXCSRH13_DMAMOD     0x00000004  // DMA Request Mode
-#define USB_TXCSRH13_DTWE       0x00000002  // Data Toggle Write Enable
-#define USB_TXCSRH13_DT         0x00000001  // Data Toggle
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the USB_O_RXMAXP13 register.
-//
-//*****************************************************************************
-#define USB_RXMAXP13_MAXLOAD_M  0x000007FF  // Maximum Payload
-#define USB_RXMAXP13_MAXLOAD_S  0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the USB_O_RXCSRL13 register.
-//
-//*****************************************************************************
-#define USB_RXCSRL13_CLRDT      0x00000080  // Clear Data Toggle
-#define USB_RXCSRL13_STALLED    0x00000040  // Endpoint Stalled
-#define USB_RXCSRL13_REQPKT     0x00000020  // Request Packet
-#define USB_RXCSRL13_STALL      0x00000020  // Send STALL
-#define USB_RXCSRL13_FLUSH      0x00000010  // Flush FIFO
-#define USB_RXCSRL13_NAKTO      0x00000008  // NAK Timeout
-#define USB_RXCSRL13_DATAERR    0x00000008  // Data Error
-#define USB_RXCSRL13_OVER       0x00000004  // Overrun
-#define USB_RXCSRL13_ERROR      0x00000004  // Error
-#define USB_RXCSRL13_FULL       0x00000002  // FIFO Full
-#define USB_RXCSRL13_RXRDY      0x00000001  // Receive Packet Ready
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the USB_O_RXCSRH13 register.
-//
-//*****************************************************************************
-#define USB_RXCSRH13_AUTOCL     0x00000080  // Auto Clear
-#define USB_RXCSRH13_ISO        0x00000040  // Isochronous Transfers
-#define USB_RXCSRH13_AUTORQ     0x00000040  // Auto Request
-#define USB_RXCSRH13_DMAEN      0x00000020  // DMA Request Enable
-#define USB_RXCSRH13_DISNYET    0x00000010  // Disable NYET
-#define USB_RXCSRH13_PIDERR     0x00000010  // PID Error
-#define USB_RXCSRH13_DMAMOD     0x00000008  // DMA Request Mode
-#define USB_RXCSRH13_DTWE       0x00000004  // Data Toggle Write Enable
-#define USB_RXCSRH13_DT         0x00000002  // Data Toggle
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the USB_O_RXCOUNT13
-// register.
-//
-//*****************************************************************************
-#define USB_RXCOUNT13_COUNT_M   0x00001FFF  // Receive Packet Count
-#define USB_RXCOUNT13_COUNT_S   0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the USB_O_TXTYPE13 register.
-//
-//*****************************************************************************
-#define USB_TXTYPE13_SPEED_M    0x000000C0  // Operating Speed
-#define USB_TXTYPE13_SPEED_DFLT 0x00000000  // Default
-#define USB_TXTYPE13_SPEED_FULL 0x00000080  // Full
-#define USB_TXTYPE13_SPEED_LOW  0x000000C0  // Low
-#define USB_TXTYPE13_PROTO_M    0x00000030  // Protocol
-#define USB_TXTYPE13_PROTO_CTRL 0x00000000  // Control
-#define USB_TXTYPE13_PROTO_ISOC 0x00000010  // Isochronous
-#define USB_TXTYPE13_PROTO_BULK 0x00000020  // Bulk
-#define USB_TXTYPE13_PROTO_INT  0x00000030  // Interrupt
-#define USB_TXTYPE13_TEP_M      0x0000000F  // Target Endpoint Number
-#define USB_TXTYPE13_TEP_S      0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the USB_O_TXINTERVAL13
-// register.
-//
-//*****************************************************************************
-#define USB_TXINTERVAL13_NAKLMT_M \
-                                0x000000FF  // NAK Limit
-#define USB_TXINTERVAL13_TXPOLL_M \
-                                0x000000FF  // TX Polling
-#define USB_TXINTERVAL13_TXPOLL_S \
-                                0
-#define USB_TXINTERVAL13_NAKLMT_S \
-                                0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the USB_O_RXTYPE13 register.
-//
-//*****************************************************************************
-#define USB_RXTYPE13_SPEED_M    0x000000C0  // Operating Speed
-#define USB_RXTYPE13_SPEED_DFLT 0x00000000  // Default
-#define USB_RXTYPE13_SPEED_FULL 0x00000080  // Full
-#define USB_RXTYPE13_SPEED_LOW  0x000000C0  // Low
-#define USB_RXTYPE13_PROTO_M    0x00000030  // Protocol
-#define USB_RXTYPE13_PROTO_CTRL 0x00000000  // Control
-#define USB_RXTYPE13_PROTO_ISOC 0x00000010  // Isochronous
-#define USB_RXTYPE13_PROTO_BULK 0x00000020  // Bulk
-#define USB_RXTYPE13_PROTO_INT  0x00000030  // Interrupt
-#define USB_RXTYPE13_TEP_M      0x0000000F  // Target Endpoint Number
-#define USB_RXTYPE13_TEP_S      0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the USB_O_RXINTERVAL13
-// register.
-//
-//*****************************************************************************
-#define USB_RXINTERVAL13_TXPOLL_M \
-                                0x000000FF  // RX Polling
-#define USB_RXINTERVAL13_NAKLMT_M \
-                                0x000000FF  // NAK Limit
-#define USB_RXINTERVAL13_TXPOLL_S \
-                                0
-#define USB_RXINTERVAL13_NAKLMT_S \
-                                0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the USB_O_TXMAXP14 register.
-//
-//*****************************************************************************
-#define USB_TXMAXP14_MAXLOAD_M  0x000007FF  // Maximum Payload
-#define USB_TXMAXP14_MAXLOAD_S  0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the USB_O_TXCSRL14 register.
-//
-//*****************************************************************************
-#define USB_TXCSRL14_NAKTO      0x00000080  // NAK Timeout
-#define USB_TXCSRL14_CLRDT      0x00000040  // Clear Data Toggle
-#define USB_TXCSRL14_STALLED    0x00000020  // Endpoint Stalled
-#define USB_TXCSRL14_STALL      0x00000010  // Send STALL
-#define USB_TXCSRL14_SETUP      0x00000010  // Setup Packet
-#define USB_TXCSRL14_FLUSH      0x00000008  // Flush FIFO
-#define USB_TXCSRL14_ERROR      0x00000004  // Error
-#define USB_TXCSRL14_UNDRN      0x00000004  // Underrun
-#define USB_TXCSRL14_FIFONE     0x00000002  // FIFO Not Empty
-#define USB_TXCSRL14_TXRDY      0x00000001  // Transmit Packet Ready
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the USB_O_TXCSRH14 register.
-//
-//*****************************************************************************
-#define USB_TXCSRH14_AUTOSET    0x00000080  // Auto Set
-#define USB_TXCSRH14_ISO        0x00000040  // Isochronous Transfers
-#define USB_TXCSRH14_MODE       0x00000020  // Mode
-#define USB_TXCSRH14_DMAEN      0x00000010  // DMA Request Enable
-#define USB_TXCSRH14_FDT        0x00000008  // Force Data Toggle
-#define USB_TXCSRH14_DMAMOD     0x00000004  // DMA Request Mode
-#define USB_TXCSRH14_DTWE       0x00000002  // Data Toggle Write Enable
-#define USB_TXCSRH14_DT         0x00000001  // Data Toggle
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the USB_O_RXMAXP14 register.
-//
-//*****************************************************************************
-#define USB_RXMAXP14_MAXLOAD_M  0x000007FF  // Maximum Payload
-#define USB_RXMAXP14_MAXLOAD_S  0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the USB_O_RXCSRL14 register.
-//
-//*****************************************************************************
-#define USB_RXCSRL14_CLRDT      0x00000080  // Clear Data Toggle
-#define USB_RXCSRL14_STALLED    0x00000040  // Endpoint Stalled
-#define USB_RXCSRL14_REQPKT     0x00000020  // Request Packet
-#define USB_RXCSRL14_STALL      0x00000020  // Send STALL
-#define USB_RXCSRL14_FLUSH      0x00000010  // Flush FIFO
-#define USB_RXCSRL14_DATAERR    0x00000008  // Data Error
-#define USB_RXCSRL14_NAKTO      0x00000008  // NAK Timeout
-#define USB_RXCSRL14_OVER       0x00000004  // Overrun
-#define USB_RXCSRL14_ERROR      0x00000004  // Error
-#define USB_RXCSRL14_FULL       0x00000002  // FIFO Full
-#define USB_RXCSRL14_RXRDY      0x00000001  // Receive Packet Ready
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the USB_O_RXCSRH14 register.
-//
-//*****************************************************************************
-#define USB_RXCSRH14_AUTOCL     0x00000080  // Auto Clear
-#define USB_RXCSRH14_AUTORQ     0x00000040  // Auto Request
-#define USB_RXCSRH14_ISO        0x00000040  // Isochronous Transfers
-#define USB_RXCSRH14_DMAEN      0x00000020  // DMA Request Enable
-#define USB_RXCSRH14_PIDERR     0x00000010  // PID Error
-#define USB_RXCSRH14_DISNYET    0x00000010  // Disable NYET
-#define USB_RXCSRH14_DMAMOD     0x00000008  // DMA Request Mode
-#define USB_RXCSRH14_DTWE       0x00000004  // Data Toggle Write Enable
-#define USB_RXCSRH14_DT         0x00000002  // Data Toggle
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the USB_O_RXCOUNT14
-// register.
-//
-//*****************************************************************************
-#define USB_RXCOUNT14_COUNT_M   0x00001FFF  // Receive Packet Count
-#define USB_RXCOUNT14_COUNT_S   0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the USB_O_TXTYPE14 register.
-//
-//*****************************************************************************
-#define USB_TXTYPE14_SPEED_M    0x000000C0  // Operating Speed
-#define USB_TXTYPE14_SPEED_DFLT 0x00000000  // Default
-#define USB_TXTYPE14_SPEED_FULL 0x00000080  // Full
-#define USB_TXTYPE14_SPEED_LOW  0x000000C0  // Low
-#define USB_TXTYPE14_PROTO_M    0x00000030  // Protocol
-#define USB_TXTYPE14_PROTO_CTRL 0x00000000  // Control
-#define USB_TXTYPE14_PROTO_ISOC 0x00000010  // Isochronous
-#define USB_TXTYPE14_PROTO_BULK 0x00000020  // Bulk
-#define USB_TXTYPE14_PROTO_INT  0x00000030  // Interrupt
-#define USB_TXTYPE14_TEP_M      0x0000000F  // Target Endpoint Number
-#define USB_TXTYPE14_TEP_S      0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the USB_O_TXINTERVAL14
-// register.
-//
-//*****************************************************************************
-#define USB_TXINTERVAL14_TXPOLL_M \
-                                0x000000FF  // TX Polling
-#define USB_TXINTERVAL14_NAKLMT_M \
-                                0x000000FF  // NAK Limit
-#define USB_TXINTERVAL14_TXPOLL_S \
-                                0
-#define USB_TXINTERVAL14_NAKLMT_S \
-                                0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the USB_O_RXTYPE14 register.
-//
-//*****************************************************************************
-#define USB_RXTYPE14_SPEED_M    0x000000C0  // Operating Speed
-#define USB_RXTYPE14_SPEED_DFLT 0x00000000  // Default
-#define USB_RXTYPE14_SPEED_FULL 0x00000080  // Full
-#define USB_RXTYPE14_SPEED_LOW  0x000000C0  // Low
-#define USB_RXTYPE14_PROTO_M    0x00000030  // Protocol
-#define USB_RXTYPE14_PROTO_CTRL 0x00000000  // Control
-#define USB_RXTYPE14_PROTO_ISOC 0x00000010  // Isochronous
-#define USB_RXTYPE14_PROTO_BULK 0x00000020  // Bulk
-#define USB_RXTYPE14_PROTO_INT  0x00000030  // Interrupt
-#define USB_RXTYPE14_TEP_M      0x0000000F  // Target Endpoint Number
-#define USB_RXTYPE14_TEP_S      0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the USB_O_RXINTERVAL14
-// register.
-//
-//*****************************************************************************
-#define USB_RXINTERVAL14_TXPOLL_M \
-                                0x000000FF  // RX Polling
-#define USB_RXINTERVAL14_NAKLMT_M \
-                                0x000000FF  // NAK Limit
-#define USB_RXINTERVAL14_TXPOLL_S \
-                                0
-#define USB_RXINTERVAL14_NAKLMT_S \
-                                0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the USB_O_TXMAXP15 register.
-//
-//*****************************************************************************
-#define USB_TXMAXP15_MAXLOAD_M  0x000007FF  // Maximum Payload
-#define USB_TXMAXP15_MAXLOAD_S  0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the USB_O_TXCSRL15 register.
-//
-//*****************************************************************************
-#define USB_TXCSRL15_NAKTO      0x00000080  // NAK Timeout
-#define USB_TXCSRL15_CLRDT      0x00000040  // Clear Data Toggle
-#define USB_TXCSRL15_STALLED    0x00000020  // Endpoint Stalled
-#define USB_TXCSRL15_SETUP      0x00000010  // Setup Packet
-#define USB_TXCSRL15_STALL      0x00000010  // Send STALL
-#define USB_TXCSRL15_FLUSH      0x00000008  // Flush FIFO
-#define USB_TXCSRL15_UNDRN      0x00000004  // Underrun
-#define USB_TXCSRL15_ERROR      0x00000004  // Error
-#define USB_TXCSRL15_FIFONE     0x00000002  // FIFO Not Empty
-#define USB_TXCSRL15_TXRDY      0x00000001  // Transmit Packet Ready
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the USB_O_TXCSRH15 register.
-//
-//*****************************************************************************
-#define USB_TXCSRH15_AUTOSET    0x00000080  // Auto Set
-#define USB_TXCSRH15_ISO        0x00000040  // Isochronous Transfers
-#define USB_TXCSRH15_MODE       0x00000020  // Mode
-#define USB_TXCSRH15_DMAEN      0x00000010  // DMA Request Enable
-#define USB_TXCSRH15_FDT        0x00000008  // Force Data Toggle
-#define USB_TXCSRH15_DMAMOD     0x00000004  // DMA Request Mode
-#define USB_TXCSRH15_DTWE       0x00000002  // Data Toggle Write Enable
-#define USB_TXCSRH15_DT         0x00000001  // Data Toggle
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the USB_O_RXMAXP15 register.
-//
-//*****************************************************************************
-#define USB_RXMAXP15_MAXLOAD_M  0x000007FF  // Maximum Payload
-#define USB_RXMAXP15_MAXLOAD_S  0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the USB_O_RXCSRL15 register.
-//
-//*****************************************************************************
-#define USB_RXCSRL15_CLRDT      0x00000080  // Clear Data Toggle
-#define USB_RXCSRL15_STALLED    0x00000040  // Endpoint Stalled
-#define USB_RXCSRL15_STALL      0x00000020  // Send STALL
-#define USB_RXCSRL15_REQPKT     0x00000020  // Request Packet
-#define USB_RXCSRL15_FLUSH      0x00000010  // Flush FIFO
-#define USB_RXCSRL15_DATAERR    0x00000008  // Data Error
-#define USB_RXCSRL15_NAKTO      0x00000008  // NAK Timeout
-#define USB_RXCSRL15_ERROR      0x00000004  // Error
-#define USB_RXCSRL15_OVER       0x00000004  // Overrun
-#define USB_RXCSRL15_FULL       0x00000002  // FIFO Full
-#define USB_RXCSRL15_RXRDY      0x00000001  // Receive Packet Ready
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the USB_O_RXCSRH15 register.
-//
-//*****************************************************************************
-#define USB_RXCSRH15_AUTOCL     0x00000080  // Auto Clear
-#define USB_RXCSRH15_AUTORQ     0x00000040  // Auto Request
-#define USB_RXCSRH15_ISO        0x00000040  // Isochronous Transfers
-#define USB_RXCSRH15_DMAEN      0x00000020  // DMA Request Enable
-#define USB_RXCSRH15_PIDERR     0x00000010  // PID Error
-#define USB_RXCSRH15_DISNYET    0x00000010  // Disable NYET
-#define USB_RXCSRH15_DMAMOD     0x00000008  // DMA Request Mode
-#define USB_RXCSRH15_DTWE       0x00000004  // Data Toggle Write Enable
-#define USB_RXCSRH15_DT         0x00000002  // Data Toggle
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the USB_O_RXCOUNT15
-// register.
-//
-//*****************************************************************************
-#define USB_RXCOUNT15_COUNT_M   0x00001FFF  // Receive Packet Count
-#define USB_RXCOUNT15_COUNT_S   0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the USB_O_TXTYPE15 register.
-//
-//*****************************************************************************
-#define USB_TXTYPE15_SPEED_M    0x000000C0  // Operating Speed
-#define USB_TXTYPE15_SPEED_DFLT 0x00000000  // Default
-#define USB_TXTYPE15_SPEED_FULL 0x00000080  // Full
-#define USB_TXTYPE15_SPEED_LOW  0x000000C0  // Low
-#define USB_TXTYPE15_PROTO_M    0x00000030  // Protocol
-#define USB_TXTYPE15_PROTO_CTRL 0x00000000  // Control
-#define USB_TXTYPE15_PROTO_ISOC 0x00000010  // Isochronous
-#define USB_TXTYPE15_PROTO_BULK 0x00000020  // Bulk
-#define USB_TXTYPE15_PROTO_INT  0x00000030  // Interrupt
-#define USB_TXTYPE15_TEP_M      0x0000000F  // Target Endpoint Number
-#define USB_TXTYPE15_TEP_S      0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the USB_O_TXINTERVAL15
-// register.
-//
-//*****************************************************************************
-#define USB_TXINTERVAL15_TXPOLL_M \
-                                0x000000FF  // TX Polling
-#define USB_TXINTERVAL15_NAKLMT_M \
-                                0x000000FF  // NAK Limit
-#define USB_TXINTERVAL15_NAKLMT_S \
-                                0
-#define USB_TXINTERVAL15_TXPOLL_S \
-                                0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the USB_O_RXTYPE15 register.
-//
-//*****************************************************************************
-#define USB_RXTYPE15_SPEED_M    0x000000C0  // Operating Speed
-#define USB_RXTYPE15_SPEED_DFLT 0x00000000  // Default
-#define USB_RXTYPE15_SPEED_FULL 0x00000080  // Full
-#define USB_RXTYPE15_SPEED_LOW  0x000000C0  // Low
-#define USB_RXTYPE15_PROTO_M    0x00000030  // Protocol
-#define USB_RXTYPE15_PROTO_CTRL 0x00000000  // Control
-#define USB_RXTYPE15_PROTO_ISOC 0x00000010  // Isochronous
-#define USB_RXTYPE15_PROTO_BULK 0x00000020  // Bulk
-#define USB_RXTYPE15_PROTO_INT  0x00000030  // Interrupt
-#define USB_RXTYPE15_TEP_M      0x0000000F  // Target Endpoint Number
-#define USB_RXTYPE15_TEP_S      0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the USB_O_RXINTERVAL15
-// register.
-//
-//*****************************************************************************
-#define USB_RXINTERVAL15_TXPOLL_M \
-                                0x000000FF  // RX Polling
-#define USB_RXINTERVAL15_NAKLMT_M \
-                                0x000000FF  // NAK Limit
-#define USB_RXINTERVAL15_TXPOLL_S \
-                                0
-#define USB_RXINTERVAL15_NAKLMT_S \
+#define USB_RXINTERVAL7_TXPOLL_S                                              \
                                 0
 
 //*****************************************************************************
@@ -4250,110 +2241,10 @@
 
 //*****************************************************************************
 //
-// The following are defines for the bit fields in the USB_O_RQPKTCOUNT8
-// register.
-//
-//*****************************************************************************
-#define USB_RQPKTCOUNT8_COUNT_M 0x0000FFFF  // Block Transfer Packet Count
-#define USB_RQPKTCOUNT8_COUNT_S 0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the USB_O_RQPKTCOUNT9
-// register.
-//
-//*****************************************************************************
-#define USB_RQPKTCOUNT9_COUNT_M 0x0000FFFF  // Block Transfer Packet Count
-#define USB_RQPKTCOUNT9_COUNT_S 0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the USB_O_RQPKTCOUNT10
-// register.
-//
-//*****************************************************************************
-#define USB_RQPKTCOUNT10_COUNT_M \
-                                0x0000FFFF  // Block Transfer Packet Count
-#define USB_RQPKTCOUNT10_COUNT_S \
-                                0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the USB_O_RQPKTCOUNT11
-// register.
-//
-//*****************************************************************************
-#define USB_RQPKTCOUNT11_COUNT_M \
-                                0x0000FFFF  // Block Transfer Packet Count
-#define USB_RQPKTCOUNT11_COUNT_S \
-                                0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the USB_O_RQPKTCOUNT12
-// register.
-//
-//*****************************************************************************
-#define USB_RQPKTCOUNT12_COUNT_M \
-                                0x0000FFFF  // Block Transfer Packet Count
-#define USB_RQPKTCOUNT12_COUNT_S \
-                                0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the USB_O_RQPKTCOUNT13
-// register.
-//
-//*****************************************************************************
-#define USB_RQPKTCOUNT13_COUNT_M \
-                                0x0000FFFF  // Block Transfer Packet Count
-#define USB_RQPKTCOUNT13_COUNT_S \
-                                0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the USB_O_RQPKTCOUNT14
-// register.
-//
-//*****************************************************************************
-#define USB_RQPKTCOUNT14_COUNT_M \
-                                0x0000FFFF  // Block Transfer Packet Count
-#define USB_RQPKTCOUNT14_COUNT_S \
-                                0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the USB_O_RQPKTCOUNT15
-// register.
-//
-//*****************************************************************************
-#define USB_RQPKTCOUNT15_COUNT_M \
-                                0x0000FFFF  // Block Transfer Packet Count
-#define USB_RQPKTCOUNT15_COUNT_S \
-                                0
-
-//*****************************************************************************
-//
 // The following are defines for the bit fields in the USB_O_RXDPKTBUFDIS
 // register.
 //
 //*****************************************************************************
-#define USB_RXDPKTBUFDIS_EP15   0x00008000  // EP15 RX Double-Packet Buffer
-                                            // Disable
-#define USB_RXDPKTBUFDIS_EP14   0x00004000  // EP14 RX Double-Packet Buffer
-                                            // Disable
-#define USB_RXDPKTBUFDIS_EP13   0x00002000  // EP13 RX Double-Packet Buffer
-                                            // Disable
-#define USB_RXDPKTBUFDIS_EP12   0x00001000  // EP12 RX Double-Packet Buffer
-                                            // Disable
-#define USB_RXDPKTBUFDIS_EP11   0x00000800  // EP11 RX Double-Packet Buffer
-                                            // Disable
-#define USB_RXDPKTBUFDIS_EP10   0x00000400  // EP10 RX Double-Packet Buffer
-                                            // Disable
-#define USB_RXDPKTBUFDIS_EP9    0x00000200  // EP9 RX Double-Packet Buffer
-                                            // Disable
-#define USB_RXDPKTBUFDIS_EP8    0x00000100  // EP8 RX Double-Packet Buffer
-                                            // Disable
 #define USB_RXDPKTBUFDIS_EP7    0x00000080  // EP7 RX Double-Packet Buffer
                                             // Disable
 #define USB_RXDPKTBUFDIS_EP6    0x00000040  // EP6 RX Double-Packet Buffer
@@ -4375,22 +2266,6 @@
 // register.
 //
 //*****************************************************************************
-#define USB_TXDPKTBUFDIS_EP15   0x00008000  // EP15 TX Double-Packet Buffer
-                                            // Disable
-#define USB_TXDPKTBUFDIS_EP14   0x00004000  // EP14 TX Double-Packet Buffer
-                                            // Disable
-#define USB_TXDPKTBUFDIS_EP13   0x00002000  // EP13 TX Double-Packet Buffer
-                                            // Disable
-#define USB_TXDPKTBUFDIS_EP12   0x00001000  // EP12 TX Double-Packet Buffer
-                                            // Disable
-#define USB_TXDPKTBUFDIS_EP11   0x00000800  // EP11 TX Double-Packet Buffer
-                                            // Disable
-#define USB_TXDPKTBUFDIS_EP10   0x00000400  // EP10 TX Double-Packet Buffer
-                                            // Disable
-#define USB_TXDPKTBUFDIS_EP9    0x00000200  // EP9 TX Double-Packet Buffer
-                                            // Disable
-#define USB_TXDPKTBUFDIS_EP8    0x00000100  // EP8 TX Double-Packet Buffer
-                                            // Disable
 #define USB_TXDPKTBUFDIS_EP7    0x00000080  // EP7 TX Double-Packet Buffer
                                             // Disable
 #define USB_TXDPKTBUFDIS_EP6    0x00000040  // EP6 TX Double-Packet Buffer
@@ -4564,48 +2439,5 @@
 #define USB_PP_TYPE_0           0x00000000  // The first-generation USB
                                             // controller
 #define USB_PP_ECNT_S           8
-
-//*****************************************************************************
-//
-// The following definitions are deprecated.
-//
-//*****************************************************************************
-#ifndef DEPRECATED
-
-//*****************************************************************************
-//
-// The following are deprecated defines for the bit fields in the
-// USB_O_TXFIFOADD register.
-//
-//*****************************************************************************
-#define USB_TXFIFOADD_ADDR_2048 0x00000009  // 2048
-#define USB_TXFIFOADD_ADDR_1024 0x00000008  // 1024
-#define USB_TXFIFOADD_ADDR_512  0x00000007  // 512
-#define USB_TXFIFOADD_ADDR_256  0x00000006  // 256
-#define USB_TXFIFOADD_ADDR_128  0x00000005  // 128
-#define USB_TXFIFOADD_ADDR_64   0x00000004  // 64
-#define USB_TXFIFOADD_ADDR_32   0x00000003  // 32
-#define USB_TXFIFOADD_ADDR_16   0x00000002  // 16
-#define USB_TXFIFOADD_ADDR_8    0x00000001  // 8
-#define USB_TXFIFOADD_ADDR_0    0x00000000  // 0
-
-//*****************************************************************************
-//
-// The following are deprecated defines for the bit fields in the
-// USB_O_RXFIFOADD register.
-//
-//*****************************************************************************
-#define USB_RXFIFOADD_ADDR_2048 0x00000009  // 2048
-#define USB_RXFIFOADD_ADDR_1024 0x00000008  // 1024
-#define USB_RXFIFOADD_ADDR_512  0x00000007  // 512
-#define USB_RXFIFOADD_ADDR_256  0x00000006  // 256
-#define USB_RXFIFOADD_ADDR_128  0x00000005  // 128
-#define USB_RXFIFOADD_ADDR_64   0x00000004  // 64
-#define USB_RXFIFOADD_ADDR_32   0x00000003  // 32
-#define USB_RXFIFOADD_ADDR_16   0x00000002  // 16
-#define USB_RXFIFOADD_ADDR_8    0x00000001  // 8
-#define USB_RXFIFOADD_ADDR_0    0x00000000  // 0
-
-#endif
 
 #endif // __HW_USB_H__

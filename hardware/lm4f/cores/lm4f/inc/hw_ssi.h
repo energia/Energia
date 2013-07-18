@@ -2,7 +2,7 @@
 //
 // hw_ssi.h - Macros used when accessing the SSI hardware.
 //
-// Copyright (c) 2005-2012 Texas Instruments Incorporated.  All rights reserved.
+// Copyright (c) 2005-2013 Texas Instruments Incorporated.  All rights reserved.
 // Software License Agreement
 // 
 //   Redistribution and use in source and binary forms, with or without
@@ -33,7 +33,7 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 // 
-// This is part of revision 9453 of the Stellaris Firmware Development Package.
+// This is part of revision 1.0 of the Tiva Firmware Development Package.
 //
 //*****************************************************************************
 
@@ -193,52 +193,5 @@
                                             // PLL bypass is in effect) or the
                                             // PLL output (default)
 #define SSI_CC_CS_PIOSC         0x00000005  // PIOSC
-
-//*****************************************************************************
-//
-// The following definitions are deprecated.
-//
-//*****************************************************************************
-#ifndef DEPRECATED
-
-//*****************************************************************************
-//
-// The following are deprecated defines for the bit fields in the SSI_O_CR0
-// register.
-//
-//*****************************************************************************
-#define SSI_CR0_SCR             0x0000FF00  // Serial clock rate
-#define SSI_CR0_FRF_MASK        0x00000030  // Frame format mask
-#define SSI_CR0_DSS             0x0000000F  // Data size select
-
-//*****************************************************************************
-//
-// The following are deprecated defines for the bit fields in the SSI_O_CPSR
-// register.
-//
-//*****************************************************************************
-#define SSI_CPSR_CPSDVSR_MASK   0x000000FF  // Clock prescale
-
-//*****************************************************************************
-//
-// The following are deprecated defines for the SSI controller's FIFO size.
-//
-//*****************************************************************************
-#define TX_FIFO_SIZE            (8)         // Number of entries in the TX FIFO
-#define RX_FIFO_SIZE            (8)         // Number of entries in the RX FIFO
-
-//*****************************************************************************
-//
-// The following are deprecated defines for the bit fields in the interrupt
-// mask set and clear, raw interrupt, masked interrupt, and interrupt clear
-// registers.
-//
-//*****************************************************************************
-#define SSI_INT_TXFF            0x00000008  // TX FIFO interrupt
-#define SSI_INT_RXFF            0x00000004  // RX FIFO interrupt
-#define SSI_INT_RXTO            0x00000002  // RX timeout interrupt
-#define SSI_INT_RXOR            0x00000001  // RX overrun interrupt
-
-#endif
 
 #endif // __HW_SSI_H__

@@ -4,14 +4,15 @@
 #include <stdint.h> 
 #include <string.h> 
 #include <math.h>
-#define TARGET_IS_BLIZZARD_RA2 
-#define PART_LM4F120H5QR
+#define TARGET_IS_BLIZZARD_RB1 
+#define PART_TM4C1233H6PM
 #define HWREG(x) \
         (*((volatile unsigned long *)(x))) 
 
 #include "binary.h" 
 #include "inc/hw_types.h"  		
 #include "inc/hw_nvic.h" 
+#include "inc/tm4c1233h6pm.h"
 #include "driverlib/gpio.h" 
 #include "driverlib/pin_map.h"
 #include "driverlib/rom.h"

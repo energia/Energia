@@ -2,7 +2,7 @@
 //
 // hw_timer.h - Defines and macros used when accessing the timer.
 //
-// Copyright (c) 2005-2012 Texas Instruments Incorporated.  All rights reserved.
+// Copyright (c) 2005-2013 Texas Instruments Incorporated.  All rights reserved.
 // Software License Agreement
 // 
 //   Redistribution and use in source and binary forms, with or without
@@ -33,7 +33,7 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 // 
-// This is part of revision 9453 of the Stellaris Firmware Development Package.
+// This is part of revision 1.0 of the Tiva Firmware Development Package.
 //
 //*****************************************************************************
 
@@ -428,12 +428,6 @@
 //*****************************************************************************
 #define TIMER_TAILR_M           0xFFFFFFFF  // GPTM Timer A Interval Load
                                             // Register
-#define TIMER_TAILR_TAILRH_M    0xFFFF0000  // GPTM Timer A Interval Load
-                                            // Register High
-#define TIMER_TAILR_TAILRL_M    0x0000FFFF  // GPTM Timer A Interval Load
-                                            // Register Low
-#define TIMER_TAILR_TAILRH_S    16
-#define TIMER_TAILR_TAILRL_S    0
 #define TIMER_TAILR_S           0
 
 //*****************************************************************************
@@ -443,9 +437,6 @@
 //*****************************************************************************
 #define TIMER_TBILR_M           0xFFFFFFFF  // GPTM Timer B Interval Load
                                             // Register
-#define TIMER_TBILR_TBILRL_M    0x0000FFFF  // GPTM Timer B Interval Load
-                                            // Register
-#define TIMER_TBILR_TBILRL_S    0
 #define TIMER_TBILR_S           0
 
 //*****************************************************************************
@@ -455,10 +446,6 @@
 //
 //*****************************************************************************
 #define TIMER_TAMATCHR_TAMR_M   0xFFFFFFFF  // GPTM Timer A Match Register
-#define TIMER_TAMATCHR_TAMRH_M  0xFFFF0000  // GPTM Timer A Match Register High
-#define TIMER_TAMATCHR_TAMRL_M  0x0000FFFF  // GPTM Timer A Match Register Low
-#define TIMER_TAMATCHR_TAMRH_S  16
-#define TIMER_TAMATCHR_TAMRL_S  0
 #define TIMER_TAMATCHR_TAMR_S   0
 
 //*****************************************************************************
@@ -468,9 +455,7 @@
 //
 //*****************************************************************************
 #define TIMER_TBMATCHR_TBMR_M   0xFFFFFFFF  // GPTM Timer B Match Register
-#define TIMER_TBMATCHR_TBMRL_M  0x0000FFFF  // GPTM Timer B Match Register Low
 #define TIMER_TBMATCHR_TBMR_S   0
-#define TIMER_TBMATCHR_TBMRL_S  0
 
 //*****************************************************************************
 //
@@ -520,10 +505,6 @@
 //
 //*****************************************************************************
 #define TIMER_TAR_M             0xFFFFFFFF  // GPTM Timer A Register
-#define TIMER_TAR_TARH_M        0xFFFF0000  // GPTM Timer A Register High
-#define TIMER_TAR_TARL_M        0x0000FFFF  // GPTM Timer A Register Low
-#define TIMER_TAR_TARH_S        16
-#define TIMER_TAR_TARL_S        0
 #define TIMER_TAR_S             0
 
 //*****************************************************************************
@@ -532,8 +513,6 @@
 //
 //*****************************************************************************
 #define TIMER_TBR_M             0xFFFFFFFF  // GPTM Timer B Register
-#define TIMER_TBR_TBRL_M        0x00FFFFFF  // GPTM Timer B
-#define TIMER_TBR_TBRL_S        0
 #define TIMER_TBR_S             0
 
 //*****************************************************************************
@@ -542,10 +521,6 @@
 //
 //*****************************************************************************
 #define TIMER_TAV_M             0xFFFFFFFF  // GPTM Timer A Value
-#define TIMER_TAV_TAVH_M        0xFFFF0000  // GPTM Timer A Value High
-#define TIMER_TAV_TAVL_M        0x0000FFFF  // GPTM Timer A Register Low
-#define TIMER_TAV_TAVH_S        16
-#define TIMER_TAV_TAVL_S        0
 #define TIMER_TAV_S             0
 
 //*****************************************************************************
@@ -554,8 +529,6 @@
 //
 //*****************************************************************************
 #define TIMER_TBV_M             0xFFFFFFFF  // GPTM Timer B Value
-#define TIMER_TBV_TBVL_M        0x0000FFFF  // GPTM Timer B Register
-#define TIMER_TBV_TBVL_S        0
 #define TIMER_TBV_S             0
 
 //*****************************************************************************
@@ -610,150 +583,5 @@
 #define TIMER_PP_SIZE_32        0x00000001  // Timer A and Timer B counters are
                                             // 32 bits each with a 16-bit
                                             // prescale counter
-
-//*****************************************************************************
-//
-// The following definitions are deprecated.
-//
-//*****************************************************************************
-#ifndef DEPRECATED
-
-//*****************************************************************************
-//
-// The following are deprecated defines for the bit fields in the TIMER_O_CFG
-// register.
-//
-//*****************************************************************************
-#define TIMER_CFG_CFG_MSK       0x00000007  // Configuration options mask
-
-//*****************************************************************************
-//
-// The following are deprecated defines for the bit fields in the TIMER_O_CTL
-// register.
-//
-//*****************************************************************************
-#define TIMER_CTL_TBEVENT_MSK   0x00000C00  // TimerB event mode mask
-#define TIMER_CTL_TAEVENT_MSK   0x0000000C  // TimerA event mode mask
-
-//*****************************************************************************
-//
-// The following are deprecated defines for the bit fields in the TIMER_O_RIS
-// register.
-//
-//*****************************************************************************
-#define TIMER_RIS_CBEMIS        0x00000400  // CaptureB event masked int status
-#define TIMER_RIS_CBMMIS        0x00000200  // CaptureB match masked int status
-#define TIMER_RIS_TBTOMIS       0x00000100  // TimerB time out masked int stat
-#define TIMER_RIS_RTCMIS        0x00000008  // RTC masked int status
-#define TIMER_RIS_CAEMIS        0x00000004  // CaptureA event masked int status
-#define TIMER_RIS_CAMMIS        0x00000002  // CaptureA match masked int status
-#define TIMER_RIS_TATOMIS       0x00000001  // TimerA time out masked int stat
-
-//*****************************************************************************
-//
-// The following are deprecated defines for the bit fields in the TIMER_O_TAILR
-// register.
-//
-//*****************************************************************************
-#define TIMER_TAILR_TAILRH      0xFFFF0000  // TimerB load val in 32 bit mode
-#define TIMER_TAILR_TAILRL      0x0000FFFF  // TimerA interval load value
-
-//*****************************************************************************
-//
-// The following are deprecated defines for the bit fields in the TIMER_O_TBILR
-// register.
-//
-//*****************************************************************************
-#define TIMER_TBILR_TBILRL      0x0000FFFF  // TimerB interval load value
-
-//*****************************************************************************
-//
-// The following are deprecated defines for the bit fields in the
-// TIMER_O_TAMATCHR register.
-//
-//*****************************************************************************
-#define TIMER_TAMATCHR_TAMRH    0xFFFF0000  // TimerB match val in 32 bit mode
-#define TIMER_TAMATCHR_TAMRL    0x0000FFFF  // TimerA match value
-
-//*****************************************************************************
-//
-// The following are deprecated defines for the bit fields in the
-// TIMER_O_TBMATCHR register.
-//
-//*****************************************************************************
-#define TIMER_TBMATCHR_TBMRL    0x0000FFFF  // TimerB match load value
-
-//*****************************************************************************
-//
-// The following are deprecated defines for the bit fields in the TIMER_O_TAR
-// register.
-//
-//*****************************************************************************
-#define TIMER_TAR_TARH          0xFFFF0000  // TimerB val in 32 bit mode
-#define TIMER_TAR_TARL          0x0000FFFF  // TimerA value
-
-//*****************************************************************************
-//
-// The following are deprecated defines for the bit fields in the TIMER_O_TBR
-// register.
-//
-//*****************************************************************************
-#define TIMER_TBR_TBRL          0x0000FFFF  // TimerB value
-
-//*****************************************************************************
-//
-// The following are deprecated defines for the reset values of the timer
-// registers.
-//
-//*****************************************************************************
-#define TIMER_RV_TAILR          0xFFFFFFFF  // TimerA interval load reg RV
-#define TIMER_RV_TAR            0xFFFFFFFF  // TimerA register RV
-#define TIMER_RV_TAMATCHR       0xFFFFFFFF  // TimerA match register RV
-#define TIMER_RV_TBILR          0x0000FFFF  // TimerB interval load reg RV
-#define TIMER_RV_TBMATCHR       0x0000FFFF  // TimerB match register RV
-#define TIMER_RV_TBR            0x0000FFFF  // TimerB register RV
-#define TIMER_RV_TAPR           0x00000000  // TimerA prescale register RV
-#define TIMER_RV_CFG            0x00000000  // Configuration register RV
-#define TIMER_RV_TBPMR          0x00000000  // TimerB prescale match regi RV
-#define TIMER_RV_TAPMR          0x00000000  // TimerA prescale match reg RV
-#define TIMER_RV_CTL            0x00000000  // Control register RV
-#define TIMER_RV_ICR            0x00000000  // Interrupt clear register RV
-#define TIMER_RV_TBMR           0x00000000  // TimerB mode register RV
-#define TIMER_RV_MIS            0x00000000  // Masked interrupt status reg RV
-#define TIMER_RV_RIS            0x00000000  // Interrupt status register RV
-#define TIMER_RV_TBPR           0x00000000  // TimerB prescale register RV
-#define TIMER_RV_IMR            0x00000000  // Interrupt mask register RV
-#define TIMER_RV_TAMR           0x00000000  // TimerA mode register RV
-
-//*****************************************************************************
-//
-// The following are deprecated defines for the bit fields in the TIMER_TnMR
-// register.
-//
-//*****************************************************************************
-#define TIMER_TNMR_TNAMS        0x00000008  // Alternate mode select
-#define TIMER_TNMR_TNCMR        0x00000004  // Capture mode - count or time
-#define TIMER_TNMR_TNTMR_MSK    0x00000003  // Timer mode mask
-#define TIMER_TNMR_TNTMR_1_SHOT 0x00000001  // Mode - one shot
-#define TIMER_TNMR_TNTMR_PERIOD 0x00000002  // Mode - periodic
-#define TIMER_TNMR_TNTMR_CAP    0x00000003  // Mode - capture
-
-//*****************************************************************************
-//
-// The following are deprecated defines for the bit fields in the TIMER_TnPR
-// register.
-//
-//*****************************************************************************
-#define TIMER_TNPR_TNPSR        0x000000FF  // TimerN prescale value
-
-//*****************************************************************************
-//
-// The following are deprecated defines for the bit fields in the TIMER_TnPMR
-// register.
-//
-//*****************************************************************************
-#define TIMER_TNPMR_TNPSMR      0x000000FF  // TimerN prescale match value
-
-#endif
 
 #endif // __HW_TIMER_H__

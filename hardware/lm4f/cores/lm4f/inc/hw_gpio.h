@@ -2,7 +2,7 @@
 //
 // hw_gpio.h - Defines and Macros for GPIO hardware.
 //
-// Copyright (c) 2005-2012 Texas Instruments Incorporated.  All rights reserved.
+// Copyright (c) 2005-2013 Texas Instruments Incorporated.  All rights reserved.
 // Software License Agreement
 // 
 //   Redistribution and use in source and binary forms, with or without
@@ -33,7 +33,7 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 // 
-// This is part of revision 9453 of the Stellaris Firmware Development Package.
+// This is part of revision 1.0 of the Tiva Firmware Development Package.
 //
 //*****************************************************************************
 
@@ -113,10 +113,7 @@
                                             // and may be modified
 #define GPIO_LOCK_LOCKED        0x00000001  // The GPIOCR register is locked
                                             // and may not be modified
-#define GPIO_LOCK_KEY           0x1ACCE551  // Unlocks the GPIO_CR register
-#define GPIO_LOCK_KEY_DD        0x4C4F434B  // Unlocks the GPIO_CR register on
-                                            // DustDevil-class devices and
-                                            // later
+#define GPIO_LOCK_KEY           0x4C4F434B  // Unlocks the GPIO_CR register
 
 //*****************************************************************************
 //
@@ -124,69 +121,5 @@
 //
 //*****************************************************************************
 #define GPIO_SI_SUM             0x00000001  // Summary Interrupt
-
-//*****************************************************************************
-//
-// The following definitions are deprecated.
-//
-//*****************************************************************************
-#ifndef DEPRECATED
-
-//*****************************************************************************
-//
-// The following are deprecated defines for the GPIO register offsets.
-//
-//*****************************************************************************
-#define GPIO_O_PeriphID4        0x00000FD0
-#define GPIO_O_PeriphID5        0x00000FD4
-#define GPIO_O_PeriphID6        0x00000FD8
-#define GPIO_O_PeriphID7        0x00000FDC
-#define GPIO_O_PeriphID0        0x00000FE0
-#define GPIO_O_PeriphID1        0x00000FE4
-#define GPIO_O_PeriphID2        0x00000FE8
-#define GPIO_O_PeriphID3        0x00000FEC
-#define GPIO_O_PCellID0         0x00000FF0
-#define GPIO_O_PCellID1         0x00000FF4
-#define GPIO_O_PCellID2         0x00000FF8
-#define GPIO_O_PCellID3         0x00000FFC
-
-//*****************************************************************************
-//
-// The following are deprecated defines for the GPIO Register reset values.
-//
-//*****************************************************************************
-#define GPIO_RV_DEN             0x000000FF  // Digital input enable reg RV
-#define GPIO_RV_PUR             0x000000FF  // Pull up select reg RV
-#define GPIO_RV_DR2R            0x000000FF  // 2ma drive select reg RV
-#define GPIO_RV_PCellID1        0x000000F0
-#define GPIO_RV_PCellID3        0x000000B1
-#define GPIO_RV_PeriphID0       0x00000061
-#define GPIO_RV_PeriphID1       0x00000010
-#define GPIO_RV_PCellID0        0x0000000D
-#define GPIO_RV_PCellID2        0x00000005
-#define GPIO_RV_PeriphID2       0x00000004
-#define GPIO_RV_LOCK            0x00000001  // Lock register RV
-#define GPIO_RV_PeriphID7       0x00000000
-#define GPIO_RV_PDR             0x00000000  // Pull down select reg RV
-#define GPIO_RV_IC              0x00000000  // Interrupt clear reg RV
-#define GPIO_RV_SLR             0x00000000  // Slew rate control enable reg RV
-#define GPIO_RV_ODR             0x00000000  // Open drain select reg RV
-#define GPIO_RV_IBE             0x00000000  // Interrupt both edges reg RV
-#define GPIO_RV_AFSEL           0x00000000  // Mode control select reg RV
-#define GPIO_RV_IS              0x00000000  // Interrupt sense reg RV
-#define GPIO_RV_IM              0x00000000  // Interrupt mask reg RV
-#define GPIO_RV_PeriphID4       0x00000000
-#define GPIO_RV_PeriphID5       0x00000000
-#define GPIO_RV_DR8R            0x00000000  // 8ma drive select reg RV
-#define GPIO_RV_RIS             0x00000000  // Raw interrupt status reg RV
-#define GPIO_RV_DR4R            0x00000000  // 4ma drive select reg RV
-#define GPIO_RV_IEV             0x00000000  // Intterupt event reg RV
-#define GPIO_RV_DIR             0x00000000  // Data direction reg RV
-#define GPIO_RV_PeriphID6       0x00000000
-#define GPIO_RV_PeriphID3       0x00000000
-#define GPIO_RV_DATA            0x00000000  // Data register reset value
-#define GPIO_RV_MIS             0x00000000  // Masked interrupt status reg RV
-
-#endif
 
 #endif // __HW_GPIO_H__

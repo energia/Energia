@@ -2,7 +2,7 @@
 //
 // i2c.c - Driver for Inter-IC (I2C) bus block.
 //
-// Copyright (c) 2005-2012 Texas Instruments Incorporated.  All rights reserved.
+// Copyright (c) 2005-2013 Texas Instruments Incorporated.  All rights reserved.
 // Software License Agreement
 // 
 //   Redistribution and use in source and binary forms, with or without
@@ -33,7 +33,7 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 // 
-// This is part of revision 9453 of the Stellaris Peripheral Driver Library.
+// This is part of revision 1.0 of the Tiva Peripheral Driver Library.
 //
 //*****************************************************************************
 
@@ -44,6 +44,8 @@
 //
 //*****************************************************************************
 
+#include <stdbool.h>
+#include <stdint.h>
 #include "inc/hw_i2c.h"
 #include "inc/hw_ints.h"
 #include "inc/hw_memmap.h"
@@ -55,62 +57,42 @@
 
 //*****************************************************************************
 //
-// A mapping of I2C base address to interupt number.
+// A mapping of I2C base address to interrupt number.
 //
 //*****************************************************************************
-static const unsigned long g_ppulI2CIntMap[][2] =
+static const uint32_t g_ppui32I2CIntMap[][2] =
 {
-    { I2C0_MASTER_BASE, INT_I2C0 },
-    { I2C1_MASTER_BASE, INT_I2C1 },
-    { I2C2_MASTER_BASE, INT_I2C2 },
-    { I2C3_MASTER_BASE, INT_I2C3 },
-    { I2C4_MASTER_BASE, INT_I2C4 },
-    { I2C5_MASTER_BASE, INT_I2C5 },
+    { I2C0_BASE, INT_I2C0_BLIZZARD },
+    { I2C1_BASE, INT_I2C1_BLIZZARD },
+    { I2C2_BASE, INT_I2C2_BLIZZARD },
+    { I2C3_BASE, INT_I2C3_BLIZZARD },
+    { I2C4_BASE, INT_I2C4_BLIZZARD },
+    { I2C5_BASE, INT_I2C5_BLIZZARD },
 };
 
-//*****************************************************************************
-//
-//! \internal
-//! Checks a I2C master base address.
-//!
-//! \param ulBase is the base address of the I2C Master module.
-//!
-//! This function determines if a I2C master module base address is valid.
-//!
-//! \return Returns \b true if the base address is valid and \b false
-//! otherwise.
-//
-//*****************************************************************************
-#ifdef DEBUG
-static tBoolean
-I2CMasterBaseValid(unsigned long ulBase)
-{
-    return((ulBase == I2C0_MASTER_BASE) || (ulBase == I2C1_MASTER_BASE) ||
-           (ulBase == I2C2_MASTER_BASE) || (ulBase == I2C3_MASTER_BASE) ||
-           (ulBase == I2C4_MASTER_BASE) || (ulBase == I2C5_MASTER_BASE));
-}
-#endif
+static const int_fast8_t g_i8I2CIntMapRows =
+    sizeof(g_ppui32I2CIntMap)/sizeof(g_ppui32I2CIntMap[0]);
 
 //*****************************************************************************
 //
 //! \internal
-//! Checks a I2C slave base address.
+//! Checks an I2C base address.
 //!
-//! \param ulBase is the base address of the I2C Slave module.
+//! \param ui32Base is the base address of the I2C module.
 //!
-//! This function determines if a I2C slave module base address is valid.
+//! This function determines if a I2C module base address is valid.
 //!
 //! \return Returns \b true if the base address is valid and \b false
 //! otherwise.
 //
 //*****************************************************************************
 #ifdef DEBUG
-static tBoolean
-I2CSlaveBaseValid(unsigned long ulBase)
+static bool
+I2CBaseValid(uint32_t ui32Base)
 {
-    return((ulBase == I2C0_SLAVE_BASE) || (ulBase == I2C1_SLAVE_BASE) ||
-           (ulBase == I2C2_SLAVE_BASE) || (ulBase == I2C3_SLAVE_BASE) ||
-           (ulBase == I2C4_SLAVE_BASE) || (ulBase == I2C5_SLAVE_BASE));
+    return((ui32Base == I2C0_BASE) || (ui32Base == I2C1_BASE) ||
+           (ui32Base == I2C2_BASE) || (ui32Base == I2C3_BASE) ||
+           (ui32Base == I2C4_BASE) || (ui32Base == I2C5_BASE));
 }
 #endif
 
@@ -119,50 +101,58 @@ I2CSlaveBaseValid(unsigned long ulBase)
 //! \internal
 //! Gets the I2C interrupt number.
 //!
-//! \param ulBase is the base address of the I2C Master module.
+//! \param ui32Base is the base address of the I2C Master module.
 //!
 //! Given a I2C base address, this function returns the corresponding
 //! interrupt number.
 //!
-//! \return Returns an I2C interrupt number, or -1 if \e ulBase is invalid.
+//! \return Returns an I2C interrupt number, or 0 if \e ui32Base is invalid.
 //
 //*****************************************************************************
-static long
-I2CIntNumberGet(unsigned long ulBase)
+static uint32_t
+I2CIntNumberGet(uint32_t ui32Base)
 {
-    unsigned long ulIdx;
+    int_fast8_t i8Idx, i8Rows;
+    const uint32_t (*ppui32I2CIntMap)[2];
+
+    //
+    // Check the arguments.
+    //
+    ASSERT(I2CBaseValid(ui32Base));
+
+    ppui32I2CIntMap = g_ppui32I2CIntMap;
+    i8Rows = g_i8I2CIntMapRows;
 
     //
     // Loop through the table that maps I2C base addresses to interrupt
     // numbers.
     //
-    for(ulIdx = 0; ulIdx < (sizeof(g_ppulI2CIntMap) /
-                            sizeof(g_ppulI2CIntMap[0])); ulIdx++)
+    for(i8Idx = 0; i8Idx < i8Rows; i8Idx++)
     {
         //
         // See if this base address matches.
         //
-        if(g_ppulI2CIntMap[ulIdx][0] == ulBase)
+        if(ppui32I2CIntMap[i8Idx][0] == ui32Base)
         {
             //
             // Return the corresponding interrupt number.
             //
-            return(g_ppulI2CIntMap[ulIdx][1]);
+            return(ppui32I2CIntMap[i8Idx][1]);
         }
     }
 
     //
     // The base address could not be found, so return an error.
     //
-    return(-1);
+    return(0);
 }
 
 //*****************************************************************************
 //
 //! Initializes the I2C Master block.
 //!
-//! \param ulBase is the base address of the I2C Master module.
-//! \param ulI2CClk is the rate of the clock supplied to the I2C module.
+//! \param ui32Base is the base address of the I2C Master module.
+//! \param ui32I2CClk is the rate of the clock supplied to the I2C module.
 //! \param bFast set up for fast data transfers.
 //!
 //! This function initializes operation of the I2C Master block by configuring
@@ -181,40 +171,36 @@ I2CIntNumberGet(unsigned long ulBase)
 //! constant and known (to save the code/execution overhead of a call to
 //! SysCtlClockGet()).
 //!
-//! This function replaces the original I2CMasterInit() API and performs the
-//! same actions.  A macro is provided in <tt>i2c.h</tt> to map the original
-//! API to this API.
-//!
 //! \return None.
 //
 //*****************************************************************************
 void
-I2CMasterInitExpClk(unsigned long ulBase, unsigned long ulI2CClk,
-                    tBoolean bFast)
+I2CMasterInitExpClk(uint32_t ui32Base, uint32_t ui32I2CClk,
+                    bool bFast)
 {
-    unsigned long ulSCLFreq;
-    unsigned long ulTPR;
+    uint32_t ui32SCLFreq;
+    uint32_t ui32TPR;
 
     //
     // Check the arguments.
     //
-    ASSERT(I2CMasterBaseValid(ulBase));
+    ASSERT(I2CBaseValid(ui32Base));
 
     //
     // Must enable the device before doing anything else.
     //
-    I2CMasterEnable(ulBase);
+    I2CMasterEnable(ui32Base);
 
     //
     // Get the desired SCL speed.
     //
     if(bFast == true)
     {
-        ulSCLFreq = 400000;
+        ui32SCLFreq = 400000;
     }
     else
     {
-        ulSCLFreq = 100000;
+        ui32SCLFreq = 100000;
     }
 
     //
@@ -223,18 +209,19 @@ I2CMasterInitExpClk(unsigned long ulBase, unsigned long ulI2CClk,
     // clock divider so that the resulting clock is always less than or equal
     // to the desired clock, never greater.
     //
-    ulTPR = ((ulI2CClk + (2 * 10 * ulSCLFreq) - 1) / (2 * 10 * ulSCLFreq)) - 1;
-    HWREG(ulBase + I2C_O_MTPR) = ulTPR;
+    ui32TPR = ((ui32I2CClk + (2 * 10 * ui32SCLFreq) - 1) /
+               (2 * 10 * ui32SCLFreq)) - 1;
+    HWREG(ui32Base + I2C_O_MTPR) = ui32TPR;
 
     //
     // Check to see if this I2C peripheral is High-Speed enabled.  If yes, also
     // choose the fastest speed that is less than or equal to 3.4 Mbps.
     //
-    if(HWREG(ulBase + I2C_O_PP) & I2C_PP_HS)
+    if(HWREG(ui32Base + I2C_O_PP) & I2C_PP_HS)
     {
-        ulTPR = ((ulI2CClk + (2 * 3 * 3400000) - 1) /
-                (2 * 3 * 3400000)) - 1;
-        HWREG(ulBase + I2C_O_MTPR) = I2C_MTPR_HS | ulTPR;
+        ui32TPR = ((ui32I2CClk + (2 * 3 * 3400000) - 1) /
+                   (2 * 3 * 3400000)) - 1;
+        HWREG(ui32Base + I2C_O_MTPR) = I2C_MTPR_HS | ui32TPR;
     }
 }
 
@@ -242,78 +229,77 @@ I2CMasterInitExpClk(unsigned long ulBase, unsigned long ulI2CClk,
 //
 //! Initializes the I2C Slave block.
 //!
-//! \param ulBase is the base address of the I2C Slave module.
-//! \param ucSlaveAddr 7-bit slave address
+//! \param ui32Base is the base address of the I2C Slave module.
+//! \param ui8SlaveAddr 7-bit slave address
 //!
 //! This function initializes operation of the I2C Slave block by configuring
 //! the slave address and enabling the I2C Slave block.
 //!
-//! The parameter \e ucSlaveAddr is the value that is compared against the
+//! The parameter \e ui8SlaveAddr is the value that is compared against the
 //! slave address sent by an I2C master.
 //!
 //! \return None.
 //
 //*****************************************************************************
 void
-I2CSlaveInit(unsigned long ulBase, unsigned char ucSlaveAddr)
+I2CSlaveInit(uint32_t ui32Base, uint8_t ui8SlaveAddr)
 {
     //
     // Check the arguments.
     //
-    ASSERT(I2CSlaveBaseValid(ulBase));
-    ASSERT(!(ucSlaveAddr & 0x80));
+    ASSERT(I2CBaseValid(ui32Base));
+    ASSERT(!(ui8SlaveAddr & 0x80));
 
     //
     // Must enable the device before doing anything else.
     //
-    I2CSlaveEnable(ulBase);
+    I2CSlaveEnable(ui32Base);
 
     //
     // Set up the slave address.
     //
-    HWREG(ulBase + I2C_O_SOAR) = ucSlaveAddr;
+    HWREG(ui32Base + I2C_O_SOAR) = ui8SlaveAddr;
 }
 
 //*****************************************************************************
 //
 //! Sets the I2C slave address.
 //!
-//! \param ulBase is the base address of the I2C Slave module.
-//! \param ucAddrNum determines which slave address is set.
-//! \param ucSlaveAddr is the 7-bit slave address
+//! \param ui32Base is the base address of the I2C Slave module.
+//! \param ui8AddrNum determines which slave address is set.
+//! \param ui8SlaveAddr is the 7-bit slave address
 //!
-//! This function writes the specified slave address.  The \e ulAddrNum field
+//! This function writes the specified slave address.  The \e ui32AddrNum field
 //! dictates which slave address is configured.  For example, a value of 0
 //! configures the primary address and a value of 1 configures the secondary.
 //!
-//! \note Not all Stellaris devices support a secondary address.  Please
+//! \note Not all Tiva devices support a secondary address.  Please
 //! consult the device data sheet to determine if this feature is supported.
 //!
 //! \return None.
 //
 //*****************************************************************************
 void
-I2CSlaveAddressSet(unsigned long ulBase, unsigned char ucAddrNum,
-                   unsigned char ucSlaveAddr)
+I2CSlaveAddressSet(uint32_t ui32Base, uint8_t ui8AddrNum, uint8_t ui8SlaveAddr)
 {
     //
     // Check the arguments.
     //
-    ASSERT(I2CSlaveBaseValid(ulBase));
-    ASSERT(!(ucAddrNum > 1));
-    ASSERT(!(ucSlaveAddr & 0x80));
+    ASSERT(I2CBaseValid(ui32Base));
+    ASSERT(!(ui8AddrNum > 1));
+    ASSERT(!(ui8SlaveAddr & 0x80));
 
     //
     // Determine which slave address is being set.
     //
-    switch(ucAddrNum)
+    switch(ui8AddrNum)
     {
         //
         // Set up the primary slave address.
         //
         case 0:
         {
-            HWREG(ulBase + I2C_O_SOAR) = ucSlaveAddr;
+            HWREG(ui32Base + I2C_O_SOAR) = ui8SlaveAddr;
             break;
         }
 
@@ -322,7 +308,7 @@ I2CSlaveAddressSet(unsigned long ulBase, unsigned char ucAddrNum,
         //
         case 1:
         {
-            HWREG(ulBase + I2C_O_SOAR2) = I2C_SOAR2_OAR2EN | ucSlaveAddr;
+            HWREG(ui32Base + I2C_O_SOAR2) = I2C_SOAR2_OAR2EN | ui8SlaveAddr;
             break;
         }
     }
@@ -332,7 +318,7 @@ I2CSlaveAddressSet(unsigned long ulBase, unsigned char ucAddrNum,
 //
 //! Enables the I2C Master block.
 //!
-//! \param ulBase is the base address of the I2C Master module.
+//! \param ui32Base is the base address of the I2C Master module.
 //!
 //! This function enables operation of the I2C Master block.
 //!
@@ -340,24 +326,24 @@ I2CSlaveAddressSet(unsigned long ulBase, unsigned char ucAddrNum,
 //
 //*****************************************************************************
 void
-I2CMasterEnable(unsigned long ulBase)
+I2CMasterEnable(uint32_t ui32Base)
 {
     //
     // Check the arguments.
     //
-    ASSERT(I2CMasterBaseValid(ulBase));
+    ASSERT(I2CBaseValid(ui32Base));
 
     //
     // Enable the master block.
     //
-    HWREG(ulBase + I2C_O_MCR) |= I2C_MCR_MFE;
+    HWREG(ui32Base + I2C_O_MCR) |= I2C_MCR_MFE;
 }
 
 //*****************************************************************************
 //
 //! Enables the I2C Slave block.
 //!
-//! \param ulBase is the base address of the I2C Slave module.
+//! \param ui32Base is the base address of the I2C Slave module.
 //!
 //! This fucntion enables operation of the I2C Slave block.
 //!
@@ -365,30 +351,29 @@ I2CMasterEnable(unsigned long ulBase)
 //
 //*****************************************************************************
 void
-I2CSlaveEnable(unsigned long ulBase)
+I2CSlaveEnable(uint32_t ui32Base)
 {
     //
     // Check the arguments.
     //
-    ASSERT(I2CSlaveBaseValid(ulBase));
+    ASSERT(I2CBaseValid(ui32Base));
 
     //
     // Enable the clock to the slave block.
     //
-    HWREG(ulBase - I2C0_SLAVE_BASE + I2C0_MASTER_BASE + I2C_O_MCR) |=
-        I2C_MCR_SFE;
+    HWREG(ui32Base + I2C_O_MCR) |= I2C_MCR_SFE;
 
     //
     // Enable the slave.
     //
-    HWREG(ulBase + I2C_O_SCSR) = I2C_SCSR_DA;
+    HWREG(ui32Base + I2C_O_SCSR) = I2C_SCSR_DA;
 }
 
 //*****************************************************************************
 //
 //! Disables the I2C master block.
 //!
-//! \param ulBase is the base address of the I2C Master module.
+//! \param ui32Base is the base address of the I2C Master module.
 //!
 //! This function disables operation of the I2C master block.
 //!
@@ -396,24 +381,24 @@ I2CSlaveEnable(unsigned long ulBase)
 //
 //*****************************************************************************
 void
-I2CMasterDisable(unsigned long ulBase)
+I2CMasterDisable(uint32_t ui32Base)
 {
     //
     // Check the arguments.
     //
-    ASSERT(I2CMasterBaseValid(ulBase));
+    ASSERT(I2CBaseValid(ui32Base));
 
     //
     // Disable the master block.
     //
-    HWREG(ulBase + I2C_O_MCR) &= ~(I2C_MCR_MFE);
+    HWREG(ui32Base + I2C_O_MCR) &= ~(I2C_MCR_MFE);
 }
 
 //*****************************************************************************
 //
 //! Disables the I2C slave block.
 //!
-//! \param ulBase is the base address of the I2C Slave module.
+//! \param ui32Base is the base address of the I2C Slave module.
 //!
 //! This function disables operation of the I2C slave block.
 //!
@@ -421,30 +406,29 @@ I2CMasterDisable(unsigned long ulBase)
 //
 //*****************************************************************************
 void
-I2CSlaveDisable(unsigned long ulBase)
+I2CSlaveDisable(uint32_t ui32Base)
 {
     //
     // Check the arguments.
     //
-    ASSERT(I2CSlaveBaseValid(ulBase));
+    ASSERT(I2CBaseValid(ui32Base));
 
     //
     // Disable the slave.
     //
-    HWREG(ulBase + I2C_O_SCSR) = 0;
+    HWREG(ui32Base + I2C_O_SCSR) = 0;
 
     //
     // Disable the clock to the slave block.
     //
-    HWREG(ulBase - I2C0_SLAVE_BASE + I2C0_MASTER_BASE + I2C_O_MCR) &=
-        ~(I2C_MCR_SFE);
+    HWREG(ui32Base + I2C_O_MCR) &= ~(I2C_MCR_SFE);
 }
 
 //*****************************************************************************
 //
 //! Registers an interrupt handler for the I2C module.
 //!
-//! \param ulBase is the base address of the I2C Master module.
+//! \param ui32Base is the base address of the I2C Master module.
 //! \param pfnHandler is a pointer to the function to be called when the
 //! I2C interrupt occurs.
 //!
@@ -462,40 +446,42 @@ I2CSlaveDisable(unsigned long ulBase)
 //
 //*****************************************************************************
 void
-I2CIntRegister(unsigned long ulBase, void (*pfnHandler)(void))
+I2CIntRegister(uint32_t ui32Base, void (*pfnHandler)(void))
 {
-    unsigned long ulInt;
+    uint32_t ui32Int;
 
     //
     // Check the arguments.
     //
-    ASSERT(I2CMasterBaseValid(ulBase));
+    ASSERT(I2CBaseValid(ui32Base));
 
     //
     // Determine the interrupt number based on the I2C port.
     //
-    ulInt = I2CIntNumberGet(ulBase);
+    ui32Int = I2CIntNumberGet(ui32Base);
+
+    ASSERT(ui32Int != 0);
 
     //
     // Register the interrupt handler, returning an error if an error occurs.
     //
-    IntRegister(ulInt, pfnHandler);
+    IntRegister(ui32Int, pfnHandler);
 
     //
     // Enable the I2C interrupt.
     //
-    IntEnable(ulInt);
+    IntEnable(ui32Int);
 }
 
 //*****************************************************************************
 //
 //! Unregisters an interrupt handler for the I2C module.
 //!
-//! \param ulBase is the base address of the I2C Master module.
+//! \param ui32Base is the base address of the I2C Master module.
 //!
 //! This function clears the handler to be called when an I2C interrupt
 //! occurs.  This function also masks off the interrupt in the interrupt r
-//! controlle so that the interrupt handler no longer is called.
+//! controller so that the interrupt handler no longer is called.
 //!
 //! \sa IntRegister() for important information about registering interrupt
 //! handlers.
@@ -504,36 +490,38 @@ I2CIntRegister(unsigned long ulBase, void (*pfnHandler)(void))
 //
 //*****************************************************************************
 void
-I2CIntUnregister(unsigned long ulBase)
+I2CIntUnregister(uint32_t ui32Base)
 {
-    unsigned long ulInt;
+    uint32_t ui32Int;
 
     //
     // Check the arguments.
     //
-    ASSERT(I2CMasterBaseValid(ulBase));
+    ASSERT(I2CBaseValid(ui32Base));
 
     //
     // Determine the interrupt number based on the I2C port.
     //
-    ulInt = I2CIntNumberGet(ulBase);
+    ui32Int = I2CIntNumberGet(ui32Base);
+
+    ASSERT(ui32Int != 0);
 
     //
     // Disable the interrupt.
     //
-    IntDisable(ulInt);
+    IntDisable(ui32Int);
 
     //
     // Unregister the interrupt handler.
     //
-    IntUnregister(ulInt);
+    IntUnregister(ui32Int);
 }
 
 //*****************************************************************************
 //
 //! Enables the I2C Master interrupt.
 //!
-//! \param ulBase is the base address of the I2C Master module.
+//! \param ui32Base is the base address of the I2C Master module.
 //!
 //! This function enables the I2C Master interrupt source.
 //!
@@ -541,36 +529,36 @@ I2CIntUnregister(unsigned long ulBase)
 //
 //*****************************************************************************
 void
-I2CMasterIntEnable(unsigned long ulBase)
+I2CMasterIntEnable(uint32_t ui32Base)
 {
     //
     // Check the arguments.
     //
-    ASSERT(I2CMasterBaseValid(ulBase));
+    ASSERT(I2CBaseValid(ui32Base));
 
     //
     // Enable the master interrupt.
     //
-    HWREG(ulBase + I2C_O_MIMR) = 1;
+    HWREG(ui32Base + I2C_O_MIMR) = 1;
 }
 
 //*****************************************************************************
 //
 //! Enables individual I2C Master interrupt sources.
 //!
-//! \param ulBase is the base address of the I2C Master module.
-//! \param ulIntFlags is the bit mask of the interrupt sources to be enabled.
+//! \param ui32Base is the base address of the I2C Master module.
+//! \param ui32IntFlags is the bit mask of the interrupt sources to be enabled.
 //!
 //! This function enables the indicated I2C Master interrupt sources.  Only the
 //! sources that are enabled can be reflected to the processor interrupt;
 //! disabled sources have no effect on the processor.
 //!
-//! The \e ulIntFlags parameter is the logical OR of any of the following:
+//! The \e ui32IntFlags parameter is the logical OR of any of the following:
 //!
 //! - \b I2C_MASTER_INT_TIMEOUT - Clock Timeout interrupt
 //! - \b I2C_MASTER_INT_DATA - Data interrupt
 //!
-//! \note Not all Stellaris devices support all of the listed interrupt
+//! \note Not all Tiva devices support all of the listed interrupt
 //! sources.  Please consult the device data sheet to determine if these
 //! features are supported.
 //!
@@ -578,24 +566,24 @@ I2CMasterIntEnable(unsigned long ulBase)
 //
 //*****************************************************************************
 void
-I2CMasterIntEnableEx(unsigned long ulBase, unsigned long ulIntFlags)
+I2CMasterIntEnableEx(uint32_t ui32Base, uint32_t ui32IntFlags)
 {
     //
     // Check the arguments.
     //
-    ASSERT(I2CMasterBaseValid(ulBase));
+    ASSERT(I2CBaseValid(ui32Base));
 
     //
     // Enable the master interrupt.
     //
-    HWREG(ulBase + I2C_O_MIMR) |= ulIntFlags;
+    HWREG(ui32Base + I2C_O_MIMR) |= ui32IntFlags;
 }
 
 //*****************************************************************************
 //
 //! Enables the I2C Slave interrupt.
 //!
-//! \param ulBase is the base address of the I2C Slave module.
+//! \param ui32Base is the base address of the I2C Slave module.
 //!
 //! This function enables the I2C Slave interrupt source.
 //!
@@ -603,37 +591,37 @@ I2CMasterIntEnableEx(unsigned long ulBase, unsigned long ulIntFlags)
 //
 //*****************************************************************************
 void
-I2CSlaveIntEnable(unsigned long ulBase)
+I2CSlaveIntEnable(uint32_t ui32Base)
 {
     //
     // Check the arguments.
     //
-    ASSERT(I2CSlaveBaseValid(ulBase));
+    ASSERT(I2CBaseValid(ui32Base));
 
     //
     // Enable the slave interrupt.
     //
-    HWREG(ulBase + I2C_O_SIMR) |= I2C_SLAVE_INT_DATA;
+    HWREG(ui32Base + I2C_O_SIMR) |= I2C_SLAVE_INT_DATA;
 }
 
 //*****************************************************************************
 //
 //! Enables individual I2C Slave interrupt sources.
 //!
-//! \param ulBase is the base address of the I2C Slave module.
-//! \param ulIntFlags is the bit mask of the interrupt sources to be enabled.
+//! \param ui32Base is the base address of the I2C Slave module.
+//! \param ui32IntFlags is the bit mask of the interrupt sources to be enabled.
 //!
 //! This function enables the indicated I2C Slave interrupt sources.  Only the
 //! sources that are enabled can be reflected to the processor interrupt;
 //! disabled sources have no effect on the processor.
 //!
-//! The \e ulIntFlags parameter is the logical OR of any of the following:
+//! The \e ui32IntFlags parameter is the logical OR of any of the following:
 //!
 //! - \b I2C_SLAVE_INT_STOP - Stop condition detected interrupt
 //! - \b I2C_SLAVE_INT_START - Start condition detected interrupt
 //! - \b I2C_SLAVE_INT_DATA - Data interrupt
 //!
-//! \note Not all Stellaris devices support the all of the listed interrupts.
+//! \note Not all Tiva devices support the all of the listed interrupts.
 //! Please consult the device data sheet to determine if these features are
 //! supported.
 //!
@@ -641,24 +629,24 @@ I2CSlaveIntEnable(unsigned long ulBase)
 //
 //*****************************************************************************
 void
-I2CSlaveIntEnableEx(unsigned long ulBase, unsigned long ulIntFlags)
+I2CSlaveIntEnableEx(uint32_t ui32Base, uint32_t ui32IntFlags)
 {
     //
     // Check the arguments.
     //
-    ASSERT(I2CSlaveBaseValid(ulBase));
+    ASSERT(I2CBaseValid(ui32Base));
 
     //
     // Enable the slave interrupt.
     //
-    HWREG(ulBase + I2C_O_SIMR) |= ulIntFlags;
+    HWREG(ui32Base + I2C_O_SIMR) |= ui32IntFlags;
 }
 
 //*****************************************************************************
 //
 //! Disables the I2C Master interrupt.
 //!
-//! \param ulBase is the base address of the I2C Master module.
+//! \param ui32Base is the base address of the I2C Master module.
 //!
 //! This function disables the I2C Master interrupt source.
 //!
@@ -666,55 +654,56 @@ I2CSlaveIntEnableEx(unsigned long ulBase, unsigned long ulIntFlags)
 //
 //*****************************************************************************
 void
-I2CMasterIntDisable(unsigned long ulBase)
+I2CMasterIntDisable(uint32_t ui32Base)
 {
     //
     // Check the arguments.
     //
-    ASSERT(I2CMasterBaseValid(ulBase));
+    ASSERT(I2CBaseValid(ui32Base));
 
     //
     // Disable the master interrupt.
     //
-    HWREG(ulBase + I2C_O_MIMR) = 0;
+    HWREG(ui32Base + I2C_O_MIMR) = 0;
 }
 
 //*****************************************************************************
 //
 //! Disables individual I2C Master interrupt sources.
 //!
-//! \param ulBase is the base address of the I2C Master module.
-//! \param ulIntFlags is the bit mask of the interrupt sources to be disabled.
+//! \param ui32Base is the base address of the I2C Master module.
+//! \param ui32IntFlags is the bit mask of the interrupt sources to be
+//!        disabled.
 //!
 //! This function disables the indicated I2C Master interrupt sources.  Only
 //! the sources that are enabled can be reflected to the processor interrupt;
 //! disabled sources have no effect on the processor.
 //!
-//! The \e ulIntFlags parameter has the same definition as the \e ulIntFlags
-//! parameter to I2CMasterIntEnableEx().
+//! The \e ui32IntFlags parameter has the same definition as the
+//! \e ui32IntFlags parameter to I2CMasterIntEnableEx().
 //!
 //! \return None.
 //
 //*****************************************************************************
 void
-I2CMasterIntDisableEx(unsigned long ulBase, unsigned long ulIntFlags)
+I2CMasterIntDisableEx(uint32_t ui32Base, uint32_t ui32IntFlags)
 {
     //
     // Check the arguments.
     //
-    ASSERT(I2CMasterBaseValid(ulBase));
+    ASSERT(I2CBaseValid(ui32Base));
 
     //
     // Disable the master interrupt.
     //
-    HWREG(ulBase + I2C_O_MIMR) &= ~ulIntFlags;
+    HWREG(ui32Base + I2C_O_MIMR) &= ~ui32IntFlags;
 }
 
 //*****************************************************************************
 //
 //! Disables the I2C Slave interrupt.
 //!
-//! \param ulBase is the base address of the I2C Slave module.
+//! \param ui32Base is the base address of the I2C Slave module.
 //!
 //! This function disables the I2C Slave interrupt source.
 //!
@@ -722,73 +711,74 @@ I2CMasterIntDisableEx(unsigned long ulBase, unsigned long ulIntFlags)
 //
 //*****************************************************************************
 void
-I2CSlaveIntDisable(unsigned long ulBase)
+I2CSlaveIntDisable(uint32_t ui32Base)
 {
     //
     // Check the arguments.
     //
-    ASSERT(I2CSlaveBaseValid(ulBase));
+    ASSERT(I2CBaseValid(ui32Base));
 
     //
     // Disable the slave interrupt.
     //
-    HWREG(ulBase + I2C_O_SIMR) &= ~I2C_SLAVE_INT_DATA;
+    HWREG(ui32Base + I2C_O_SIMR) &= ~I2C_SLAVE_INT_DATA;
 }
 
 //*****************************************************************************
 //
 //! Disables individual I2C Slave interrupt sources.
 //!
-//! \param ulBase is the base address of the I2C Slave module.
-//! \param ulIntFlags is the bit mask of the interrupt sources to be disabled.
+//! \param ui32Base is the base address of the I2C Slave module.
+//! \param ui32IntFlags is the bit mask of the interrupt sources to be
+//!        disabled.
 //!
 //! This function disables the indicated I2C Slave interrupt sources.  Only
 //! the sources that are enabled can be reflected to the processor interrupt;
 //! disabled sources have no effect on the processor.
 //!
-//! The \e ulIntFlags parameter has the same definition as the \e ulIntFlags
-//! parameter to I2CSlaveIntEnableEx().
+//! The \e ui32IntFlags parameter has the same definition as the
+//! \e ui32IntFlags parameter to I2CSlaveIntEnableEx().
 //!
 //! \return None.
 //
 //*****************************************************************************
 void
-I2CSlaveIntDisableEx(unsigned long ulBase, unsigned long ulIntFlags)
+I2CSlaveIntDisableEx(uint32_t ui32Base, uint32_t ui32IntFlags)
 {
     //
     // Check the arguments.
     //
-    ASSERT(I2CSlaveBaseValid(ulBase));
+    ASSERT(I2CBaseValid(ui32Base));
 
     //
     // Disable the slave interrupt.
     //
-    HWREG(ulBase + I2C_O_SIMR) &= ~ulIntFlags;
+    HWREG(ui32Base + I2C_O_SIMR) &= ~ui32IntFlags;
 }
 
 //*****************************************************************************
 //
 //! Gets the current I2C Master interrupt status.
 //!
-//! \param ulBase is the base address of the I2C Master module.
+//! \param ui32Base is the base address of the I2C Master module.
 //! \param bMasked is false if the raw interrupt status is requested and
 //! true if the masked interrupt status is requested.
 //!
 //! This function returns the interrupt status for the I2C Master module.
-//! Either the raw interrupt status or the status of interrupts that are allowed to
-//! reflect to the processor can be returned.
+//! Either the raw interrupt status or the status of interrupts that are
+//! allowed to reflect to the processor can be returned.
 //!
 //! \return The current interrupt status, returned as \b true if active
 //! or \b false if not active.
 //
 //*****************************************************************************
-tBoolean
-I2CMasterIntStatus(unsigned long ulBase, tBoolean bMasked)
+bool
+I2CMasterIntStatus(uint32_t ui32Base, bool bMasked)
 {
     //
     // Check the arguments.
     //
-    ASSERT(I2CMasterBaseValid(ulBase));
+    ASSERT(I2CBaseValid(ui32Base));
 
     //
     // Return either the interrupt status or the raw interrupt status as
@@ -796,11 +786,11 @@ I2CMasterIntStatus(unsigned long ulBase, tBoolean bMasked)
     //
     if(bMasked)
     {
-        return((HWREG(ulBase + I2C_O_MMIS)) ? true : false);
+        return((HWREG(ui32Base + I2C_O_MMIS)) ? true : false);
     }
     else
     {
-        return((HWREG(ulBase + I2C_O_MRIS)) ? true : false);
+        return((HWREG(ui32Base + I2C_O_MRIS)) ? true : false);
     }
 }
 
@@ -808,7 +798,7 @@ I2CMasterIntStatus(unsigned long ulBase, tBoolean bMasked)
 //
 //! Gets the current I2C Master interrupt status.
 //!
-//! \param ulBase is the base address of the I2C Master module.
+//! \param ui32Base is the base address of the I2C Master module.
 //! \param bMasked is false if the raw interrupt status is requested and
 //! true if the masked interrupt status is requested.
 //!
@@ -820,13 +810,13 @@ I2CMasterIntStatus(unsigned long ulBase, tBoolean bMasked)
 //! values described in I2CMasterIntEnableEx().
 //
 //*****************************************************************************
-unsigned long
-I2CMasterIntStatusEx(unsigned long ulBase, tBoolean bMasked)
+uint32_t
+I2CMasterIntStatusEx(uint32_t ui32Base, bool bMasked)
 {
     //
     // Check the arguments.
     //
-    ASSERT(I2CMasterBaseValid(ulBase));
+    ASSERT(I2CBaseValid(ui32Base));
 
     //
     // Return either the interrupt status or the raw interrupt status as
@@ -834,11 +824,11 @@ I2CMasterIntStatusEx(unsigned long ulBase, tBoolean bMasked)
     //
     if(bMasked)
     {
-        return(HWREG(ulBase + I2C_O_MMIS));
+        return(HWREG(ui32Base + I2C_O_MMIS));
     }
     else
     {
-        return(HWREG(ulBase + I2C_O_MRIS));
+        return(HWREG(ui32Base + I2C_O_MRIS));
     }
 }
 
@@ -846,7 +836,7 @@ I2CMasterIntStatusEx(unsigned long ulBase, tBoolean bMasked)
 //
 //! Gets the current I2C Slave interrupt status.
 //!
-//! \param ulBase is the base address of the I2C Slave module.
+//! \param ui32Base is the base address of the I2C Slave module.
 //! \param bMasked is false if the raw interrupt status is requested and
 //! true if the masked interrupt status is requested.
 //!
@@ -858,13 +848,13 @@ I2CMasterIntStatusEx(unsigned long ulBase, tBoolean bMasked)
 //! or \b false if not active.
 //
 //*****************************************************************************
-tBoolean
-I2CSlaveIntStatus(unsigned long ulBase, tBoolean bMasked)
+bool
+I2CSlaveIntStatus(uint32_t ui32Base, bool bMasked)
 {
     //
     // Check the arguments.
     //
-    ASSERT(I2CSlaveBaseValid(ulBase));
+    ASSERT(I2CBaseValid(ui32Base));
 
     //
     // Return either the interrupt status or the raw interrupt status as
@@ -872,11 +862,11 @@ I2CSlaveIntStatus(unsigned long ulBase, tBoolean bMasked)
     //
     if(bMasked)
     {
-        return((HWREG(ulBase + I2C_O_SMIS)) ? true : false);
+        return((HWREG(ui32Base + I2C_O_SMIS)) ? true : false);
     }
     else
     {
-        return((HWREG(ulBase + I2C_O_SRIS)) ? true : false);
+        return((HWREG(ui32Base + I2C_O_SRIS)) ? true : false);
     }
 }
 
@@ -884,7 +874,7 @@ I2CSlaveIntStatus(unsigned long ulBase, tBoolean bMasked)
 //
 //! Gets the current I2C Slave interrupt status.
 //!
-//! \param ulBase is the base address of the I2C Slave module.
+//! \param ui32Base is the base address of the I2C Slave module.
 //! \param bMasked is false if the raw interrupt status is requested and
 //! true if the masked interrupt status is requested.
 //!
@@ -896,15 +886,13 @@ I2CSlaveIntStatus(unsigned long ulBase, tBoolean bMasked)
 //! values described in I2CSlaveIntEnableEx().
 //
 //*****************************************************************************
-unsigned long
-I2CSlaveIntStatusEx(unsigned long ulBase, tBoolean bMasked)
+uint32_t
+I2CSlaveIntStatusEx(uint32_t ui32Base, bool bMasked)
 {
-    unsigned long ulValue;
-
     //
     // Check the arguments.
     //
-    ASSERT(I2CSlaveBaseValid(ulBase));
+    ASSERT(I2CBaseValid(ui32Base));
 
     //
     // Return either the interrupt status or the raw interrupt status as
@@ -912,23 +900,11 @@ I2CSlaveIntStatusEx(unsigned long ulBase, tBoolean bMasked)
     //
     if(bMasked)
     {
-        //
-        // Workaround for I2C slave masked interrupt status register errata
-        // (7.1) for Dustdevil Rev A0 devices.
-        //
-        if(CLASS_IS_DUSTDEVIL && REVISION_IS_A0)
-        {
-            ulValue = HWREG(ulBase + I2C_O_SRIS);
-            return(ulValue & HWREG(ulBase + I2C_O_SIMR));
-        }
-        else
-        {
-            return(HWREG(ulBase + I2C_O_SMIS));
-        }
+        return(HWREG(ui32Base + I2C_O_SMIS));
     }
     else
     {
-        return(HWREG(ulBase + I2C_O_SRIS));
+        return(HWREG(ui32Base + I2C_O_SRIS));
     }
 }
 
@@ -936,11 +912,11 @@ I2CSlaveIntStatusEx(unsigned long ulBase, tBoolean bMasked)
 //
 //! Clears I2C Master interrupt sources.
 //!
-//! \param ulBase is the base address of the I2C Master module.
+//! \param ui32Base is the base address of the I2C Master module.
 //!
-//! The I2C Master interrupt source is cleared, so that it no longer asserts.
-//! This function must be called in the interrupt handler to keep the interrupt
-//! from being triggered again immediately upon exit.
+//! The I2C Master interrupt source is cleared, so that it no longer
+//! asserts.  This function must be called in the interrupt handler to keep the
+//! interrupt from being triggered again immediately upon exit.
 //!
 //! \note Because there is a write buffer in the Cortex-M processor, it may
 //! take several clock cycles before the interrupt source is actually cleared.
@@ -955,39 +931,39 @@ I2CSlaveIntStatusEx(unsigned long ulBase, tBoolean bMasked)
 //
 //*****************************************************************************
 void
-I2CMasterIntClear(unsigned long ulBase)
+I2CMasterIntClear(uint32_t ui32Base)
 {
     //
     // Check the arguments.
     //
-    ASSERT(I2CMasterBaseValid(ulBase));
+    ASSERT(I2CBaseValid(ui32Base));
 
     //
     // Clear the I2C master interrupt source.
     //
-    HWREG(ulBase + I2C_O_MICR) = I2C_MICR_IC;
+    HWREG(ui32Base + I2C_O_MICR) = I2C_MICR_IC;
 
     //
-    // Workaround for I2C master interrupt clear errata for rev B Stellaris
+    // Workaround for I2C master interrupt clear errata for rev B Tiva
     // devices.  For later devices, this write is ignored and therefore
     // harmless (other than the slight performance hit).
     //
-    HWREG(ulBase + I2C_O_MMIS) = I2C_MICR_IC;
+    HWREG(ui32Base + I2C_O_MMIS) = I2C_MICR_IC;
 }
 
 //*****************************************************************************
 //
 //! Clears I2C Master interrupt sources.
 //!
-//! \param ulBase is the base address of the I2C Master module.
-//! \param ulIntFlags is a bit mask of the interrupt sources to be cleared.
+//! \param ui32Base is the base address of the I2C Master module.
+//! \param ui32IntFlags is a bit mask of the interrupt sources to be cleared.
 //!
 //! The specified I2C Master interrupt sources are cleared, so that they no
 //! longer assert.  This function must be called in the interrupt handler to
 //! keep the interrupt from being triggered again immediately upon exit.
 //!
-//! The \e ulIntFlags parameter has the same definition as the \e ulIntFlags
-//! parameter to I2CMasterIntEnableEx().
+//! The \e ui32IntFlags parameter has the same definition as the
+//! \e ui32IntFlags parameter to I2CMasterIntEnableEx().
 //!
 //! \note Because there is a write buffer in the Cortex-M processor, it may
 //! take several clock cycles before the interrupt source is actually cleared.
@@ -1002,24 +978,24 @@ I2CMasterIntClear(unsigned long ulBase)
 //
 //*****************************************************************************
 void
-I2CMasterIntClearEx(unsigned long ulBase, unsigned long ulIntFlags)
+I2CMasterIntClearEx(uint32_t ui32Base, uint32_t ui32IntFlags)
 {
     //
     // Check the arguments.
     //
-    ASSERT(I2CMasterBaseValid(ulBase));
+    ASSERT(I2CBaseValid(ui32Base));
 
     //
     // Clear the I2C master interrupt source.
     //
-    HWREG(ulBase + I2C_O_MICR) = ulIntFlags;
+    HWREG(ui32Base + I2C_O_MICR) = ui32IntFlags;
 }
 
 //*****************************************************************************
 //
 //! Clears I2C Slave interrupt sources.
 //!
-//! \param ulBase is the base address of the I2C Slave module.
+//! \param ui32Base is the base address of the I2C Slave module.
 //!
 //! The I2C Slave interrupt source is cleared, so that it no longer asserts.
 //! This function must be called in the interrupt handler to keep the interrupt
@@ -1038,32 +1014,32 @@ I2CMasterIntClearEx(unsigned long ulBase, unsigned long ulIntFlags)
 //
 //*****************************************************************************
 void
-I2CSlaveIntClear(unsigned long ulBase)
+I2CSlaveIntClear(uint32_t ui32Base)
 {
     //
     // Check the arguments.
     //
-    ASSERT(I2CSlaveBaseValid(ulBase));
+    ASSERT(I2CBaseValid(ui32Base));
 
     //
     // Clear the I2C slave interrupt source.
     //
-    HWREG(ulBase + I2C_O_SICR) = I2C_SICR_DATAIC;
+    HWREG(ui32Base + I2C_O_SICR) = I2C_SICR_DATAIC;
 }
 
 //*****************************************************************************
 //
 //! Clears I2C Slave interrupt sources.
 //!
-//! \param ulBase is the base address of the I2C Slave module.
-//! \param ulIntFlags is a bit mask of the interrupt sources to be cleared.
+//! \param ui32Base is the base address of the I2C Slave module.
+//! \param ui32IntFlags is a bit mask of the interrupt sources to be cleared.
 //!
 //! The specified I2C Slave interrupt sources are cleared, so that they no
 //! longer assert.  This function must be called in the interrupt handler to
 //! keep the interrupt from being triggered again immediately upon exit.
 //!
-//! The \e ulIntFlags parameter has the same definition as the \e ulIntFlags
-//! parameter to I2CSlaveIntEnableEx().
+//! The \e ui32IntFlags parameter has the same definition as the
+//! \e ui32IntFlags parameter to I2CSlaveIntEnableEx().
 //!
 //! \note Because there is a write buffer in the Cortex-M processor, it may
 //! take several clock cycles before the interrupt source is actually cleared.
@@ -1078,25 +1054,25 @@ I2CSlaveIntClear(unsigned long ulBase)
 //
 //*****************************************************************************
 void
-I2CSlaveIntClearEx(unsigned long ulBase, unsigned long ulIntFlags)
+I2CSlaveIntClearEx(uint32_t ui32Base, uint32_t ui32IntFlags)
 {
     //
     // Check the arguments.
     //
-    ASSERT(I2CSlaveBaseValid(ulBase));
+    ASSERT(I2CBaseValid(ui32Base));
 
     //
     // Clear the I2C slave interrupt source.
     //
-    HWREG(ulBase + I2C_O_SICR) = ulIntFlags;
+    HWREG(ui32Base + I2C_O_SICR) = ui32IntFlags;
 }
 
 //*****************************************************************************
 //
 //! Sets the address that the I2C Master places on the bus.
 //!
-//! \param ulBase is the base address of the I2C Master module.
-//! \param ucSlaveAddr 7-bit slave address
+//! \param ui32Base is the base address of the I2C Master module.
+//! \param ui8SlaveAddr 7-bit slave address
 //! \param bReceive flag indicating the type of communication with the slave
 //!
 //! This function configures the address that the I2C Master places on the
@@ -1109,56 +1085,56 @@ I2CSlaveIntClearEx(unsigned long ulBase, unsigned long ulIntFlags)
 //
 //*****************************************************************************
 void
-I2CMasterSlaveAddrSet(unsigned long ulBase, unsigned char ucSlaveAddr,
-                      tBoolean bReceive)
+I2CMasterSlaveAddrSet(uint32_t ui32Base, uint8_t ui8SlaveAddr,
+                      bool bReceive)
 {
     //
     // Check the arguments.
     //
-    ASSERT(I2CMasterBaseValid(ulBase));
-    ASSERT(!(ucSlaveAddr & 0x80));
+    ASSERT(I2CBaseValid(ui32Base));
+    ASSERT(!(ui8SlaveAddr & 0x80));
 
     //
     // Set the address of the slave with which the master will communicate.
     //
-    HWREG(ulBase + I2C_O_MSA) = (ucSlaveAddr << 1) | bReceive;
+    HWREG(ui32Base + I2C_O_MSA) = (ui8SlaveAddr << 1) | bReceive;
 }
 
 //*****************************************************************************
 //
 //! Reads the state of the SDA and SCL pins.
 //!
-//! \param ulBase is the base address of the I2C Master module.
+//! \param ui32Base is the base address of the I2C Master module.
 //!
 //! This function returns the state of the I2C bus by providing the real time
 //! values of the SDA and SCL pins.
 //!
-//! \note Not all Stellaris devices support this function.  Please consult the
+//! \note Not all Tiva devices support this function.  Please consult the
 //! device data sheet to determine if this feature is supported.
 //!
 //! \return Returns the state of the bus with SDA in bit position 1 and SCL in
 //! bit position 0.
 //
 //*****************************************************************************
-unsigned long
-I2CMasterLineStateGet(unsigned long ulBase)
+uint32_t
+I2CMasterLineStateGet(uint32_t ui32Base)
 {
     //
     // Check the arguments.
     //
-    ASSERT(I2CMasterBaseValid(ulBase));
+    ASSERT(I2CBaseValid(ui32Base));
 
     //
     // Return the line state.
     //
-    return(HWREG(ulBase + I2C_O_MBMON));
+    return(HWREG(ui32Base + I2C_O_MBMON));
 }
 
 //*****************************************************************************
 //
 //! Indicates whether or not the I2C Master is busy.
 //!
-//! \param ulBase is the base address of the I2C Master module.
+//! \param ui32Base is the base address of the I2C Master module.
 //!
 //! This function returns an indication of whether or not the I2C Master is
 //! busy transmitting or receiving data.
@@ -1167,18 +1143,18 @@ I2CMasterLineStateGet(unsigned long ulBase)
 //! \b false.
 //
 //*****************************************************************************
-tBoolean
-I2CMasterBusy(unsigned long ulBase)
+bool
+I2CMasterBusy(uint32_t ui32Base)
 {
     //
     // Check the arguments.
     //
-    ASSERT(I2CMasterBaseValid(ulBase));
+    ASSERT(I2CBaseValid(ui32Base));
 
     //
     // Return the busy status.
     //
-    if(HWREG(ulBase + I2C_O_MCS) & I2C_MCS_BUSY)
+    if(HWREG(ui32Base + I2C_O_MCS) & I2C_MCS_BUSY)
     {
         return(true);
     }
@@ -1192,7 +1168,7 @@ I2CMasterBusy(unsigned long ulBase)
 //
 //! Indicates whether or not the I2C bus is busy.
 //!
-//! \param ulBase is the base address of the I2C Master module.
+//! \param ui32Base is the base address of the I2C Master module.
 //!
 //! This function returns an indication of whether or not the I2C bus is busy.
 //! This function can be used in a multi-master environment to determine if
@@ -1202,18 +1178,18 @@ I2CMasterBusy(unsigned long ulBase)
 //! \b false.
 //
 //*****************************************************************************
-tBoolean
-I2CMasterBusBusy(unsigned long ulBase)
+bool
+I2CMasterBusBusy(uint32_t ui32Base)
 {
     //
     // Check the arguments.
     //
-    ASSERT(I2CMasterBaseValid(ulBase));
+    ASSERT(I2CBaseValid(ui32Base));
 
     //
     // Return the bus busy status.
     //
-    if(HWREG(ulBase + I2C_O_MCS) & I2C_MCS_BUSBSY)
+    if(HWREG(ui32Base + I2C_O_MCS) & I2C_MCS_BUSBSY)
     {
         return(true);
     }
@@ -1227,11 +1203,11 @@ I2CMasterBusBusy(unsigned long ulBase)
 //
 //! Controls the state of the I2C Master module.
 //!
-//! \param ulBase is the base address of the I2C Master module.
-//! \param ulCmd command to be issued to the I2C Master module.
+//! \param ui32Base is the base address of the I2C Master module.
+//! \param ui32Cmd command to be issued to the I2C Master module.
 //!
 //! This function is used to control the state of the Master module send and
-//! receive operations.  The \e ucCmd parameter can be one of the following
+//! receive operations.  The \e ui8Cmd parameter can be one of the following
 //! values:
 //!
 //! - \b I2C_MASTER_CMD_SINGLE_SEND
@@ -1251,36 +1227,36 @@ I2CMasterBusBusy(unsigned long ulBase)
 //
 //*****************************************************************************
 void
-I2CMasterControl(unsigned long ulBase, unsigned long ulCmd)
+I2CMasterControl(uint32_t ui32Base, uint32_t ui32Cmd)
 {
     //
     // Check the arguments.
     //
-    ASSERT(I2CMasterBaseValid(ulBase));
-    ASSERT((ulCmd == I2C_MASTER_CMD_SINGLE_SEND) ||
-           (ulCmd == I2C_MASTER_CMD_SINGLE_RECEIVE) ||
-           (ulCmd == I2C_MASTER_CMD_BURST_SEND_START) ||
-           (ulCmd == I2C_MASTER_CMD_BURST_SEND_CONT) ||
-           (ulCmd == I2C_MASTER_CMD_BURST_SEND_FINISH) ||
-           (ulCmd == I2C_MASTER_CMD_BURST_SEND_ERROR_STOP) ||
-           (ulCmd == I2C_MASTER_CMD_BURST_RECEIVE_START) ||
-           (ulCmd == I2C_MASTER_CMD_BURST_RECEIVE_CONT) ||
-           (ulCmd == I2C_MASTER_CMD_BURST_RECEIVE_FINISH) ||
-           (ulCmd == I2C_MASTER_CMD_BURST_RECEIVE_ERROR_STOP) ||
-           (ulCmd == I2C_MASTER_CMD_QUICK_COMMAND) ||
-           (ulCmd == I2C_MASTER_CMD_HS_MASTER_CODE_SEND));
+    ASSERT(I2CBaseValid(ui32Base));
+    ASSERT((ui32Cmd == I2C_MASTER_CMD_SINGLE_SEND) ||
+           (ui32Cmd == I2C_MASTER_CMD_SINGLE_RECEIVE) ||
+           (ui32Cmd == I2C_MASTER_CMD_BURST_SEND_START) ||
+           (ui32Cmd == I2C_MASTER_CMD_BURST_SEND_CONT) ||
+           (ui32Cmd == I2C_MASTER_CMD_BURST_SEND_FINISH) ||
+           (ui32Cmd == I2C_MASTER_CMD_BURST_SEND_ERROR_STOP) ||
+           (ui32Cmd == I2C_MASTER_CMD_BURST_RECEIVE_START) ||
+           (ui32Cmd == I2C_MASTER_CMD_BURST_RECEIVE_CONT) ||
+           (ui32Cmd == I2C_MASTER_CMD_BURST_RECEIVE_FINISH) ||
+           (ui32Cmd == I2C_MASTER_CMD_BURST_RECEIVE_ERROR_STOP) ||
+           (ui32Cmd == I2C_MASTER_CMD_QUICK_COMMAND) ||
+           (ui32Cmd == I2C_MASTER_CMD_HS_MASTER_CODE_SEND));
 
     //
     // Send the command.
     //
-    HWREG(ulBase + I2C_O_MCS) = ulCmd;
+    HWREG(ui32Base + I2C_O_MCS) = ui32Cmd;
 }
 
 //*****************************************************************************
 //
 //! Gets the error status of the I2C Master module.
 //!
-//! \param ulBase is the base address of the I2C Master module.
+//! \param ui32Base is the base address of the I2C Master module.
 //!
 //! This function is used to obtain the error status of the Master module send
 //! and receive operations.
@@ -1290,26 +1266,26 @@ I2CMasterControl(unsigned long ulBase, unsigned long ulCmd)
 //! \b I2C_MASTER_ERR_ARB_LOST.
 //
 //*****************************************************************************
-unsigned long
-I2CMasterErr(unsigned long ulBase)
+uint32_t
+I2CMasterErr(uint32_t ui32Base)
 {
-    unsigned long ulErr;
+    uint32_t ui32Err;
 
     //
     // Check the arguments.
     //
-    ASSERT(I2CMasterBaseValid(ulBase));
+    ASSERT(I2CBaseValid(ui32Base));
 
     //
     // Get the raw error state
     //
-    ulErr = HWREG(ulBase + I2C_O_MCS);
+    ui32Err = HWREG(ui32Base + I2C_O_MCS);
 
     //
     // If the I2C master is busy, then all the other bit are invalid, and
     // don't have an error to report.
     //
-    if(ulErr & I2C_MCS_BUSY)
+    if(ui32Err & I2C_MCS_BUSY)
     {
         return(I2C_MASTER_ERR_NONE);
     }
@@ -1317,9 +1293,9 @@ I2CMasterErr(unsigned long ulBase)
     //
     // Check for errors.
     //
-    if(ulErr & (I2C_MCS_ERROR | I2C_MCS_ARBLST))
+    if(ui32Err & (I2C_MCS_ERROR | I2C_MCS_ARBLST))
     {
-        return(ulErr & (I2C_MCS_ARBLST | I2C_MCS_DATACK | I2C_MCS_ADRACK));
+        return(ui32Err & (I2C_MCS_ARBLST | I2C_MCS_DATACK | I2C_MCS_ADRACK));
     }
     else
     {
@@ -1331,8 +1307,8 @@ I2CMasterErr(unsigned long ulBase)
 //
 //! Transmits a byte from the I2C Master.
 //!
-//! \param ulBase is the base address of the I2C Master module.
-//! \param ucData data to be transmitted from the I2C Master.
+//! \param ui32Base is the base address of the I2C Master module.
+//! \param ui8Data data to be transmitted from the I2C Master.
 //!
 //! This function places the supplied data into I2C Master Data Register.
 //!
@@ -1340,111 +1316,112 @@ I2CMasterErr(unsigned long ulBase)
 //
 //*****************************************************************************
 void
-I2CMasterDataPut(unsigned long ulBase, unsigned char ucData)
+I2CMasterDataPut(uint32_t ui32Base, uint8_t ui8Data)
 {
     //
     // Check the arguments.
     //
-    ASSERT(I2CMasterBaseValid(ulBase));
+    ASSERT(I2CBaseValid(ui32Base));
 
     //
     // Write the byte.
     //
-    HWREG(ulBase + I2C_O_MDR) = ucData;
+    HWREG(ui32Base + I2C_O_MDR) = ui8Data;
 }
 
 //*****************************************************************************
 //
 //! Receives a byte that has been sent to the I2C Master.
 //!
-//! \param ulBase is the base address of the I2C Master module.
+//! \param ui32Base is the base address of the I2C Master module.
 //!
 //! This function reads a byte of data from the I2C Master Data Register.
 //!
 //! \return Returns the byte received from by the I2C Master, cast as an
-//! unsigned long.
+//! uint32_t.
 //
 //*****************************************************************************
-unsigned long
-I2CMasterDataGet(unsigned long ulBase)
+uint32_t
+I2CMasterDataGet(uint32_t ui32Base)
 {
     //
     // Check the arguments.
     //
-    ASSERT(I2CMasterBaseValid(ulBase));
+    ASSERT(I2CBaseValid(ui32Base));
 
     //
     // Read a byte.
     //
-    return(HWREG(ulBase + I2C_O_MDR));
+    return(HWREG(ui32Base + I2C_O_MDR));
 }
 
 //*****************************************************************************
 //
 //! Sets the Master clock timeout value.
 //!
-//! \param ulBase is the base address of the I2C Master module.
-//! \param ulValue is the number of I2C clocks before the timeout is asserted.
+//! \param ui32Base is the base address of the I2C Master module.
+//! \param ui32Value is the number of I2C clocks before the timeout is
+//!        asserted.
 //!
 //! This function enables and configures the clock low timeout feature in the
 //! I2C peripheral.  This feature is implemented as a 12-bit counter, with the
 //! upper 8-bits being programmable.  For example, to program a timeout of 20ms
-//! with a 100kHz SCL frequency, \e ulValue would be 0x7d.
+//! with a 100kHz SCL frequency, \e ui32Value would be 0x7d.
 //!
-//! \note Not all Stellaris devices support this function.  Please consult the
+//! \note Not all Tiva devices support this function.  Please consult the
 //! device data sheet to determine if this feature is supported.
 //!
 //! \return None.
 //
 //*****************************************************************************
 void
-I2CMasterTimeoutSet(unsigned long ulBase, unsigned long ulValue)
+I2CMasterTimeoutSet(uint32_t ui32Base, uint32_t ui32Value)
 {
     //
     // Check the arguments.
     //
-    ASSERT(I2CMasterBaseValid(ulBase));
+    ASSERT(I2CBaseValid(ui32Base));
 
     //
     // Write the timeout value.
     //
-    HWREG(ulBase + I2C_O_MCLKOCNT) = ulValue;
+    HWREG(ui32Base + I2C_O_MCLKOCNT) = ui32Value;
 }
 
 //*****************************************************************************
 //
 //! Configures ACK override behavior of the I2C Slave.
 //!
-//! \param ulBase is the base address of the I2C Slave module.
+//! \param ui32Base is the base address of the I2C Slave module.
 //! \param bEnable enables or disables ACK override.
 //!
 //! This function enables or disables ACK override, allowing the user
 //! application to drive the value on SDA during the ACK cycle.
 //!
-//! \note Not all Stellaris devices support this function.  Please consult the
+//! \note Not all Tiva devices support this function.  Please consult the
 //! device data sheet to determine if this feature is supported.
 //!
 //! \return None.
 //
 //*****************************************************************************
 void
-I2CSlaveACKOverride(unsigned long ulBase, tBoolean bEnable)
+I2CSlaveACKOverride(uint32_t ui32Base, bool bEnable)
 {
     //
     // Check the arguments.
     //
-    ASSERT(I2CSlaveBaseValid(ulBase));
+    ASSERT(I2CBaseValid(ui32Base));
 
     //
     // Enable or disable based on bEnable.
     //
     if(bEnable)
     {
-        HWREG(ulBase + I2C_O_SACKCTL) |= I2C_SACKCTL_ACKOEN;
+        HWREG(ui32Base + I2C_O_SACKCTL) |= I2C_SACKCTL_ACKOEN;
     }
     else
     {
-        HWREG(ulBase + I2C_O_SACKCTL) &= ~I2C_SACKCTL_ACKOEN;
+        HWREG(ui32Base + I2C_O_SACKCTL) &= ~I2C_SACKCTL_ACKOEN;
     }
 }
 
@@ -1452,7 +1429,7 @@ I2CSlaveACKOverride(unsigned long ulBase, tBoolean bEnable)
 //
 //! Writes the ACK value.
 //!
-//! \param ulBase is the base address of the I2C Slave module.
+//! \param ui32Base is the base address of the I2C Slave module.
 //! \param bACK chooses whether to ACK (true) or NACK (false) the transfer.
 //!
 //! This function puts the desired ACK value on SDA during the ACK cycle.  The
@@ -1463,23 +1440,23 @@ I2CSlaveACKOverride(unsigned long ulBase, tBoolean bEnable)
 //
 //*****************************************************************************
 void
-I2CSlaveACKValueSet(unsigned long ulBase, tBoolean bACK)
+I2CSlaveACKValueSet(uint32_t ui32Base, bool bACK)
 {
     //
     // Check the arguments.
     //
-    ASSERT(I2CSlaveBaseValid(ulBase));
+    ASSERT(I2CBaseValid(ui32Base));
 
     //
     // ACK or NACK based on the value of bACK.
     //
     if(bACK)
     {
-        HWREG(ulBase + I2C_O_SACKCTL) &= ~I2C_SACKCTL_ACKOVAL;
+        HWREG(ui32Base + I2C_O_SACKCTL) &= ~I2C_SACKCTL_ACKOVAL;
     }
     else
     {
-        HWREG(ulBase + I2C_O_SACKCTL) |= I2C_SACKCTL_ACKOVAL;
+        HWREG(ui32Base + I2C_O_SACKCTL) |= I2C_SACKCTL_ACKOVAL;
     }
 }
 
@@ -1487,7 +1464,7 @@ I2CSlaveACKValueSet(unsigned long ulBase, tBoolean bACK)
 //
 //! Gets the I2C Slave module status
 //!
-//! \param ulBase is the base address of the I2C Slave module.
+//! \param ui32Base is the base address of the I2C Slave module.
 //!
 //! This function returns the action requested from a master, if any.
 //! Possible values are:
@@ -1500,7 +1477,7 @@ I2CSlaveACKValueSet(unsigned long ulBase, tBoolean bACK)
 //! - \b I2C_SLAVE_ACT_QCMD
 //! - \b I2C_SLAVE_ACT_QCMD_DATA
 //!
-//! \note Not all Stellaris devices support the second I2C slave's own address
+//! \note Not all Tiva devices support the second I2C slave's own address
 //! or the quick command function.  Please consult the device data sheet to
 //! determine if these features are supported.
 //!
@@ -1516,26 +1493,26 @@ I2CSlaveACKValueSet(unsigned long ulBase, tBoolean bACK)
 //! data bit was set when the quick command was received.
 //
 //*****************************************************************************
-unsigned long
-I2CSlaveStatus(unsigned long ulBase)
+uint32_t
+I2CSlaveStatus(uint32_t ui32Base)
 {
     //
     // Check the arguments.
     //
-    ASSERT(I2CSlaveBaseValid(ulBase));
+    ASSERT(I2CBaseValid(ui32Base));
 
     //
     // Return the slave status.
     //
-    return(HWREG(ulBase + I2C_O_SCSR));
+    return(HWREG(ui32Base + I2C_O_SCSR));
 }
 
 //*****************************************************************************
 //
 //! Transmits a byte from the I2C Slave.
 //!
-//! \param ulBase is the base address of the I2C Slave module.
-//! \param ucData is the data to be transmitted from the I2C Slave
+//! \param ui32Base is the base address of the I2C Slave module.
+//! \param ui8Data is the data to be transmitted from the I2C Slave
 //!
 //! This function places the supplied data into I2C Slave Data Register.
 //!
@@ -1543,43 +1520,43 @@ I2CSlaveStatus(unsigned long ulBase)
 //
 //*****************************************************************************
 void
-I2CSlaveDataPut(unsigned long ulBase, unsigned char ucData)
+I2CSlaveDataPut(uint32_t ui32Base, uint8_t ui8Data)
 {
     //
     // Check the arguments.
     //
-    ASSERT(I2CSlaveBaseValid(ulBase));
+    ASSERT(I2CBaseValid(ui32Base));
 
     //
     // Write the byte.
     //
-    HWREG(ulBase + I2C_O_SDR) = ucData;
+    HWREG(ui32Base + I2C_O_SDR) = ui8Data;
 }
 
 //*****************************************************************************
 //
 //! Receives a byte that has been sent to the I2C Slave.
 //!
-//! \param ulBase is the base address of the I2C Slave module.
+//! \param ui32Base is the base address of the I2C Slave module.
 //!
 //! This function reads a byte of data from the I2C Slave Data Register.
 //!
 //! \return Returns the byte received from by the I2C Slave, cast as an
-//! unsigned long.
+//! uint32_t.
 //
 //*****************************************************************************
-unsigned long
-I2CSlaveDataGet(unsigned long ulBase)
+uint32_t
+I2CSlaveDataGet(uint32_t ui32Base)
 {
     //
     // Check the arguments.
     //
-    ASSERT(I2CSlaveBaseValid(ulBase));
+    ASSERT(I2CBaseValid(ui32Base));
 
     //
     // Read a byte.
     //
-    return(HWREG(ulBase + I2C_O_SDR));
+    return(HWREG(ui32Base + I2C_O_SDR));
 }
 
 //*****************************************************************************
