@@ -3583,8 +3583,8 @@
 
 //*****************************************************************************
 //
-// TM4C1233H6PM Port/Pin Mapping Definitions
-//
+// TM4C1233H6PM & LM4F120H5QR Port/Pin Mapping Definitions
+// They are exactly the same.
 //*****************************************************************************
 #ifdef PART_TM4C1233H6PM
 
@@ -3728,7 +3728,7 @@
 
 #define GPIO_PF4_T2CCP0         0x00051007
 
-#endif // PART_TM4C1233H6PM
+#endif // PART_TM4C1233H6PM & LM4F120H5QR
 
 //*****************************************************************************
 //
