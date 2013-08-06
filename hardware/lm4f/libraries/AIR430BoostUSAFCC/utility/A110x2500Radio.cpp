@@ -85,7 +85,7 @@ void A110x2500Radio::end()
   while (busy());
 
   detachInterrupt(RF_GDO0);
-  #if defined( __TM4C1230C3PM__ )
+  #if defined(__LM4F120H5QR__) || defined(__TM4C1233H6PM__)
   SPI.end();
   #endif
   pinMode (RF_SPI_CSN, INPUT);
