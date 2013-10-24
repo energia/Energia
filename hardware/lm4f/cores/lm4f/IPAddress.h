@@ -72,5 +72,4 @@ public:
 
 const IPAddress INADDR_NONE(0,0,0,0);
 
-
 #endif
