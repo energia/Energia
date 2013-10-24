@@ -23,6 +23,17 @@
  *===-----------------------------------------------------------------------===
  */
 
+// Override a normal `stdbool.h` with our modified `boolean.h`
+#ifndef __BOOLEAN_H
+#define __BOOLEAN_H
+#endif
+
+#ifdef  __STDBOOL_H
+#ifndef __BOOLEAN_H
+#undef  __STDBOOL_H
+#endif
+
+// The rest of stdbool
 #ifndef __STDBOOL_H
 #define __STDBOOL_H
 
@@ -38,6 +49,9 @@
 #define false false
 #define true  true
 #endif
+
+// Our boolean
+typedef uint8_t boolean;
 
 #define __bool_true_false_are_defined 1
 
