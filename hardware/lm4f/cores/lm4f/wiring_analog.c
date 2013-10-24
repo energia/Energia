@@ -83,9 +83,7 @@ void enableTimerPeriph(uint32_t offset) {
 //
 //empty function due to single reference
 //
-void analogReference(uint16_t mode)
-{
-}
+void analogReference(uint16_t mode){ }
 
 void PWMWrite(uint8_t pin, uint32_t analog_res, uint32_t duty, unsigned int freq)
 {
