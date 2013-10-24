@@ -243,4 +243,3 @@ size_t Stream::readBytesUntil(char terminator, char *buffer, size_t length)
     }
     return index; // return number of characters, not including null terminator
 }
-
