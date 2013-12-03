@@ -9,6 +9,7 @@
 #define HWREG(x) \
         (*((volatile unsigned long *)(x))) 
 
+#include "boolean.h"
 #include "binary.h" 
 #include "inc/hw_types.h"  		
 #include "inc/hw_nvic.h" 
@@ -92,7 +93,6 @@ extern "C"{
 #define WTIMER3 7
 #define WTIMER5 9
 
-typedef uint8_t boolean;
 typedef uint8_t byte;
 
 #define min(a,b) ((a)<(b)?(a):(b))
@@ -118,7 +118,6 @@ typedef uint8_t byte;
 #define bitSet(value, bit) ((value) |= (1UL << (bit)))
 #define bitClear(value, bit) ((value) &= ~(1UL << (bit)))
 #define bitWrite(value, bit, bitvalue) (bitvalue ? bitSet(value, bit) : bitClear(value, bit))
-
 
 typedef unsigned int word;
 
@@ -235,6 +234,3 @@ long map(long, long, long, long, long);
 #include "pins_energia.h"
 
 #endif
-
-
-

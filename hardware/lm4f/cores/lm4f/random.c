@@ -66,13 +66,11 @@ do_random(unsigned long *ctx)
     return ((*ctx = x) % ((unsigned long)RANDOM_MAX + 1));
 }
 
-
 long
 random_r(unsigned long *ctx)
 {
     return do_random(ctx);
 }
-
 
 static unsigned long next = 1;
 
@@ -87,4 +85,3 @@ srandom(unsigned long seed)
 {
     next = seed;
 }
-

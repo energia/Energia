@@ -139,5 +139,3 @@ void noTone(uint8_t _pin)
     }
 
 }
-
-
