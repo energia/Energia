@@ -2,7 +2,7 @@
 //
 // ssi.h - Prototypes for the Synchronous Serial Interface Driver.
 //
-// Copyright (c) 2005-2012 Texas Instruments Incorporated.  All rights reserved.
+// Copyright (c) 2005-2013 Texas Instruments Incorporated.  All rights reserved.
 // Software License Agreement
 // 
 //   Redistribution and use in source and binary forms, with or without
@@ -33,7 +33,7 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 // 
-// This is part of revision 9453 of the Stellaris Peripheral Driver Library.
+// This is part of revision 1.0 of the Tiva Peripheral Driver Library.
 //
 //*****************************************************************************
 
@@ -54,7 +54,7 @@ extern "C"
 //*****************************************************************************
 //
 // Values that can be passed to SSIIntEnable, SSIIntDisable, and SSIIntClear
-// as the ulIntFlags parameter, and returned by SSIIntStatus.
+// as the ui32IntFlags parameter, and returned by SSIIntStatus.
 //
 //*****************************************************************************
 #define SSI_TXFF                0x00000008  // TX FIFO half full or less
@@ -100,44 +100,28 @@ extern "C"
 // Prototypes for the APIs.
 //
 //*****************************************************************************
-extern void SSIConfigSetExpClk(unsigned long ulBase, unsigned long ulSSIClk,
-                               unsigned long ulProtocol, unsigned long ulMode,
-                               unsigned long ulBitRate,
-                               unsigned long ulDataWidth);
-extern void SSIDataGet(unsigned long ulBase, unsigned long *pulData);
-extern long SSIDataGetNonBlocking(unsigned long ulBase,
-                                  unsigned long *pulData);
-extern void SSIDataPut(unsigned long ulBase, unsigned long ulData);
-extern long SSIDataPutNonBlocking(unsigned long ulBase, unsigned long ulData);
-extern void SSIDisable(unsigned long ulBase);
-extern void SSIEnable(unsigned long ulBase);
-extern void SSIIntClear(unsigned long ulBase, unsigned long ulIntFlags);
-extern void SSIIntDisable(unsigned long ulBase, unsigned long ulIntFlags);
-extern void SSIIntEnable(unsigned long ulBase, unsigned long ulIntFlags);
-extern void SSIIntRegister(unsigned long ulBase, void(*pfnHandler)(void));
-extern unsigned long SSIIntStatus(unsigned long ulBase, tBoolean bMasked);
-extern void SSIIntUnregister(unsigned long ulBase);
-extern void SSIDMAEnable(unsigned long ulBase, unsigned long ulDMAFlags);
-extern void SSIDMADisable(unsigned long ulBase, unsigned long ulDMAFlags);
-extern tBoolean SSIBusy(unsigned long ulBase);
-extern void SSIClockSourceSet(unsigned long ulBase, unsigned long ulSource);
-extern unsigned long SSIClockSourceGet(unsigned long ulBase);
-
-//*****************************************************************************
-//
-// Several SSI APIs have been renamed, with the original function name being
-// deprecated.  These defines provide backward compatibility.
-//
-//*****************************************************************************
-#ifndef DEPRECATED
-#include "driverlib/sysctl.h"
-#define SSIConfig(a, b, c, d, e)                            \
-        SSIConfigSetExpClk(a, SysCtlClockGet(), b, c, d, e)
-#define SSIDataNonBlockingGet(a, b) \
-        SSIDataGetNonBlocking(a, b)
-#define SSIDataNonBlockingPut(a, b) \
-        SSIDataPutNonBlocking(a, b)
-#endif
+extern void SSIConfigSetExpClk(uint32_t ui32Base, uint32_t ui32SSIClk,
+                               uint32_t ui32Protocol, uint32_t ui32Mode,
+                               uint32_t ui32BitRate,
+                               uint32_t ui32DataWidth);
+extern void SSIDataGet(uint32_t ui32Base, uint32_t *pui32Data);
+extern int32_t SSIDataGetNonBlocking(uint32_t ui32Base,
+                                  uint32_t *pui32Data);
+extern void SSIDataPut(uint32_t ui32Base, uint32_t ui32Data);
+extern int32_t SSIDataPutNonBlocking(uint32_t ui32Base, uint32_t ui32Data);
+extern void SSIDisable(uint32_t ui32Base);
+extern void SSIEnable(uint32_t ui32Base);
+extern void SSIIntClear(uint32_t ui32Base, uint32_t ui32IntFlags);
+extern void SSIIntDisable(uint32_t ui32Base, uint32_t ui32IntFlags);
+extern void SSIIntEnable(uint32_t ui32Base, uint32_t ui32IntFlags);
+extern void SSIIntRegister(uint32_t ui32Base, void (*pfnHandler)(void));
+extern uint32_t SSIIntStatus(uint32_t ui32Base, bool bMasked);
+extern void SSIIntUnregister(uint32_t ui32Base);
+extern void SSIDMAEnable(uint32_t ui32Base, uint32_t ui32DMAFlags);
+extern void SSIDMADisable(uint32_t ui32Base, uint32_t ui32DMAFlags);
+extern bool SSIBusy(uint32_t ui32Base);
+extern void SSIClockSourceSet(uint32_t ui32Base, uint32_t ui32Source);
+extern uint32_t SSIClockSourceGet(uint32_t ui32Base);
 
 //*****************************************************************************
 //

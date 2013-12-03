@@ -2,7 +2,7 @@
 //
 // systick.h - Prototypes for the SysTick driver.
 //
-// Copyright (c) 2005-2012 Texas Instruments Incorporated.  All rights reserved.
+// Copyright (c) 2005-2013 Texas Instruments Incorporated.  All rights reserved.
 // Software License Agreement
 // 
 //   Redistribution and use in source and binary forms, with or without
@@ -33,7 +33,7 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 // 
-// This is part of revision 9453 of the Stellaris Peripheral Driver Library.
+// This is part of revision 1.0 of the Tiva Peripheral Driver Library.
 //
 //*****************************************************************************
 
@@ -62,9 +62,9 @@ extern void SysTickIntRegister(void (*pfnHandler)(void));
 extern void SysTickIntUnregister(void);
 extern void SysTickIntEnable(void);
 extern void SysTickIntDisable(void);
-extern void SysTickPeriodSet(unsigned long ulPeriod);
-extern unsigned long SysTickPeriodGet(void);
-extern unsigned long SysTickValueGet(void);
+extern void SysTickPeriodSet(uint32_t ui32Period);
+extern uint32_t SysTickPeriodGet(void);
+extern uint32_t SysTickValueGet(void);
 
 //*****************************************************************************
 //

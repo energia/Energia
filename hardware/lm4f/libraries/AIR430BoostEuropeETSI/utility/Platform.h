@@ -33,7 +33,7 @@ extern "C" {
   #include "CC1101.h"
 }
 
-#if defined( __LM4F120H5QR__ )
+#if defined( __TM4C1230C3PM__ )
 //#error "TODO: LM4F120H5QR Stellaris Launchpad currently not supported."
 #define RF_SPI_MISO   14
 #define RF_SPI_CSN    18

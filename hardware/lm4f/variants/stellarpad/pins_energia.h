@@ -33,6 +33,7 @@
 #ifndef Pins_Arduino_h
 #define Pins_Arduino_h
 
+#define __TM4C1233H6PM__
 #define __LM4F120H5QR__
 
 #ifndef BV 

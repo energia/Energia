@@ -2,7 +2,7 @@
 //
 // watchdog.h - Prototypes for the Watchdog Timer API
 //
-// Copyright (c) 2005-2012 Texas Instruments Incorporated.  All rights reserved.
+// Copyright (c) 2005-2013 Texas Instruments Incorporated.  All rights reserved.
 // Software License Agreement
 // 
 //   Redistribution and use in source and binary forms, with or without
@@ -33,7 +33,7 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 // 
-// This is part of revision 9453 of the Stellaris Peripheral Driver Library.
+// This is part of revision 1.0 of the Tiva Peripheral Driver Library.
 //
 //*****************************************************************************
 
@@ -64,24 +64,24 @@ extern "C"
 // Prototypes for the APIs.
 //
 //*****************************************************************************
-extern tBoolean WatchdogRunning(unsigned long ulBase);
-extern void WatchdogEnable(unsigned long ulBase);
-extern void WatchdogResetEnable(unsigned long ulBase);
-extern void WatchdogResetDisable(unsigned long ulBase);
-extern void WatchdogLock(unsigned long ulBase);
-extern void WatchdogUnlock(unsigned long ulBase);
-extern tBoolean WatchdogLockState(unsigned long ulBase);
-extern void WatchdogReloadSet(unsigned long ulBase, unsigned long ulLoadVal);
-extern unsigned long WatchdogReloadGet(unsigned long ulBase);
-extern unsigned long WatchdogValueGet(unsigned long ulBase);
-extern void WatchdogIntRegister(unsigned long ulBase, void(*pfnHandler)(void));
-extern void WatchdogIntUnregister(unsigned long ulBase);
-extern void WatchdogIntEnable(unsigned long ulBase);
-extern unsigned long WatchdogIntStatus(unsigned long ulBase, tBoolean bMasked);
-extern void WatchdogIntClear(unsigned long ulBase);
-extern void WatchdogIntTypeSet(unsigned long ulBase, unsigned long ulType);
-extern void WatchdogStallEnable(unsigned long ulBase);
-extern void WatchdogStallDisable(unsigned long ulBase);
+extern bool WatchdogRunning(uint32_t ui32Base);
+extern void WatchdogEnable(uint32_t ui32Base);
+extern void WatchdogResetEnable(uint32_t ui32Base);
+extern void WatchdogResetDisable(uint32_t ui32Base);
+extern void WatchdogLock(uint32_t ui32Base);
+extern void WatchdogUnlock(uint32_t ui32Base);
+extern bool WatchdogLockState(uint32_t ui32Base);
+extern void WatchdogReloadSet(uint32_t ui32Base, uint32_t ui32LoadVal);
+extern uint32_t WatchdogReloadGet(uint32_t ui32Base);
+extern uint32_t WatchdogValueGet(uint32_t ui32Base);
+extern void WatchdogIntRegister(uint32_t ui32Base, void (*pfnHandler)(void));
+extern void WatchdogIntUnregister(uint32_t ui32Base);
+extern void WatchdogIntEnable(uint32_t ui32Base);
+extern uint32_t WatchdogIntStatus(uint32_t ui32Base, bool bMasked);
+extern void WatchdogIntClear(uint32_t ui32Base);
+extern void WatchdogIntTypeSet(uint32_t ui32Base, uint32_t ui32Type);
+extern void WatchdogStallEnable(uint32_t ui32Base);
+extern void WatchdogStallDisable(uint32_t ui32Base);
 
 //*****************************************************************************
 //

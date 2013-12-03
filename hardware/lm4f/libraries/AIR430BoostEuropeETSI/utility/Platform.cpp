@@ -31,7 +31,7 @@ void A110x2500SpiInit()
   // Setup CSn line.
   pinMode (RF_SPI_CSN, OUTPUT);
   
-  #if defined( __LM4F120H5QR__ )
+  #if defined( __LM4F120H5QR__) || defined(__TM4C1233H6PM__ )
   // Select the correct SPI port to interface with AIR Booster Pack.
   SPI.setModule(2);
   #endif

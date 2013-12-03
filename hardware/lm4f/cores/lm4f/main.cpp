@@ -1,4 +1,5 @@
 #include <Energia.h>
+#include "inc/tm4c1233h6pm.h"
 #include "inc/lm4f120h5qr.h"
 #include "inc/hw_gpio.h"
 #include "driverlib/rom.h"
@@ -27,13 +28,12 @@ int main(void)
     HWREG(GPIO_PORTF_BASE + GPIO_O_LOCK) = 0x4C4F434B;
     HWREG(GPIO_PORTF_BASE + GPIO_O_CR) |= 0x1;
     HWREG(GPIO_PORTD_BASE + GPIO_O_LOCK) = 0x4C4F434B;
-    HWREG(GPIO_PORTD_BASE + GPIO_O_CR) |= 0x80;
+    HWREG(GPIO_PORTD_BASE + GPIO_O_CR) |= 0x8;
 
     setup();
 
     for (;;) {
         loop();
-        if (serialEventRun) serialEventRun();
     }
 
 }

@@ -2,7 +2,7 @@
 //
 // hw_eeprom.h - Macros used when accessing the EEPROM controller.
 //
-// Copyright (c) 2011-2012 Texas Instruments Incorporated.  All rights reserved.
+// Copyright (c) 2011-2013 Texas Instruments Incorporated.  All rights reserved.
 // Software License Agreement
 // 
 //   Redistribution and use in source and binary forms, with or without
@@ -33,7 +33,7 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 // 
-// This is part of revision 9453 of the Stellaris Firmware Development Package.
+// This is part of revision 1.0 of the Tiva Firmware Development Package.
 //
 //*****************************************************************************
 
@@ -87,9 +87,9 @@
 // register.
 //
 //*****************************************************************************
-#define EEPROM_EEOFFSET_OFFSET_M \
+#define EEPROM_EEOFFSET_OFFSET_M                                              \
                                 0x0000000F  // Current Address Offset
-#define EEPROM_EEOFFSET_OFFSET_S \
+#define EEPROM_EEOFFSET_OFFSET_S                                              \
                                 0
 
 //*****************************************************************************
@@ -106,10 +106,10 @@
 // register.
 //
 //*****************************************************************************
-#define EEPROM_EERDWRINC_VALUE_M \
+#define EEPROM_EERDWRINC_VALUE_M                                              \
                                 0xFFFFFFFF  // EEPROM Read or Write Data with
                                             // Increment
-#define EEPROM_EERDWRINC_VALUE_S \
+#define EEPROM_EERDWRINC_VALUE_S                                              \
                                 0
 
 //*****************************************************************************
@@ -140,7 +140,7 @@
 // register.
 //
 //*****************************************************************************
-#define EEPROM_EEUNLOCK_UNLOCK_M \
+#define EEPROM_EEUNLOCK_UNLOCK_M                                              \
                                 0xFFFFFFFF  // EEPROM Unlock
 
 //*****************************************************************************
@@ -149,7 +149,7 @@
 //
 //*****************************************************************************
 #define EEPROM_EEPROT_PROT_M    0x00000007  // Protection Control
-#define EEPROM_EEPROT_PROT_RWNPW \
+#define EEPROM_EEPROT_PROT_RWNPW                                              \
                                 0x00000000  // This setting is the default. If
                                             // there is no password, the block
                                             // is not protected and is readable
@@ -157,7 +157,7 @@
 #define EEPROM_EEPROT_PROT_RWPW 0x00000001  // If there is a password, the
                                             // block is readable or writable
                                             // only when unlocked
-#define EEPROM_EEPROT_PROT_RONPW \
+#define EEPROM_EEPROT_PROT_RONPW                                              \
                                 0x00000002  // If there is no password, the
                                             // block is readable, not writable
 #define EEPROM_EEPROT_ACC       0x00000008  // Access Control
@@ -216,30 +216,5 @@
 //*****************************************************************************
 #define EEPROM_PP_SIZE_M        0x0000001F  // EEPROM Size
 #define EEPROM_PP_SIZE_S        0
-
-//*****************************************************************************
-//
-// The following definitions are deprecated.
-//
-//*****************************************************************************
-#ifndef DEPRECATED
-
-//*****************************************************************************
-//
-// The following are deprecated defines for the EEPROM register offsets.
-//
-//*****************************************************************************
-#define EEPROM_EEPROMPP         0x400AFFC0  // EEPROM
-
-//*****************************************************************************
-//
-// The following are deprecated defines for the bit fields in the
-// EEPROM_EEPROMPP register.
-//
-//*****************************************************************************
-#define EEPROM_EEPROMPP_SIZE_M  0x0000001F  // EEPROM Size
-#define EEPROM_EEPROMPP_SIZE_S  0
-
-#endif
 
 #endif // __HW_EEPROM_H__

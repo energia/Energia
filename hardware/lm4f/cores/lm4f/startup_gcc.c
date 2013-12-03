@@ -38,10 +38,7 @@
 #include "Energia.h"
 #include "inc/hw_types.h"
 #include "inc/hw_nvic.h"
-#include <stdio.h>
-#include <stdarg.h>
-#include <sys/types.h>
-#include <sys/stat.h>
+
 //*****************************************************************************
 //
 // Forward declaration of the default fault handlers.
@@ -69,16 +66,8 @@ extern void GPIOFIntHandler(void);
  * create some overridable default signal handlers
  */
 __attribute__((weak)) void UARTIntHandler(void) {}
-__attribute__((weak)) void UARTIntHandler1(void) {}
-__attribute__((weak)) void UARTIntHandler2(void) {}
-__attribute__((weak)) void UARTIntHandler3(void) {}
-__attribute__((weak)) void UARTIntHandler4(void) {}
-__attribute__((weak)) void UARTIntHandler5(void) {}
-__attribute__((weak)) void UARTIntHandler6(void) {}
-__attribute__((weak)) void UARTIntHandler7(void) {}
 __attribute__((weak)) void ToneIntHandler(void) {}
 __attribute__((weak)) void I2CIntHandler(void) {}
-__attribute__((weak)) void Timer5IntHandler(void) {}
 
 //*****************************************************************************
 // System stack start determined by ldscript, normally highest ram address
@@ -117,7 +106,7 @@ void (* const g_pfnVectors[])(void) =
     GPIODIntHandler,                        // GPIO Port D
     GPIOEIntHandler,                        // GPIO Port E
     UARTIntHandler,                         // UART0 Rx and Tx
-    UARTIntHandler1,                        // UART1 Rx and Tx
+    UARTIntHandler,                         // UART1 Rx and Tx
     IntDefaultHandler,                      // SSI0 Rx and Tx
     I2CIntHandler,                          // I2C0 Master and Slave
     IntDefaultHandler,                      // PWM Fault
@@ -144,7 +133,7 @@ void (* const g_pfnVectors[])(void) =
     GPIOFIntHandler,                        // GPIO Port F
     IntDefaultHandler,                      // GPIO Port G
     IntDefaultHandler,                      // GPIO Port H
-    UARTIntHandler2,                         // UART2 Rx and Tx
+    UARTIntHandler,                         // UART2 Rx and Tx
     IntDefaultHandler,                      // SSI1 Rx and Tx
     IntDefaultHandler,                      // Timer 3 subtimer A
     IntDefaultHandler,                      // Timer 3 subtimer B
@@ -170,11 +159,11 @@ void (* const g_pfnVectors[])(void) =
     IntDefaultHandler,                      // GPIO Port L
     IntDefaultHandler,                      // SSI2 Rx and Tx
     IntDefaultHandler,                      // SSI3 Rx and Tx
-    UARTIntHandler3,                         // UART3 Rx and Tx
-    UARTIntHandler4,                         // UART4 Rx and Tx
-    UARTIntHandler5,                         // UART5 Rx and Tx
-    UARTIntHandler6,                         // UART6 Rx and Tx
-    UARTIntHandler7,                         // UART7 Rx and Tx
+    UARTIntHandler,                         // UART3 Rx and Tx
+    UARTIntHandler,                         // UART4 Rx and Tx
+    UARTIntHandler,                         // UART5 Rx and Tx
+    UARTIntHandler,                         // UART6 Rx and Tx
+    UARTIntHandler,                         // UART7 Rx and Tx
     0,                                      // Reserved
     0,                                      // Reserved
     0,                                      // Reserved
@@ -203,7 +192,7 @@ void (* const g_pfnVectors[])(void) =
     0,                                      // Reserved
     0,                                      // Reserved
     0,                                      // Reserved
-    Timer5IntHandler,                       // Timer 5 subtimer A
+    IntDefaultHandler,                      // Timer 5 subtimer A
     IntDefaultHandler,                      // Timer 5 subtimer B
     IntDefaultHandler,                      // Wide Timer 0 subtimer A
     IntDefaultHandler,                      // Wide Timer 0 subtimer B
@@ -220,8 +209,8 @@ void (* const g_pfnVectors[])(void) =
     IntDefaultHandler,                      // FPU
     IntDefaultHandler,                      // PECI 0
     IntDefaultHandler,                      // LPC 0
-    IntDefaultHandler,                      // I2C4 Master and Slave
-    IntDefaultHandler,                      // I2C5 Master and Slave
+    IntDefaultHandler,                          // I2C4 Master and Slave
+    IntDefaultHandler,                          // I2C5 Master and Slave
     IntDefaultHandler,                      // GPIO Port M
     IntDefaultHandler,                      // GPIO Port N
     IntDefaultHandler,                      // Quadrature Encoder 2
@@ -332,6 +321,37 @@ void ResetISR(void) {
     main();
 }
 
+void *__dso_handle = 0;
+
+/**
+ * _sbrk - newlib memory allocation routine
+ */
+typedef char *caddr_t;
+
+caddr_t _sbrk (int incr)
+{
+    double current_sp;
+    extern char end asm ("end"); /* Defined by linker */
+    static char * heap_end;
+    char * prev_heap_end;
+
+    if (heap_end == NULL) {
+        heap_end = &end; /* first ram address after bss and data */
+    }
+
+    prev_heap_end = heap_end;
+
+    // simplistic approach to prevent the heap from corrupting the stack
+    // TBD: review for alternatives
+    if ( heap_end + incr < (caddr_t)&current_sp ) {
+        heap_end += incr;
+        return (caddr_t) prev_heap_end;
+    }
+    else {
+        return NULL;
+    }
+}
+
 //*****************************************************************************
 //
 // This is the code that gets called when the processor receives a NMI.  This
@@ -378,88 +398,4 @@ static void IntDefaultHandler(void) {
     while (1) {
         ; // trap any handler not defined
     }
-}
-
-/* syscall stuff */
-void *__dso_handle = 0;
-
-/**
- * _sbrk - newlib memory allocation routine
- */
-typedef char *caddr_t;
-
-caddr_t _sbrk (int incr)
-{
-    double current_sp;
-    extern char end asm ("end"); /* Defined by linker */
-    static char * heap_end;
-    char * prev_heap_end;
-
-    if (heap_end == NULL) {
-        heap_end = &end; /* first ram address after bss and data */
-    }
-
-    prev_heap_end = heap_end;
-
-    // simplistic approach to prevent the heap from corrupting the stack
-    // TBD: review for alternatives
-    if ( heap_end + incr < (caddr_t)&current_sp ) {
-        heap_end += incr;
-        return (caddr_t) prev_heap_end;
-    }
-    else {
-        return NULL;
-    }
-}
-
-extern int link( char *cOld, char *cNew )
-{
-    return -1 ;
-}
-
-extern int _close( int file )
-{
-    return -1 ;
-}
-
-extern int _fstat( int file, struct stat *st )
-{
-    st->st_mode = S_IFCHR ;
-
-    return 0 ;
-}
-
-extern int _isatty( int file )
-{
-    return 1 ;
-}
-
-extern int _lseek( int file, int ptr, int dir )
-{
-    return 0 ;
-}
-
-extern int _read(int file, char *ptr, int len)
-{
-    return 0 ;
-}
-
-extern int _write( int file, char *ptr, int len )
-{
-    return len;
-}
-
-extern void _kill( int pid, int sig )
-{
-    return ;
-}
-
-extern int _getpid ( void )
-{
-    return -1 ;
-}
-
-extern void _exit (void)
-{
-
 }

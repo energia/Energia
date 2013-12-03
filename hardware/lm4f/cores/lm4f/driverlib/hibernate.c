@@ -2,7 +2,7 @@
 //
 // hibernate.c - Driver for the Hibernation module
 //
-// Copyright (c) 2007-2012 Texas Instruments Incorporated.  All rights reserved.
+// Copyright (c) 2007-2013 Texas Instruments Incorporated.  All rights reserved.
 // Software License Agreement
 // 
 //   Redistribution and use in source and binary forms, with or without
@@ -33,7 +33,7 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 // 
-// This is part of revision 9453 of the Stellaris Peripheral Driver Library.
+// This is part of revision 1.0 of the Tiva Peripheral Driver Library.
 //
 //*****************************************************************************
 
@@ -44,6 +44,9 @@
 //
 //*****************************************************************************
 
+#include <stdbool.h>
+#include <stdint.h>
+#include <time.h>
 #include "inc/hw_hibernate.h"
 #include "inc/hw_ints.h"
 #include "inc/hw_sysctl.h"
@@ -69,13 +72,6 @@
 
 //*****************************************************************************
 //
-// The calculated number of delay loops to achieve the write delay.
-//
-//*****************************************************************************
-static unsigned long g_ulWriteDelay;
-
-//*****************************************************************************
-//
 //! \internal
 //!
 //! Polls until the write complete (WRC) bit in the hibernate control register
@@ -83,10 +79,10 @@ static unsigned long g_ulWriteDelay;
 //!
 //! \param None.
 //!
-//! On non-Fury-class devices, the Hibernation module provides an indication
-//! when any write is completed.  This mechanism is used to pace writes to the
-//! module.  This function merely polls this bit and returns as soon as it is
-//! set.  At this point, it is safe to perform another write to the module.
+//! The Hibernation module provides an indication when any write is completed.
+//! This mechanism is used to pace writes to the module.  This function merely
+//! polls this bit and returns as soon as it is set.  At this point, it is safe
+//! to perform another write to the module.
 //!
 //! \return None.
 //
@@ -95,24 +91,10 @@ void
 HibernateWriteComplete(void)
 {
     //
-    // Add a delay here to enforce the required delay between write accesses to
-    // certain Hibernation module registers.
+    // Spin until the write complete bit is set.
     //
-    if(CLASS_IS_FURY)
+    while(!(HWREG(HIB_CTL) & HIB_CTL_WRC))
     {
-        //
-        // Delay a fixed time on Fury-class devices
-        //
-        SysCtlDelay(g_ulWriteDelay);
-    }
-    else
-    {
-        //
-        // Spin until the write complete bit is set, for later devices.
-        //
-        while(!(HWREG(HIB_CTL) & HIB_CTL_WRC))
-        {
-        }
     }
 }
 
@@ -120,7 +102,7 @@ HibernateWriteComplete(void)
 //
 //! Enables the Hibernation module for operation.
 //!
-//! \param ulHibClk is the rate of the clock supplied to the Hibernation
+//! \param ui32HibClk is the rate of the clock supplied to the Hibernation
 //! module.
 //!
 //! This function enables the Hibernation module for operation.  This function
@@ -131,15 +113,11 @@ HibernateWriteComplete(void)
 //! constant and known (to save the code/execution overhead of a call to
 //! SysCtlClockGet()).
 //!
-//! This function replaces the original HibernateEnable() API and performs the
-//! same actions.  A macro is provided in <tt>hibernate.h</tt> to map the
-//! original API to this API.
-//!
 //! \return None.
 //
 //*****************************************************************************
 void
-HibernateEnableExpClk(unsigned long ulHibClk)
+HibernateEnableExpClk(uint32_t ui32HibClk)
 {
     //
     // Turn on the clock enable bit.
@@ -147,24 +125,9 @@ HibernateEnableExpClk(unsigned long ulHibClk)
     HWREG(HIB_CTL) |= HIB_CTL_CLK32EN;
 
     //
-    // For Fury-class devices, compute the number of delay loops that must be
-    // used to achieve the desired delay for writes to the hibernation
-    // registers.  This value is used in calls to SysCtlDelay().
+    // Wait for write complete following register load (above).
     //
-    if(CLASS_IS_FURY)
-    {
-        g_ulWriteDelay = (((ulHibClk / 1000) * DELAY_USECS) /
-                          (1000L * LOOP_CYCLES));
-        g_ulWriteDelay++;
-    }
-    else
-    {
-        //
-        // Non-fury parts must wait for write complete following register
-        // load (above).
-        //
-        HibernateWriteComplete();
-    }
+    HibernateWriteComplete();
 }
 
 //*****************************************************************************
@@ -193,109 +156,61 @@ HibernateDisable(void)
 
 //*****************************************************************************
 //
-//! Selects the clock input for the Hibernation module.
-//!
-//! \param ulClockInput specifies the clock input.
-//!
-//! This function configures the clock input for the Hibernation module.  The
-//! configuration option chosen depends entirely on hardware design.  The clock
-//! input for the module is either a 32.768-kHz oscillator/crystal or a
-//! 4.194304-MHz crystal.
-//! The \e ulClockFlags parameter must be one of the following:
-//!
-//! - \b HIBERNATE_CLOCK_SEL_RAW - use the raw signal from a 32.768 kHz
-//!   oscillator.
-//! - \b HIBERNATE_CLOCK_SEL_DIV128 - use the 4.194304-MHz crystal input,
-//!   divided by 128.
-//!
-//! \note The \b HIBERNATE_CLOCK_SEL_DIV128 setting is not available on all
-//! Stellaris devices.  Please consult the data sheet to determine if the
-//! device that you are using supports the 4.194304 crystal as a source for the
-//! Hibernation module.
-//!
-//! \return None.
-//
-//*****************************************************************************
-void
-HibernateClockSelect(unsigned long ulClockInput)
-{
-    //
-    // Check the arguments.
-    //
-    ASSERT((ulClockInput == HIBERNATE_CLOCK_SEL_RAW) ||
-           (ulClockInput == HIBERNATE_CLOCK_SEL_DIV128));
-
-    //
-    // Set the clock selection bit according to the parameter.
-    //
-    HWREG(HIB_CTL) = ulClockInput | (HWREG(HIB_CTL) & ~HIB_CTL_CLKSEL);
-
-    //
-    // Wait for write completion
-    //
-    HibernateWriteComplete();
-}
-
-//*****************************************************************************
-//
 //! Configures the clock input for the Hibernation module.
 //!
-//! \param ulConfig is one of the possible configuration options for the clock
-//! input listed below.
+//! \param ui32Config is one of the possible configuration options for the
+//! clock input listed below.
 //!
 //! This function is used to configure the clock input for the Hibernation
-//! module.  The \e ulConfig parameter can be one of the following values:
+//! module.  The \e ui32Config parameter can be one of the following values:
 //!
 //! - \b HIBERNATE_OSC_DISABLE specifies that the internal oscillator
-//! is powered off and either an externally supplied clock source or no clock
-//! source is being used.
+//! is powered off.  This is used when an externally supplied oscillator is
+//! connected to the XOSC0 pin or to save power when the LFIOSC is used in
+//! devices that have an LFIOSC in the hibernation module.
 //! - \b HIBERNATE_OSC_HIGHDRIVE specifies a higher drive strength when a 24pF
 //! filter capacitor is used with a crystal.
 //! - \b HIBERNATE_OSC_LOWDRIVE specifies a lower drive strength when a 12pF
 //! filter capacitor is used with a crystal.
 //!
-//!
 //! The \b HIBERNATE_OSC_DISABLE option is used to disable and power down the
 //! internal oscillator if an external clock source or no clock source is used
-//! instead of a 32.768 kHz crystal.  In the case where an external crystal is
+//! instead of a 32.768-kHz crystal.  In the case where an external crystal is
 //! used, either the \b HIBERNATE_OSC_HIGHDRIVE or \b HIBERNATE_OSC_LOWDRIVE is
-//! used.  This optimizes the oscillator drive strength to match the size of
-//! the filter capacitor that is used with the external crystal circuit.
-//!
-//! \note The ability to configure the clock input in the Hibernation
-//! module is not available on all Stellaris devices.  Please consult the data
-//! sheet for the Stellaris device that you are using to determine if this
-//! feature is available.
+//! used.  These settings optimizes the oscillator drive strength to match the
+//! size of the filter capacitor that is used with the external crystal
+//! circuit.
 //!
 //! \return None.
 //
 //*****************************************************************************
 void
-HibernateClockConfig(unsigned long ulConfig)
+HibernateClockConfig(uint32_t ui32Config)
 {
-    unsigned long ulHIBCtl;
+    uint32_t ui32HIBCtl;
 
-    ASSERT((ulConfig & (HIBERNATE_OSC_HIGHDRIVE | HIBERNATE_OSC_LOWDRIVE |
-                        HIBERNATE_OSC_DISABLE)) == 0);
+    ASSERT((ui32Config & (HIBERNATE_OSC_HIGHDRIVE | HIBERNATE_OSC_LOWDRIVE |
+                          HIBERNATE_OSC_DISABLE)) == 0);
 
-    ulHIBCtl = HWREG(HIB_CTL);
+    ui32HIBCtl = HWREG(HIB_CTL);
 
     //
     // Clear the current configuration bits.
     //
-    ulHIBCtl &= ~(HIBERNATE_OSC_HIGHDRIVE | HIBERNATE_OSC_LOWDRIVE |
-                  HIBERNATE_OSC_DISABLE);
+    ui32HIBCtl &= ~(HIBERNATE_OSC_HIGHDRIVE | HIBERNATE_OSC_LOWDRIVE |
+                    HIBERNATE_OSC_DISABLE);
 
     //
     // Set the new configuration bits.
     //
-    ulHIBCtl |= ulConfig & (HIBERNATE_OSC_HIGHDRIVE | HIBERNATE_OSC_LOWDRIVE |
-                            HIBERNATE_OSC_DISABLE);
+    ui32HIBCtl |= ui32Config & (HIBERNATE_OSC_HIGHDRIVE |
+                                HIBERNATE_OSC_LOWDRIVE |
+                                HIBERNATE_OSC_DISABLE);
 
     //
     // Set the hibernation clocking configuration.
     //
-    HWREG(HIB_CTL) = ulHIBCtl;
+    HWREG(HIB_CTL) = ui32HIBCtl;
 
     //
     // Wait for write completion
@@ -361,7 +276,7 @@ HibernateRTCDisable(void)
 //! This function forces the Hibernation module to initiate a check of the
 //! battery voltage immediately rather than waiting for the next check interval
 //! to pass.  After calling this function, the application should call the
-//! () function and wait for the function to return a zero
+//! HibernateBatCheckDone() function and wait for the function to return a zero
 //! value before calling the HibernateIntStatus() to check if the return code
 //! has the \b HIBERNATE_INT_LOW_BAT set.  If \b HIBERNATE_INT_LOW_BAT is set,
 //! the battery level is low.  The application can also enable the
@@ -369,7 +284,6 @@ HibernateRTCDisable(void)
 //! that the battery level is low.
 //!
 //! \note A hibernation request is held off if a battery check is in progress.
-//! This function is only available on some Stellaris devices.
 //!
 //! \return None.
 //
@@ -400,13 +314,11 @@ HibernateBatCheckStart(void)
 //! check if the battery was low by checking if the value returned has the
 //! \b HIBERNATE_INT_LOW_BAT set.
 //!
-//! \note This function is only available on some Stellaris devices.
-//!
 //! \return The value is zero when the battery level check has completed or
 //! non-zero if the check is still in process.
 //
 //*****************************************************************************
-unsigned long
+uint32_t
 HibernateBatCheckDone(void)
 {
     //
@@ -419,39 +331,36 @@ HibernateBatCheckDone(void)
 //
 //! Configures the wake conditions for the Hibernation module.
 //!
-//! \param ulWakeFlags specifies which conditions should be used for waking.
+//! \param ui32WakeFlags specifies which conditions should be used for waking.
 //!
 //! This function enables the conditions under which the Hibernation module
-//! wakes.  The \e ulWakeFlags parameter is the logical OR of any combination
+//! wakes.  The \e ui32WakeFlags parameter is the logical OR of any combination
 //! of the following:
 //!
 //! - \b HIBERNATE_WAKE_PIN - wake when the external wake pin is asserted.
-//! - \b HIBERNATE_WAKE_RTC - wake when one of the RTC matches occurs.
+//! - \b HIBERNATE_WAKE_RTC - wake when the RTC match occurs.
 //! - \b HIBERNATE_WAKE_LOW_BAT - wake from hibernate due to a low-battery
 //! level being detected.
-//!
-//! \note The \b HIBERNATE_WAKE_LOW_BAT parameter is only available on some
-//! Stellaris devices.
 //!
 //! \return None.
 //
 //*****************************************************************************
 void
-HibernateWakeSet(unsigned long ulWakeFlags)
+HibernateWakeSet(uint32_t ui32WakeFlags)
 {
     //
     // Check the arguments.
     //
-    ASSERT(!(ulWakeFlags & ~(HIBERNATE_WAKE_PIN | HIBERNATE_WAKE_RTC |
+    ASSERT(!(ui32WakeFlags & ~(HIBERNATE_WAKE_PIN | HIBERNATE_WAKE_RTC |
                              HIBERNATE_WAKE_LOW_BAT)));
 
     //
     // Set the specified wake flags in the control register.
     //
-    HWREG(HIB_CTL) = (ulWakeFlags |
-                      (HWREG(HIB_CTL) & ~(HIBERNATE_WAKE_PIN |
-                                          HIBERNATE_WAKE_RTC |
-                                          HIBERNATE_WAKE_LOW_BAT)));
+    HWREG(HIB_CTL) = (ui32WakeFlags | (HWREG(HIB_CTL) &
+                                      ~(HIBERNATE_WAKE_PIN |
+                                        HIBERNATE_WAKE_RTC |
+                                        HIBERNATE_WAKE_LOW_BAT)));
 
     //
     // Wait for write completion
@@ -468,18 +377,18 @@ HibernateWakeSet(unsigned long ulWakeFlags)
 //! Hibernation module.  The return value is a combination of the following
 //! flags:
 //!
-//! - \b HIBERNATE_WAKE_PIN - wake when the external wake pin is asserted.
-//! - \b HIBERNATE_WAKE_RTC - wake when one of the RTC matches occurs.
-//! - \b HIBERNATE_WAKE_LOW_BAT - wake from hibernate due to a low-battery
-//! level being detected.
+//! - \b HIBERNATE_WAKE_PIN - wake when the external wake pin is asserted
+//! - \b HIBERNATE_WAKE_RTC - wake when one of the RTC matches occurs
+//! - \b HIBERNATE_WAKE_LOW_BAT - wake from hibernation due to a low-battery
+//! level being detected
 //!
 //! \note The \b HIBERNATE_WAKE_LOW_BAT parameter is only available on some
-//! Stellaris devices.
+//! Tiva devices.
 //!
 //! \return Returns flags indicating the configured wake conditions.
 //
 //*****************************************************************************
-unsigned long
+uint32_t
 HibernateWakeGet(void)
 {
     //
@@ -494,7 +403,7 @@ HibernateWakeGet(void)
 //
 //! Configures the low-battery detection.
 //!
-//! \param ulLowBatFlags specifies behavior of low-battery detection.
+//! \param ui32LowBatFlags specifies behavior of low-battery detection.
 //!
 //! This function enables the low-battery detection and whether hibernation is
 //! allowed if a low-battery is detected.  If low-battery detection is enabled,
@@ -502,45 +411,43 @@ HibernateWakeGet(void)
 //! register, which can also trigger an interrupt.  Optionally, hibernation can
 //! be aborted if a low-battery is detected.
 //!
-//! The \e ulLowBatFlags parameter is one of the following values:
+//! The \e ui32LowBatFlags parameter is one of the following values:
 //!
-//! - \b HIBERNATE_LOW_BAT_DETECT - detect a low-battery condition.
+//! - \b HIBERNATE_LOW_BAT_DETECT - detect a low-battery condition
 //! - \b HIBERNATE_LOW_BAT_ABORT - detect a low-battery condition, and abort
-//!   hibernation if low-battery is detected.
+//!   hibernation if low-battery is detected
 //!
-//! The other setting in the \e ulLowBatFlags allows the caller to set one of
+//! The other setting in the \e ui32LowBatFlags allows the caller to set one of
 //! the following voltage level trigger values :
 //!
-//! - \b HIBERNATE_LOW_BAT_1_9V - voltage low level is 1.9V
-//! - \b HIBERNATE_LOW_BAT_2_1V - voltage low level is 2.1V
-//! - \b HIBERNATE_LOW_BAT_2_3V - voltage low level is 2.3V
-//! - \b HIBERNATE_LOW_BAT_2_5V - voltage low level is 2.5V
+//! - \b HIBERNATE_LOW_BAT_1_9V - voltage low level is 1.9 V
+//! - \b HIBERNATE_LOW_BAT_2_1V - voltage low level is 2.1 V
+//! - \b HIBERNATE_LOW_BAT_2_3V - voltage low level is 2.3 V
+//! - \b HIBERNATE_LOW_BAT_2_5V - voltage low level is 2.5 V
 //!
-//! \b Example: Abort hibernate if the voltage level is below 2.1V.
+//! \b Example: Abort hibernate if the voltage level is below 2.1 V.
 //!
 //! \verbatim
 //! HibernateLowBatSet(HIBERNATE_LOW_BAT_ABORT | HIBERNATE_LOW_BAT_2_1V);
 //! \endverbatim
 //!
-//! \note The parameters with the specific voltage levels are only available on
-//! some Stellaris devices.
-//!
 //! \return None.
 //
 //*****************************************************************************
 void
-HibernateLowBatSet(unsigned long ulLowBatFlags)
+HibernateLowBatSet(uint32_t ui32LowBatFlags)
 {
     //
     // Check the arguments.
     //
-    ASSERT(!(ulLowBatFlags & ~(HIB_CTL_VBATSEL_M | HIBERNATE_LOW_BAT_ABORT)));
+    ASSERT(!(ui32LowBatFlags &
+             ~(HIB_CTL_VBATSEL_M | HIBERNATE_LOW_BAT_ABORT)));
 
     //
     // Set the low-battery detect and abort bits in the control register,
     // according to the parameter.
     //
-    HWREG(HIB_CTL) = (ulLowBatFlags |
+    HWREG(HIB_CTL) = (ui32LowBatFlags |
                       (HWREG(HIB_CTL) & ~(HIB_CTL_VBATSEL_M
                                           | HIBERNATE_LOW_BAT_ABORT)));
 
@@ -563,7 +470,7 @@ HibernateLowBatSet(unsigned long ulLowBatFlags)
 //! \return Returns a value indicating the configured low-battery detection.
 //
 //*****************************************************************************
-unsigned long
+uint32_t
 HibernateLowBatGet(void)
 {
     //
@@ -577,7 +484,7 @@ HibernateLowBatGet(void)
 //
 //! Sets the value of the real time clock (RTC) counter.
 //!
-//! \param ulRTCValue is the new value for the RTC.
+//! \param ui32RTCValue is the new value for the RTC.
 //!
 //! This function sets the value of the RTC.  The RTC count seconds if the
 //! hardware is configured correctly.  The RTC must be enabled by calling
@@ -587,12 +494,12 @@ HibernateLowBatGet(void)
 //
 //*****************************************************************************
 void
-HibernateRTCSet(unsigned long ulRTCValue)
+HibernateRTCSet(uint32_t ui32RTCValue)
 {
     //
     // Write the new RTC value to the RTC load register.
     //
-    HWREG(HIB_RTCLD) = ulRTCValue;
+    HWREG(HIB_RTCLD) = ui32RTCValue;
 
     //
     // Wait for write completion
@@ -609,7 +516,7 @@ HibernateRTCSet(unsigned long ulRTCValue)
 //! \return Returns the value of the RTC counter in seconds.
 //
 //*****************************************************************************
-unsigned long
+uint32_t
 HibernateRTCGet(void)
 {
     //
@@ -622,9 +529,10 @@ HibernateRTCGet(void)
 //
 //! Sets the value of the RTC match 0 register.
 //!
-//! \param ulMatch is the value for the match register.
+//! \param ui32Match is the index of the match register.
+//! \param ui32Value is the value for the match register.
 //!
-//! This function sets the match 0 register for the RTC.  The Hibernation
+//! This function sets a match register for the RTC.  The Hibernation
 //! module can be configured to wake from hibernation, and/or generate an
 //! interrupt when the value of the RTC counter is the same as the match
 //! register.
@@ -633,12 +541,14 @@ HibernateRTCGet(void)
 //
 //*****************************************************************************
 void
-HibernateRTCMatch0Set(unsigned long ulMatch)
+HibernateRTCMatchSet(uint32_t ui32Match, uint32_t ui32Value)
 {
+    ASSERT(ui32Match == 0);
+
     //
     // Write the new match value to the match register.
     //
-    HWREG(HIB_RTCM0) = ulMatch;
+    HWREG(HIB_RTCM0) = ui32Value;
 
     //
     // Wait for write completion
@@ -648,16 +558,20 @@ HibernateRTCMatch0Set(unsigned long ulMatch)
 
 //*****************************************************************************
 //
-//! Gets the value of the RTC match 0 register.
+//! Gets the value of the requested RTC match register.
 //!
-//! This function gets the value of the match 0 register for the RTC.
+//! \param ui32Match is the index of the match register.
 //!
-//! \return Returns the value of the match register.
+//! This function gets the value of the match register for the RTC.
+//!
+//! \return Returns the value of the requested match register.
 //
 //*****************************************************************************
-unsigned long
-HibernateRTCMatch0Get(void)
+uint32_t
+HibernateRTCMatchGet(uint32_t ui32Match)
 {
+    ASSERT(ui32Match == 0);
+
     //
     // Return the value of the match register to the caller.
     //
@@ -666,84 +580,29 @@ HibernateRTCMatch0Get(void)
 
 //*****************************************************************************
 //
-//! Sets the value of the RTC match 1 register.
-//!
-//! \param ulMatch is the value for the match register.
-//!
-//! This function sets the match 1 register for the RTC.  The Hibernation
-//! module can be configured to wake from hibernation, and/or generate an
-//! interrupt when the value of the RTC counter is the same as the match
-//! register.
-//!
-//! \note The Hibernation RTC Match 1 feature is not available on all Stellaris
-//! devices.  Please consult the data sheet for the Stellaris device that you
-//! are using to determine if this feature is available.
-//!
-//! \return None.
-//
-//*****************************************************************************
-void
-HibernateRTCMatch1Set(unsigned long ulMatch)
-{
-    //
-    // Write the new match value to the match register.
-    //
-    HWREG(HIB_RTCM1) = ulMatch;
-
-    //
-    // Wait for write completion
-    //
-    HibernateWriteComplete();
-}
-
-//*****************************************************************************
-//
-//! Gets the value of the RTC match 1 register.
-//!
-//! This function gets the value of the match 1 register for the RTC.
-//!
-//! \note The Hibernation RTC Match 1 feature is not available on all Stellaris
-//! devices.  Please consult the data sheet for the Stellaris device that you
-//! are using to determine if this feature is available.
-//!
-//! \return Returns the value of the match register.
-//
-//*****************************************************************************
-unsigned long
-HibernateRTCMatch1Get(void)
-{
-    //
-    // Return the value of the match register to the caller.
-    //
-    return(HWREG(HIB_RTCM1));
-}
-
-//*****************************************************************************
-//
 //! Sets the value of the RTC sub second match 0 register.
 //!
-//! \param ulMatch is the value for the sub second match register.
+//! \param ui32Match is the index of the match register.
+//! \param ui32Value is the value for the sub second match register.
 //!
-//! This function sets the sub second match 0 register for the RTC in 1/32768
+//! This function sets the sub second match register for the RTC in 1/32768
 //! of a second increments.  The Hibernation module can be configured to wake
 //! from hibernation, and/or generate an interrupt when the value of the RTC
 //! counter is the same as the match combined with the sub second match
 //! register.
 //!
-//! \note The Hibernation sub second RTC Match 0 feature is not available on
-//! all Stellaris devices.  Please consult the data sheet for the Stellaris
-//! device that you are using to determine if this feature is available.
-//!
 //! \return None.
 //
 //*****************************************************************************
 void
-HibernateRTCSSMatch0Set(unsigned long ulMatch)
+HibernateRTCSSMatchSet(uint32_t ui32Match, uint32_t ui32Value)
 {
+    ASSERT(ui32Match == 0);
+
     //
     // Write the new sub second match value to the sub second match register.
     //
-    HWREG(HIB_RTCSS) = ulMatch << HIB_RTCSS_RTCSSM_S;
+    HWREG(HIB_RTCSS) = ui32Value << HIB_RTCSS_RTCSSM_S;
 
     //
     // Wait for write complete to be signaled on later devices.
@@ -753,21 +612,21 @@ HibernateRTCSSMatch0Set(unsigned long ulMatch)
 
 //*****************************************************************************
 //
-//! Returns the value of the RTC sub second match 0 register.
+//! Returns the value of the requested RTC sub second match register.
 //!
-//! This function returns the current value of the sub second match 0 register
+//! \param ui32Match is the index of the match register.
+//!
+//! This function returns the current value of the sub second match register
 //! for the RTC.  The value returned is in 1/32768 second increments.
 //!
-//! \note The Hibernation sub second RTC Match 0 feature is not available on
-//! all Stellaris devices.  Please consult the data sheet for the Stellaris
-//! device that you are using to determine if this feature is available.
-//!
-//! \return Returns the value of the sub section match register.
+//! \return Returns the value of the requested sub section match register.
 //
 //*****************************************************************************
-unsigned long
-HibernateRTCSSMatch0Get(void)
+uint32_t
+HibernateRTCSSMatchGet(uint32_t ui32Match)
 {
+    ASSERT(ui32Match == 0);
+
     //
     // Read the current second RTC count.
     //
@@ -778,17 +637,13 @@ HibernateRTCSSMatch0Get(void)
 //
 //! Returns the current value of the RTC sub second count.
 //!
-//! This function returns the current value of the sub second count for the
-//! for the RTC in 1/32768 of a second increments.
-//!
-//! \note The Hibernation sub second RTC Match 0 feature is not available on
-//! all Stellaris devices.  Please consult the data sheet for the Stellaris
-//! device that you are using to determine if this feature is available.
+//! This function returns the current value of the sub second count for the RTC
+//! in 1/32768 of a second increments.
 //!
 //! \return The current RTC sub second count in 1/32768 seconds.
 //
 //*****************************************************************************
-unsigned long
+uint32_t
 HibernateRTCSSGet(void)
 {
     //
@@ -801,7 +656,7 @@ HibernateRTCSSGet(void)
 //
 //! Sets the value of the RTC pre-divider trim register.
 //!
-//! \param ulTrim is the new value for the pre-divider trim register.
+//! \param ui32Trim is the new value for the pre-divider trim register.
 //!
 //! This function sets the value of the pre-divider trim register.  The input
 //! time source is divided by the pre-divider to achieve a one-second clock
@@ -816,17 +671,17 @@ HibernateRTCSSGet(void)
 //
 //*****************************************************************************
 void
-HibernateRTCTrimSet(unsigned long ulTrim)
+HibernateRTCTrimSet(uint32_t ui32Trim)
 {
     //
     // Check the arguments.
     //
-    ASSERT(ulTrim < 0x10000);
+    ASSERT(ui32Trim < 0x10000);
 
     //
     // Write the new trim value to the trim register.
     //
-    HWREG(HIB_RTCT) = ulTrim;
+    HWREG(HIB_RTCT) = ui32Trim;
 
     //
     // Wait for write completion
@@ -845,7 +700,7 @@ HibernateRTCTrimSet(unsigned long ulTrim)
 //! \return None.
 //
 //*****************************************************************************
-unsigned long
+uint32_t
 HibernateRTCTrimGet(void)
 {
     //
@@ -858,9 +713,9 @@ HibernateRTCTrimGet(void)
 //
 //! Stores data in the battery-backed memory of the Hibernation module.
 //!
-//! \param pulData points to the data that the caller wants to store in the
+//! \param pui32Data points to the data that the caller wants to store in the
 //! memory of the Hibernation module.
-//! \param ulCount is the count of 32-bit words to store.
+//! \param ui32Count is the count of 32-bit words to store.
 //!
 //! Stores a set of data in the Hibernation module battery-backed memory.
 //! This memory is preserved when the power to the processor is turned off,
@@ -869,34 +724,29 @@ HibernateRTCTrimGet(void)
 //! battery-backed memory.  The data can be restored by calling the
 //! HibernateDataGet() function.
 //!
-//! \note The amount of memory available in the Hibernation module varies
-//! across Stellaris devices.  Please consult the data sheet for the Stellaris
-//! device that you are using to determine the amount of memory available in
-//! the Hibernation module.
-//!
 //! \return None.
 //
 //*****************************************************************************
 void
-HibernateDataSet(unsigned long *pulData, unsigned long ulCount)
+HibernateDataSet(uint32_t *pui32Data, uint32_t ui32Count)
 {
-    unsigned long ulIdx;
+    uint32_t ui32Idx;
 
     //
     // Check the arguments.
     //
-    ASSERT(ulCount <= 64);
-    ASSERT(pulData != 0);
+    ASSERT(ui32Count <= 64);
+    ASSERT(pui32Data != 0);
 
     //
     // Loop through all the words to be stored, storing one at a time.
     //
-    for(ulIdx = 0; ulIdx < ulCount; ulIdx++)
+    for(ui32Idx = 0; ui32Idx < ui32Count; ui32Idx++)
     {
         //
         // Write a word to the battery-backed storage area.
         //
-        HWREG(HIB_DATA + (ulIdx * 4)) = pulData[ulIdx];
+        HWREG(HIB_DATA + (ui32Idx * 4)) = pui32Data[ui32Idx];
 
         //
         // Wait for write completion
@@ -910,18 +760,18 @@ HibernateDataSet(unsigned long *pulData, unsigned long ulCount)
 //! Reads a set of data from the battery-backed memory of the Hibernation
 //! module.
 //!
-//! \param pulData points to a location where the data that is read from the
+//! \param pui32Data points to a location where the data that is read from the
 //! Hibernation module is stored.
-//! \param ulCount is the count of 32-bit words to read.
+//! \param ui32Count is the count of 32-bit words to read.
 //!
 //! This function retrieves a set of data from the Hibernation module
-//! battery-backed memory that was previously stored with the HibernateDataSet()
-//! function.  The caller must ensure that \e pulData points to a large enough
-//! memory block to hold all the data that is read from the battery-backed
-//! memory.
+//! battery-backed memory that was previously stored with the
+//! HibernateDataSet() function.  The caller must ensure that \e pui32Data
+//! points to a large enough memory block to hold all the data that is read
+//! from the battery-backed memory.
 //!
 //! \note The amount of memory available in the Hibernation module varies
-//! across Stellaris devices.  Please consult the data sheet for the Stellaris
+//! across Tiva devices.  Please consult the data sheet for the Tiva
 //! device that you are using to determine the amount of memory available in
 //! the Hibernation module.
 //!
@@ -929,26 +779,26 @@ HibernateDataSet(unsigned long *pulData, unsigned long ulCount)
 //
 //*****************************************************************************
 void
-HibernateDataGet(unsigned long *pulData, unsigned long ulCount)
+HibernateDataGet(uint32_t *pui32Data, uint32_t ui32Count)
 {
-    unsigned long ulIdx;
+    uint32_t ui32Idx;
 
     //
     // Check the arguments.
     //
-    ASSERT(ulCount <= 64);
-    ASSERT(pulData != 0);
+    ASSERT(ui32Count <= 64);
+    ASSERT(pui32Data != 0);
 
     //
     // Loop through all the words to be restored, reading one at a time.
     //
-    for(ulIdx = 0; ulIdx < ulCount; ulIdx++)
+    for(ui32Idx = 0; ui32Idx < ui32Count; ui32Idx++)
     {
         //
         // Read a word from the battery-backed storage area.  No delay is
         // required between reads.
         //
-        pulData[ulIdx] = HWREG(HIB_DATA + (ulIdx * 4));
+        pui32Data[ui32Idx] = HWREG(HIB_DATA + (ui32Idx * 4));
     }
 }
 
@@ -1005,43 +855,36 @@ HibernateRequest(void)
 //
 //! Enables interrupts for the Hibernation module.
 //!
-//! \param ulIntFlags is the bit mask of the interrupts to be enabled.
+//! \param ui32IntFlags is the bit mask of the interrupts to be enabled.
 //!
 //! This function enables the specified interrupt sources from the Hibernation
 //! module.
 //!
-//! The \e ulIntFlags parameter must be the logical OR of any combination of
+//! The \e ui32IntFlags parameter must be the logical OR of any combination of
 //! the following:
 //!
 //! - \b HIBERNATE_INT_WR_COMPLETE - write complete interrupt
 //! - \b HIBERNATE_INT_PIN_WAKE - wake from pin interrupt
 //! - \b HIBERNATE_INT_LOW_BAT - low-battery interrupt
 //! - \b HIBERNATE_INT_RTC_MATCH_0 - RTC match 0 interrupt
-//! - \b HIBERNATE_INT_RTC_MATCH_1 - RTC match 1 interrupt
-//!
-//! \note The \b HIBERNATE_INT_WR_COMPLETE and \b HIBERNATE_INT_RTC_MATCH_1
-//! settings are not available on all Stellaris devices.  Please consult the
-//! data sheet for the Stellaris device that you are using to determine if
-//! these interrupt sources are available.
 //!
 //! \return None.
 //
 //*****************************************************************************
 void
-HibernateIntEnable(unsigned long ulIntFlags)
+HibernateIntEnable(uint32_t ui32IntFlags)
 {
     //
     // Check the arguments.
     //
-    ASSERT(!(ulIntFlags & ~(HIBERNATE_INT_PIN_WAKE | HIBERNATE_INT_LOW_BAT |
-                            HIBERNATE_INT_RTC_MATCH_0 |
-                            HIBERNATE_INT_RTC_MATCH_1 |
-                            HIBERNATE_INT_WR_COMPLETE)));
+    ASSERT(!(ui32IntFlags & ~(HIBERNATE_INT_PIN_WAKE | HIBERNATE_INT_LOW_BAT |
+                              HIBERNATE_INT_RTC_MATCH_0 |
+                              HIBERNATE_INT_WR_COMPLETE)));
 
     //
     // Set the specified interrupt mask bits.
     //
-    HWREG(HIB_IM) |= ulIntFlags;
+    HWREG(HIB_IM) |= ui32IntFlags;
 
     //
     // Wait for write completion
@@ -1053,37 +896,66 @@ HibernateIntEnable(unsigned long ulIntFlags)
 //
 //! Disables interrupts for the Hibernation module.
 //!
-//! \param ulIntFlags is the bit mask of the interrupts to be disabled.
+//! \param ui32IntFlags is the bit mask of the interrupts to be disabled.
 //!
 //! This function disables the specified interrupt sources from the
 //! Hibernation module.
 //!
-//! The \e ulIntFlags parameter has the same definition as the \e ulIntFlags
-//! parameter to the HibernateIntEnable() function.
+//! The \e ui32IntFlags parameter has the same definition as the
+//! \e ui32IntFlags parameter to the HibernateIntEnable() function.
 //!
 //! \return None.
 //
 //*****************************************************************************
 void
-HibernateIntDisable(unsigned long ulIntFlags)
+HibernateIntDisable(uint32_t ui32IntFlags)
 {
     //
     // Check the arguments.
     //
-    ASSERT(!(ulIntFlags & ~(HIBERNATE_INT_PIN_WAKE | HIBERNATE_INT_LOW_BAT |
-                            HIBERNATE_INT_RTC_MATCH_0 |
-                            HIBERNATE_INT_RTC_MATCH_1 |
-                            HIBERNATE_INT_WR_COMPLETE)));
+    ASSERT(!(ui32IntFlags & ~(HIBERNATE_INT_PIN_WAKE | HIBERNATE_INT_LOW_BAT |
+                              HIBERNATE_INT_RTC_MATCH_0 |
+                              HIBERNATE_INT_WR_COMPLETE)));
 
     //
     // Clear the specified interrupt mask bits.
     //
-    HWREG(HIB_IM) &= ~ulIntFlags;
+    HWREG(HIB_IM) &= ~ui32IntFlags;
 
     //
     // Wait for write completion
     //
     HibernateWriteComplete();
+}
+
+//*****************************************************************************
+//
+//! Returns the hibernate module interrupt number.
+//!
+//! This function returns the interrupt number for the hibernate module.
+//!
+//! \return Returns a hibernate interrupt number or 0 if the interrupt does not
+//! exist.
+//
+//*****************************************************************************
+static uint32_t
+HibernateIntNumberGet(void)
+{
+    uint32_t ui32Int;
+
+    //
+    // Find the valid interrupt number for the hibernate module.
+    //
+    if(CLASS_IS_BLIZZARD)
+    {
+        ui32Int = INT_HIBERNATE_BLIZZARD;
+    }
+    else
+    {
+        ui32Int = 0;
+    }
+
+    return(ui32Int);
 }
 
 //*****************************************************************************
@@ -1107,15 +979,24 @@ HibernateIntDisable(unsigned long ulIntFlags)
 void
 HibernateIntRegister(void (*pfnHandler)(void))
 {
+    uint32_t ui32Int;
+
+    //
+    // Get the interrupt number for the Hibernate module.
+    //
+    ui32Int = HibernateIntNumberGet();
+
+    ASSERT(ui32Int != 0);
+
     //
     // Register the interrupt handler.
     //
-    IntRegister(INT_HIBERNATE, pfnHandler);
+    IntRegister(ui32Int, pfnHandler);
 
     //
     // Enable the hibernate module interrupt.
     //
-    IntEnable(INT_HIBERNATE);
+    IntEnable(ui32Int);
 }
 
 //*****************************************************************************
@@ -1124,7 +1005,7 @@ HibernateIntRegister(void (*pfnHandler)(void))
 //!
 //! This function unregisters the interrupt handler in the system interrupt
 //! controller.  The interrupt is disabled at the global level, and the
-//! interrupt handler is longer called.
+//! interrupt handler is no longer called.
 //!
 //! \sa IntRegister() for important information about registering interrupt
 //! handlers.
@@ -1135,15 +1016,24 @@ HibernateIntRegister(void (*pfnHandler)(void))
 void
 HibernateIntUnregister(void)
 {
+    uint32_t ui32Int;
+
+    //
+    // Get the interrupt number for the Hibernate module.
+    //
+    ui32Int = HibernateIntNumberGet();
+
+    ASSERT(ui32Int != 0);
+
     //
     // Disable the hibernate interrupt.
     //
-    IntDisable(INT_HIBERNATE);
+    IntDisable(ui32Int);
 
     //
     // Unregister the interrupt handler.
     //
-    IntUnregister(INT_HIBERNATE);
+    IntUnregister(ui32Int);
 }
 
 //*****************************************************************************
@@ -1161,8 +1051,8 @@ HibernateIntUnregister(void)
 //! described in the HibernateIntEnable() function.
 //
 //*****************************************************************************
-unsigned long
-HibernateIntStatus(tBoolean bMasked)
+uint32_t
+HibernateIntStatus(bool bMasked)
 {
     //
     // Read and return the Hibernation module raw or masked interrupt status.
@@ -1181,14 +1071,14 @@ HibernateIntStatus(tBoolean bMasked)
 //
 //! Clears pending interrupts from the Hibernation module.
 //!
-//! \param ulIntFlags is the bit mask of the interrupts to be cleared.
+//! \param ui32IntFlags is the bit mask of the interrupts to be cleared.
 //!
 //! This function clears the specified interrupt sources.  This function must
 //! be called within the interrupt handler or else the handler is called again
 //! upon exit.
 //!
-//! The \e ulIntFlags parameter has the same definition as the \e ulIntFlags
-//! parameter to the HibernateIntEnable() function.
+//! The \e ui32IntFlags parameter has the same definition as the
+//! \e ui32IntFlags parameter to the HibernateIntEnable() function.
 //!
 //! \note Because there is a write buffer in the Cortex-M processor, it may
 //! take several clock cycles before the interrupt source is actually cleared.
@@ -1203,20 +1093,19 @@ HibernateIntStatus(tBoolean bMasked)
 //
 //*****************************************************************************
 void
-HibernateIntClear(unsigned long ulIntFlags)
+HibernateIntClear(uint32_t ui32IntFlags)
 {
     //
     // Check the arguments.
     //
-    ASSERT(!(ulIntFlags & ~(HIBERNATE_INT_PIN_WAKE | HIBERNATE_INT_LOW_BAT |
-                            HIBERNATE_INT_RTC_MATCH_0 |
-                            HIBERNATE_INT_RTC_MATCH_1 |
-                            HIBERNATE_INT_WR_COMPLETE)));
+    ASSERT(!(ui32IntFlags & ~(HIBERNATE_INT_PIN_WAKE | HIBERNATE_INT_LOW_BAT |
+                              HIBERNATE_INT_RTC_MATCH_0 |
+                              HIBERNATE_INT_WR_COMPLETE)));
 
     //
     // Write the specified interrupt bits into the interrupt clear register.
     //
-    HWREG(HIB_IC) |= ulIntFlags;
+    HWREG(HIB_IC) |= ui32IntFlags;
 
     //
     // Wait for write completion
@@ -1245,7 +1134,7 @@ HibernateIntClear(unsigned long ulIntFlags)
 //! not.
 //
 //*****************************************************************************
-unsigned long
+uint32_t
 HibernateIsActive(void)
 {
     //
@@ -1258,16 +1147,16 @@ HibernateIsActive(void)
 //
 //! Enables GPIO retention after wake from hibernate.
 //!
-//! Calling this function enables the GPIO pin state to be maintained during
-//! hibernation and remain active even when waking from hibernation.
-//! The GPIO module itself is reset upon entering hibernation and no longer
-//! controls the output pin.  To maintain the current output level after waking
-//! from hibernation, the GPIO module must be reconfigured and then the
+//! This function enables the GPIO pin state to be maintained during
+//! hibernation and remain active even when waking from hibernation.  The GPIO
+//! module itself is reset upon entering hibernation and no longer controls the
+//! output pins.  To maintain the current output level after waking from
+//! hibernation, the GPIO module must be reconfigured and then the
 //! HibernateGPIORetentionDisable() function must be called to return control
 //! of the GPIO pin to the GPIO module.
 //!
 //! \note The hibernation GPIO retention setting is not available on all
-//! Stellaris devices.  Please consult the data sheet to determine if the
+//! Tiva devices.  Please consult the data sheet to determine if the
 //! device you are using supports this feature in the Hibernation module.
 //!
 //! \return None.
@@ -1291,14 +1180,14 @@ HibernateGPIORetentionEnable(void)
 //
 //! Disables GPIO retention after wake from hibernate.
 //!
-//! Calling this function disables the retention of the the GPIO pin state
-//! during hibernation and allows the GPIO pins to be controlled by the system.
-//! If the HibernateGPIORetentionEnable() function is called before entering
-//! the hibernate, this function must be called after returning from the
-//! hibernate state to allow the GPIO pins to be controlled by GPIO module.
+//! This function disables the retention of the GPIO pin state during
+//! hibernation and allows the GPIO pins to be controlled by the system.  If
+//! the HibernateGPIORetentionEnable() function is called before entering
+//! hibernation, this function must be called after returning from hibernation
+//! to allow the GPIO pins to be controlled by GPIO module.
 //!
 //! \note The hibernate GPIO retention setting is not available on all
-//! Stellaris devices.  Please consult the data sheet to determine if the
+//! Tiva devices.  Please consult the data sheet to determine if the
 //! device you are using supports this feature in the Hibernation module.
 //!
 //! \return None.
@@ -1326,14 +1215,14 @@ HibernateGPIORetentionDisable(void)
 //! hibernate module.
 //!
 //! \note The hibernation GPIO retention setting is not available on all
-//! Stellaris devices.  Please consult the data sheet to determine if the
+//! Tiva devices.  Please consult the data sheet to determine if the
 //! device you are using supports this feature in the Hibernation module.
 //!
 //! \return Returns true if GPIO retention is enabled and false if GPIO
 //! retention is disabled.
 //
 //*****************************************************************************
-tBoolean
+bool
 HibernateGPIORetentionGet(void)
 {
     //
