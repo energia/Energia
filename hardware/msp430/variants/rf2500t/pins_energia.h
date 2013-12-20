@@ -78,40 +78,42 @@ static const uint8_t A15  = 15;
 /*
 F2274 RF2500T pin mapping
 
+								debug uart up
+
                                +--\/--+
-                          GND  |1   18| VCC
-                     (A0) P2.0 |2   17| P2.1 (A1)
-                     (A2) P2.2 |3   16| P2.3 (TA1, A3)
-                (TA2, A4) P2.4 |4   15| P4.3 (TB0, A12)
-               (TB1, A13) P4.4 |5   14| P4.5 (TB2, A14)
-                    (A15) P4.6 |6   13| GND
-              (XIN, GDO0) P2.6 |7   12| P2.7 (XOUT, GDO2)
-               (UCB0SOMI) P3.2 |8   11| P3.3 (UCB0CLK)
-                (UCB0STE) P3.0 |9   10| P3.1 (UCB0SIMO)
+                          VCC  |1   18| GND
+                     (A1) P2.1 |2   17| P2.0 (A0)
+                (TA1, A3) P2.3 |3   16| P2.2 (TA1, A2)
+               (TB0, A12) P4.3 |4   15| P2.4 (TA2, A4)
+               (TB2, A14) P4.5 |5   14| P4.4 (TB1, A13)
+                           GND |6   13| P4.6 (A15)
+             (XOUT, GDO2) P2.7 |7   12| P2.6 (XIN, GDO0)
+                (UCB0CLK) P3.3 |8   11| P3.2 (UCB0SOMI)
+               (UCB0SIMO) P3.1 |9   10| P3.0 (UCB0STE)
                                +------+
 
 */
 
 /* Pin names based on the silkscreen */
 
-/* PIN1 = GND */
-static const uint8_t P2_0 = 2;
-static const uint8_t P2_2 = 3;
-static const uint8_t P2_4 = 4;
-static const uint8_t P4_4 = 5;
-static const uint8_t P4_6 = 6;
-static const uint8_t P2_6 = 7;
-static const uint8_t P3_2 = 8;
-static const uint8_t P3_0 = 9;
-static const uint8_t P3_1 = 10;
-static const uint8_t P3_3 = 11;
-static const uint8_t P2_7 = 12;
-/* PIN13 = GND */
-static const uint8_t P4_5 = 14;
-static const uint8_t P4_3 = 15;
-static const uint8_t P2_3 = 16;
-static const uint8_t P2_1 = 17;
-/* PIN18 = VCC */
+/* PIN1 = VCC */
+static const uint8_t P2_1 = 2;
+static const uint8_t P2_3 = 3;
+static const uint8_t P4_3 = 4;
+static const uint8_t P4_5 = 5;
+/* PIN6 = GND */
+static const uint8_t P2_7 = 7;
+static const uint8_t P3_3 = 8;
+static const uint8_t P3_1 = 9;
+static const uint8_t P3_0 = 10;
+static const uint8_t P3_2 = 11;
+static const uint8_t P2_6 = 12;
+static const uint8_t P4_6 = 13;
+static const uint8_t P4_4 = 14;
+static const uint8_t P2_4 = 15;
+static const uint8_t P2_2 = 16;
+static const uint8_t P2_0 = 17;
+/* PIN18 = GND */
 
 /* Extra pins not on the header + temp sensor */
 static const uint8_t P3_4 = 19;		//TXD0
@@ -130,8 +132,8 @@ static const uint8_t BUTTON = 23;	//P1.2
 static const uint8_t TEMPSENSOR = 10;	//internal A10
 
 /* Onboard CC2500 */
-static const uint8_t GDO0 = 7;		//P2.6
-static const uint8_t GDO2 = 12;		//P2.7
+static const uint8_t GDO0 = 12;		//P2.6
+static const uint8_t GDO2 = 7;		//P2.7
 
 #ifdef ARDUINO_MAIN
 
@@ -203,24 +205,24 @@ const uint16_t port_to_sel0[] = {  /* put this PxSEL register under the group of
 
 const uint8_t digital_pin_to_timer[] = {
 	NOT_ON_TIMER, /*  dummy */
-	NOT_ON_TIMER, /*  1 - GND */
-	NOT_ON_TIMER, /*  2 - P2.0 */
-	T0A0,         /*  3 - P2.2 */
-	T0A2,         /*  4 - P2.4 */
-	T0B1,         /*  5 - P4.4 */
-	NOT_ON_TIMER, /*  6 - P4.6 */
-	NOT_ON_TIMER, /*  7 - P2.6 */
-	NOT_ON_TIMER, /*  8 - P3.2 */
-	NOT_ON_TIMER, /*  9 - P3.0 */
-	NOT_ON_TIMER, /* 10 - P3.1 */
-	NOT_ON_TIMER, /* 11 - P3.3 */
-	NOT_ON_TIMER, /* 12 - P2.7 */
-	NOT_ON_TIMER, /* 13 - GND */
-	T0B2,         /* 14 - P4.5 */
-	T0B0,         /* 15 - P4.3 */
-	T0A1,         /* 16 - P2.3 */
-	NOT_ON_TIMER, /* 17 - P2.1 */
-	NOT_ON_TIMER, /* 18 - VCC */
+	NOT_ON_TIMER, /*  1 - VCC */
+	NOT_ON_TIMER, /*  2 - P2.1 */
+	T0A1,         /*  3 - P2.3 */
+	T0B0,         /*  4 - P4.3 */
+	T0B2,         /*  5 - P4.5 */
+	NOT_ON_TIMER, /*  6 - GND */
+	NOT_ON_TIMER, /*  7 - P2.7 */
+	NOT_ON_TIMER, /*  8 - P3.3 */
+	NOT_ON_TIMER, /*  9 - P3.1 */
+	NOT_ON_TIMER, /* 10 - P3.0 */
+	NOT_ON_TIMER, /* 11 - P3.2 */
+	NOT_ON_TIMER, /* 12 - P2.6 */
+	NOT_ON_TIMER, /* 13 - P4.6 */
+	T0B1,         /* 14 - P4.4 */
+	T0A2,         /* 15 - P2.4 */
+	T0A0,         /* 16 - P2.2 */
+	NOT_ON_TIMER, /* 17 - P2.0 */
+	NOT_ON_TIMER, /* 18 - GND */
 	NOT_ON_TIMER, /* 19 - P3.4 */
 	NOT_ON_TIMER, /* 20 - P3.5 */
 	NOT_ON_TIMER, /* 21 - P1.0 */
@@ -234,18 +236,18 @@ const uint8_t digital_pin_to_port[] = {
 	NOT_A_PIN, /* 1 */
 	P2,        /* 2 */
 	P2,        /* 3 */
-	P2,        /* 4 */
+	P4,        /* 4 */
 	P4,        /* 5 */
-	P4,        /* 6 */
+	NOT_A_PIN,        /* 6 */
 	P2,        /* 7 */
 	P3,        /* 8 */
 	P3,        /* 9 */
 	P3,        /* 10 */
 	P3,        /* 11 */
 	P2,        /* 12 */
-	NOT_A_PIN, /* 13 */
+	P4, 		/* 13 */
 	P4,        /* 14 */
-	P4,        /* 15 */
+	P2,        /* 15 */
 	P2,        /* 16 */
 	P2,        /* 17 */
 	NOT_A_PIN, /* 18 */
@@ -259,22 +261,22 @@ const uint8_t digital_pin_to_port[] = {
 const uint8_t digital_pin_to_bit_mask[] = {
 	NOT_A_PIN, /* 0,  pin count starts at 1 */
 	NOT_A_PIN, /* 1 */
-	BV(0),     /* 2 */
-	BV(2),     /* 3 */
-	BV(4),     /* 4 */
-	BV(4),     /* 5 */
-	BV(6),     /* 6 */
-	BV(6),     /* 7 */
-	BV(2),     /* 8 */
-	BV(0),     /* 9 */
-	BV(1),     /* 10 */
-	BV(3),     /* 11 */
-	BV(7),     /* 12 */
-	NOT_A_PIN, /* 13 */
-	BV(5),     /* 14 */
-	BV(3),     /* 15 */
-	BV(3),	   /* 16 */
-	BV(1),     /* 17 */
+	BV(1),     /* 2 */
+	BV(3),     /* 3 */
+	BV(3),     /* 4 */
+	BV(5),     /* 5 */
+	NOT_A_PIN,     /* 6 */
+	BV(5),     /* 7 */
+	BV(3),     /* 8 */
+	BV(1),     /* 9 */
+	BV(0),     /* 10 */
+	BV(2),     /* 11 */
+	BV(6),     /* 12 */
+	BV(6), 		/* 13 */
+	BV(4),     /* 14 */
+	BV(4),     /* 15 */
+	BV(2),	   /* 16 */
+	BV(0),     /* 17 */
 	NOT_A_PIN, /* 18 */
 	BV(4),     /* 19 */
 	BV(5),	   /* 20 */
