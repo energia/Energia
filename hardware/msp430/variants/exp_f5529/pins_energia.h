@@ -86,88 +86,89 @@ static const uint8_t A15  = 15;
  
 								J4
                                +--\/--+
-                          3.3v |1   14| P6.6 (CB6, A6)
-           (UCA1RXD/SOMI) P4.5 |2   13| P8.1 (GPIO - LED2)
-           (UCA1TXD/SIMO) P4.4 |3   12| P8.2 (GPIO - LED3)
-		      (GPIO - RF) P4.6 |4   11| P8.0 (GPIO - POT)
-              (GPIO - RF) P4.7 |5   10| P4.5 (UCA1RXD/SOMI)
-                     (A9) P5.1 |6    9| P4.4 (UCA1TXD/SIMO)
+                          3.3v |1   12| P6.6 (CB6, A6)
+           (UCA1RXD/SOMI) P4.5 |2   11| P8.1 (GPIO - LED2)
+           (UCA1TXD/SIMO) P4.4 |3   10| P8.2 (GPIO - LED3)
+		      (GPIO - RF) P4.6 |4    9| P8.0 (GPIO - POT)
+              (GPIO - RF) P4.7 |5    -| P4.5 (UCA1RXD/SOMI)
+                     (A9) P5.1 |6    -| P4.4 (UCA1TXD/SIMO)
                            GND |7    8| P6.7 (CB7, A7)
 */
 /*						   		
 								J5
                                 +--\/--+
-                           3.3v |15   28| P7.0 (CB8, A12)
-       (UCB1SOMI/SCL - SD) P4.2 |16   27| P7.1 (CB9, A13)
-   (UCB1SIMO/SDA - LCD/SD) P4.1 |17   26| P7.2 (CB10, A14)
-(UCB1CLK/UCA1STE - LCD/SD) P4.3 |18   25| P7.3 (CB11, A15)
-    (UCB1STE/UCA1CLK - RF) P4.0 |19   24| P4.1 (UCB1SIM0/UCB1SDA - LCD/SD)
-    (TB0OUTH, SVMOUT - SD) P3.7 |20   23| P4.2 (UCB1SOMI/UCB1SCL - SD)
-                            GND |21   22| P7.7 (TB0CLK)
+                           3.3v |13   24| P7.0 (CB8, A12)
+       (UCB1SOMI/SCL - SD) P4.2 |14   23| P7.1 (CB9, A13)
+   (UCB1SIMO/SDA - LCD/SD) P4.1 |15   22| P7.2 (CB10, A14)
+(UCB1CLK/UCA1STE - LCD/SD) P4.3 |16   21| P7.3 (CB11, A15)
+    (UCB1STE/UCA1CLK - RF) P4.0 |17    -| P4.1 (UCB1SIM0/UCB1SDA - LCD/SD)
+    (TB0OUTH, SVMOUT - SD) P3.7 |18    -| P4.2 (UCB1SOMI/UCB1SCL - SD)
+                            GND |19   20| P7.7 (TB0CLK)
 */
 /*						
 								 J12
                                +--\/--+
-           (UCB0STE - RF) P2.6 |29  46| P3.0 (UCB0SIMO - RF)
-          (UCB0SOMI - RF) P3.1 |30  45| P3.2 (UCB0CLK - RF)
-        (TA2.0 - RF_GDO0) P2.3 |31  44| P2.1 (TA1.2 - RF_GDO2)
-		          (TB0.3) P7.5 |32  43| GND
-                   (GPIO) P4.7 |33  42| P2.4 (TA2.1)
-           (UCA1RXD/SOMI) P4.5 |34  41| P4.6 (GPIO)
-   		   (UCA1TXD/SIMO) P4.4 |35  40| P4.0 (UC 1)
-            (GPIO - LED2) P1.0 |36  39| P2.0 (TA1.1)
-						   GND |37  38| VCC
+           (UCB0STE - RF) P2.6 |25  37| P3.0 (UCB0SIMO - RF)
+          (UCB0SOMI - RF) P3.1 |26  36| P3.2 (UCB0CLK - RF)
+        (TA2.0 - RF_GDO0) P2.3 |27  35| P2.1 (TA1.2 - RF_GDO2)
+		          (TB0.3) P7.5 |28  34| GND
+                   (GPIO) P4.7 |-   33| P2.4 (TA2.1)
+           (UCA1RXD/SOMI) P4.5 |-    -| P4.6 (GPIO)
+   		   (UCA1TXD/SIMO) P4.4 |-    -| P4.0 (UC 1)
+            (GPIO - LED2) P1.0 |29  32| P2.0 (TA1.1)
+						   GND |30  31| VCC
 */
 /*
 					  ----+
-						47| P1.7 (PUSH1)
-                        48| P2.2 (PUSH2)
-                        49| P1.0 (LED1)
-                        50| P8.1 (LED2)
-						51| P8.2 (LED3)
-								   
-						52| P8.0 (POT_EN)
-						53| P6.5 (POT_READ - A5)
+						38| P1.7 (PUSH1)
+                        39| P2.2 (PUSH2)
+						
+                       -29| P1.0 (LED1)
+                       -11| P8.1 (LED2)
+					   -10| P8.2 (LED3)
+					    -9| P8.0 (POT_EN)
+						
+						40| P6.5 (POT_READ - A5)
 					
 					TOUCHPADS
-						54| P1.1 (TA0.0)
-						55| P6.0 (CB0)
-						56| P1.2 (TA0.1)
-						57| P6.1 (CB1)
-						58| 53| P1.3 (TA0.2)
-						59| P6.2 (CB2)
-						60| P1.4 (TA0.3)
-						61| P6.3 (CB3)
-						62| P1.5 (TA0.4)
-						63| P6.4 (CB4)
+						41| P1.1 (TA0.0)
+						46| P6.0 (CB0)
+						42| P1.2 (TA0.1)
+						47| P6.1 (CB1)
+						43| 53| P1.3 (TA0.2)
+						48| P6.2 (CB2)
+						44| P1.4 (TA0.3)
+						49| P6.3 (CB3)
+						45| P1.5 (TA0.4)
+						50| P6.4 (CB4)
 */
 /*								   
 					ACCEL-UCA0
-						63| P3.6 (ACCEL_PWR)
-						64| P3.4 (ACCEL_SOMI)
-						65| P3.3 (ACCEL_SIMO)
-						66| P2.7 (ACCEL_SCLK)
-						67| P2.5 (ACCEL_INT)
-						68| P3.5 (ACCEL_CS)
+						51| P3.6 (ACCEL_PWR)
+						52| P3.4 (ACCEL_SOMI)
+						53| P3.3 (ACCEL_SIMO)
+						54| P2.7 (ACCEL_SCLK)
+						55| P2.5 (ACCEL_INT)
+						56| P3.5 (ACCEL_CS)
 								   
 					ezFET-UCA1
-                        69| P4.5 (UCA1RXD -> ezFET -> Serial)
-                        70| P4.4 (UCA1TXD -> ezFET -> Serial)
+                        -2| P4.5 (UCA1RXD -> ezFET -> Serial)
+                        -3| P4.4 (UCA1TXD -> ezFET -> Serial)
 */
 /*								   
 					LCD-UCB1
-						71| P5.7 (LCD_RST)
-						72| P4.1 (LCD_SIMO)
-						73| P4.3 (LCD_SCLK)
-						74| P5.6 (LCD_D/C)
-						75| P7.4 (LCD_CS)
-						76| P7.6 (LCD_BL_EN)
+						57| P5.7 (LCD_RST)
+					   -15| P4.1 (LCD_SIMO)
+					   -16| P4.3 (LCD_SCLK)
+						58| P5.6 (LCD_D/C)
+						59| P7.4 (LCD_CS)
+						60| P7.6 (LCD_BL_EN)
 								   
 					SD-UCB1
-						77| P4.2 (SD_SOMI - DO)
-						78| P4.1 (SD_SIMO - DI)
-						79| P4.3 (SD_SCLK)
-						80| P3.7 (SD_CS)								   
+					   -14| P4.2 (SD_SOMI - DO)
+					   -15| P4.1 (SD_SIMO - DI)
+					   -16| P4.3 (SD_SCLK)
+					   -18| P3.7 (SD_CS)								   
                       ----+
 */
 
@@ -182,63 +183,55 @@ static const uint8_t P5_1 = 6;
 /* PIN7 is GND */
 
 static const uint8_t P6_7 = 8;
-/*
-static const uint8_t P4_4 = 9;
-static const uint8_t P4_5 = 10;
-*/
-static const uint8_t P8_0 = 11;
-static const uint8_t P8_2 = 12;
-static const uint8_t P8_1 = 13;
-static const uint8_t P6_6 = 14;
+/*-*/
+/*-*/
+static const uint8_t P8_0 = 9;
+static const uint8_t P8_2 = 10;
+static const uint8_t P8_1 = 11;
+static const uint8_t P6_6 = 12;
 
-/* PIN15 = 3.3v */
-static const uint8_t P4_2 = 16;
-static const uint8_t P4_1 = 17;
-static const uint8_t P4_3 = 18;
-static const uint8_t P4_0 = 19;
-static const uint8_t P3_7 = 20;
-/* PIN21 is GND */
+/* PIN13 = 3.3v */
+static const uint8_t P4_2 = 14;
+static const uint8_t P4_1 = 15;
+static const uint8_t P4_3 = 16;
+static const uint8_t P4_0 = 17;
+static const uint8_t P3_7 = 18;
+/* PIN19 is GND */
 
-static const uint8_t P7_7 = 22;
-/*
-static const uint8_t P4_2 = 23;
-static const uint8_t P4_1 = 24;
-*/
-static const uint8_t P7_3 = 25;
-static const uint8_t P7_2 = 26;
-static const uint8_t P7_1 = 27;
-static const uint8_t P7_0 = 28;
+static const uint8_t P7_7 = 20;
+/*-*/
+/*-*/
+static const uint8_t P7_3 = 21;
+static const uint8_t P7_2 = 22;
+static const uint8_t P7_1 = 23;
+static const uint8_t P7_0 = 24;
 
-static const uint8_t P2_6 = 29;
-static const uint8_t P3_1 = 30;
-static const uint8_t P2_3 = 31;
-static const uint8_t P7_5 = 32;
-/*
-static const uint8_t P4_7 = 33;
-static const uint8_t P4_5 = 34;
-static const uint8_t P4_4 = 35;
-*/
-static const uint8_t P1_0 = 36;
-/* PIN37 is GND */
+static const uint8_t P2_6 = 25;
+static const uint8_t P3_1 = 26;
+static const uint8_t P2_3 = 27;
+static const uint8_t P7_5 = 28;
+/*-*/
+/*-*/
+/*-*/
+static const uint8_t P1_0 = 29;
+/* PIN30 is GND */
 
-/* PIN38 = 3.3v */
-static const uint8_t P2_0 = 39;
-/*
-static const uint8_t P4_0 = 40;
-static const uint8_t P4_6 = 41;
-*/
-static const uint8_t P2_4 = 42;
-/* PIN37 is GND */
-static const uint8_t P2_1 = 44;
-static const uint8_t P3_2 = 45;
-static const uint8_t P3_0 = 46;
+/* PIN31 = 3.3v */
+static const uint8_t P2_0 = 32;
+/*-*/
+/*-*/
+static const uint8_t P2_4 = 33;
+/* PIN34 is GND */
+static const uint8_t P2_1 = 35;
+static const uint8_t P3_2 = 36;
+static const uint8_t P3_0 = 37;
 
 /* Extra pins not on the header + temp sensor */
-static const uint8_t PUSH1 = 47;
-static const uint8_t PUSH2 = 48;
-static const uint8_t RED_LED = 36;
-static const uint8_t GREEN_LED = 50;
-static const uint8_t ORANGE_LED = 51;
+static const uint8_t PUSH1 = 38;
+static const uint8_t PUSH2 = 39;
+static const uint8_t RED_LED = 29;
+static const uint8_t GREEN_LED = 10;
+static const uint8_t ORANGE_LED = 11;
 static const uint8_t TEMPSENSOR = 10;
 
 #ifdef ARDUINO_MAIN
@@ -415,12 +408,7 @@ const uint8_t digital_pin_to_timer[] = {
 	T0A2,         /* 36 - P1.3 */
 	T0A3,         /* 37 - P1.4 */
 	T0A4,         /* 38 - P1.5 */
-	T2A1,         /* 39 - P2.4 */
-	T2A2,         /* 40 - P2.5 */
-	NOT_ON_TIMER, /* 41 - P2.1 */
-	NOT_ON_TIMER, /* 42 - P1.1 */
-	NOT_ON_TIMER, /* 43 - P1.0 */
-	T0B1,         /* 44 - P4.7 */
+	T2A1        /* 39 - P2.4 */
 };
 
 const uint8_t digital_pin_to_port[] = {
@@ -433,44 +421,37 @@ const uint8_t digital_pin_to_port[] = {
 	P5,        /* 6 */
 	NOT_A_PIN,        /* 7 */
 	P6,        /* 8 */
-	P4,        /* 9 */
-	P4,        /* 10 */
+	P8,        /* 9 */
+	P8,        /* 10 */
 	P8,        /* 11 */
-	P8,        /* 12 */
-	P8,        /* 13 */
-	P6,        /* 14 */
-	NOT_A_PIN,        /* 15 */
+	P6,        /* 12 */
+	NOT_A_PIN,        /* 13 */
+	P4,        /* 14 */
+	P4,        /* 15 */
 	P4,		   /* 16 */
 	P4,        /* 17 */
-	P4,        /* 18 */
-	P4,        /* 19 */
-	P3, /* 20 */
-	NOT_A_PIN, /* 21 */
+	P3,        /* 18 */
+	NOT_A_PIN,        /* 19 */
+	P7, /* 20 */
+	P7, /* 21 */
 	P7, /* 22 */
-	P4,        /* 23 */
-	P4,        /* 24 */
-	P7,        /* 25 */
-	P7,        /* 26 */
-	P7,        /* 27 */
+	P7,        /* 23 */
+	P7,        /* 24 */
+	P2,        /* 25 */
+	P3,        /* 26 */
+	P2,        /* 27 */
 	P7,        /* 28 */
-	P2,        /* 29 */
-	P3,        /* 30 */
-	P2,        /* 31 */
-	P7,        /* 32 */
-	P4,        /* 33 */
-	P4,        /* 34 */
-	P4,        /* 35 */
-	P1,        /* 36 */
-	NOT_A_PIN,        /* 37 */
-	NOT_A_PIN,        /* 38 */
-	P2,        /* 39 */
-	P4,        /* 40 */
-	P4,        /* 41 */
-	P2,        /* 42 */
-	NOT_A_PIN,        /* 43 */
-	P2,        /* 44 */
-	P3,        /* 45 */
-	P3,        /* 46 */
+	P1,        /* 29 */
+	NOT_A_PIN,        /* 30 */
+	NOT_A_PIN,        /* 31 */
+	P2,        /* 32 */
+	P2,        /* 33 */
+	NOT_A_PIN,        /* 34 */
+	P2,        /* 35 */
+	P3,        /* 36 */
+	P3,        /* 37 */
+	P1,        /* 38 */
+	P2        /* 39 */
 };
 
 const uint8_t digital_pin_to_bit_mask[] = {
@@ -483,44 +464,37 @@ const uint8_t digital_pin_to_bit_mask[] = {
 	BV(1),     /* 6 */
 	NOT_A_PIN,     /* 7 */
 	BV(7),     /* 8 */
-	BV(4),     /* 9 */
-	BV(5),     /* 10 */
-	BV(0),     /* 11 */
-	BV(1),     /* 12 */
-	BV(1),     /* 13 */
-	BV(6),     /* 14 */
-	NOT_A_PIN,     /* 15 */
-	BV(2), /* 16 */
-	BV(1),     /* 17 */
-	BV(3),     /* 18 */
-	BV(0),     /* 19 */
+	BV(0),     /* 9 */
+	BV(2),     /* 10 */
+	BV(1),     /* 11 */
+	BV(6),     /* 12 */
+	NOT_A_PIN,     /* 13 */
+	BV(2),     /* 14 */
+	BV(1),     /* 15 */
+	BV(3), /* 16 */
+	BV(0),     /* 17 */
+	BV(7),     /* 18 */
+	NOT_A_PIN,     /* 19 */
 	BV(7), /* 20 */
-	NOT_A_PIN, /* 21 */
-	BV(7), /* 22 */
-	BV(2),     /* 23 */
-	BV(1),     /* 24 */
-	BV(3),     /* 25 */
-	BV(2),     /* 26 */
-	BV(1),     /* 27 */
-	BV(0),     /* 28 */
-	BV(6),     /* 29 */
-	BV(1),     /* 30 */
-	BV(3),     /* 31 */
-	BV(5),     /* 32 */
-	BV(7),     /* 33 */
-	BV(5),     /* 34 */
-	BV(4),     /* 35 */
-	BV(0),     /* 36 */
-	NOT_A_PIN,     /* 37 */
-	NOT_A_PIN,     /* 38 */
-	BV(0),     /* 39 */
-	BV(0),     /* 40 */
-	BV(6),     /* 41 */
-	BV(4),     /* 42 */
-	NOT_A_PIN,     /* 43 */
-	BV(1),     /* 44 */
-	BV(2),     /* 45 */
-	BV(0),     /* 46 */
+	BV(1), /* 21 */
+	BV(2), /* 22 */
+	BV(1),     /* 23 */
+	BV(0),     /* 24 */
+	BV(6),     /* 25 */
+	BV(1),     /* 26 */
+	BV(3),     /* 27 */
+	BV(5),     /* 28 */
+	BV(0),     /* 29 */
+	NOT_A_PIN,     /* 30 */
+	NOT_A_PIN,     /* 31 */
+	BV(0),     /* 32 */
+	BV(4),     /* 33 */
+	NOT_A_PIN,     /* 34 */
+	BV(1),     /* 35 */
+	BV(2),     /* 36 */
+	BV(0),     /* 37 */
+	BV(7),     /* 38 */
+	BV(2)     /* 39 */
 };
 #endif // #ifdef ARDUINO_MAIN
 #endif // #ifndef Pins_Energia_h
