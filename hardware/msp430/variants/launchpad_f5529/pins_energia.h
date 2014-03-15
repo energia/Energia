@@ -41,8 +41,13 @@ static const uint8_t SS      = 8;  /* P2.7 */
 static const uint8_t SCK     = 7;  /* P3.2 */
 static const uint8_t MOSI    = 15;  /* P3.0 */
 static const uint8_t MISO    = 14;  /* P3.1 */
+#ifndef USE_USCI_B1
 static const uint8_t TWISDA  = 15;  /* P3.0 */
 static const uint8_t TWISCL  = 14;  /* P3.1 */
+#else
+static const uint8_t TWISDA  = 10;  /* P4.1 */
+static const uint8_t TWISCL  = 9;   /* P4.2 */
+#endif
 static const uint8_t DEBUG_UARTRXD = 45;  /* Receive  Data (RXD) at P4.5 */
 static const uint8_t DEBUG_UARTTXD = 46;  /* Transmit Data (TXD) at P4.4 */
 static const uint8_t AUX_UARTRXD = 3;  /* Receive  Data (RXD) at P4.5 */

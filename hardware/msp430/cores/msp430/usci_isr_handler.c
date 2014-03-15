@@ -1,6 +1,6 @@
 #include "Energia.h"
 #if defined(__MSP430_HAS_USCI__) || defined(__MSP430_HAS_USCI_A0__) || defined(__MSP430_HAS_USCI_A1__) \
- || defined(__MSP430_HAS_EUSCI_A0__)|| defined(__MSP430_HAS_USCI_B0__) || defined(__MSP430_HAS_USCI_B1__) 
+ || defined(__MSP430_HAS_EUSCI_A0__) || defined(__MSP430_HAS_USCI_B0__) || defined(__MSP430_HAS_USCI_B1__)
 #include "usci_isr_handler.h"
 /* This dummy function ensures that, when called from any module that 
  * is interested in having the USCIAB0TX_VECTOR and USCIAB0TX_VECTOR
@@ -70,12 +70,12 @@ void USCIB1_ISR(void)
 	/* USCI_B1 I2C TX RX interrupt. */
 	if ((UCB1CTL0 & UCMODE_3) == UCMODE_3 && (UCB1IFG & (UCTXIFG | UCRXIFG)) != 0)
 		i2c_txrx_isr();
-  }  
 }
 #endif
 #endif
 
-#endif //defined(__MSP430_HAS_USCI_A0__) || defined(__MSP430_HAS_USCI_A1__) || defined(__MSP430_HAS_EUSCI_A0__)
+#endif /* defined(__MSP430_HAS_USCI__) || defined(__MSP430_HAS_USCI_A0__) || defined(__MSP430_HAS_USCI_A1__) ||
+          defined(__MSP430_HAS_EUSCI_A0__) || defined(__MSP430_HAS_USCI_B0__) || defined(__MSP430_HAS_USCI_B1__) */
 
 #ifdef __MSP430_HAS_USCI__
 /* USCI_Ax and USCI_Bx share the same TX interrupt vector.
