@@ -61,6 +61,8 @@
 
 #define NOT_ACTIVE  0xA
 
+#define SLOWMODE_DELAYUS 200
+
 static const unsigned long g_uli2cMasterBase[4] =
 {
 #ifdef TARGET_IS_BLIZZARD_RB1
@@ -269,7 +271,7 @@ uint8_t TwoWire::getRxData(unsigned long cmd) {
 	}
 	else {
 	    if(!fastMode) //Fast mode works without delay (Tested on stellaris&GY-80)
-            delay(1);
+            delayMicroseconds(SLOWMODE_DELAYUS);
 		rxBuffer[rxWriteIndex] = ROM_I2CMasterDataGet(MASTER_BASE);
 		rxWriteIndex = (rxWriteIndex + 1) % BUFFER_LENGTH;
 	}
@@ -279,7 +281,7 @@ uint8_t TwoWire::getRxData(unsigned long cmd) {
 
 uint8_t TwoWire::sendTxData(unsigned long cmd, uint8_t data) {
     if(!fastMode) //Fast mode works without delay (Tested on stellaris&GY-80)
-        delay(1);
+        delayMicroseconds(SLOWMODE_DELAYUS);
     ROM_I2CMasterDataPut(MASTER_BASE, data);
 
     HWREG(MASTER_BASE + I2C_O_MCS) = cmd;
