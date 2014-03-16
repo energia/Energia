@@ -27,6 +27,7 @@
 
   Modified 23 November 2006 by David A. Mellis
   Modified 28 September 2010 by Mark Sproul
+  Modified 16 March 2014 by Alessio Graziano
  */
 
 #include <stdlib.h>
@@ -61,7 +62,7 @@
 
 #define NOT_ACTIVE  0xA
 
-#define SLOWMODE_DELAYUS 200
+#define SLOWMODE_DELAYUS 200 ///Delay in microseconds after master busy wait in non-fast Mode
 
 static const unsigned long g_uli2cMasterBase[4] =
 {
@@ -690,6 +691,11 @@ I2CIntHandler(void)
 {
     Wire.I2CIntHandler();
 }
+/***
+* Set module and mode
+* _fastMode = true //400KHz
+* _fastMode = false //100KHz (Default)
+**/
 void TwoWire::setModule(unsigned long _i2cModule,bool _fastMode)
 {
     i2cModule = _i2cModule;
