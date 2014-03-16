@@ -64,15 +64,15 @@
 static const unsigned long g_uli2cMasterBase[4] =
 {
 #ifdef TARGET_IS_BLIZZARD_RB1
-    I2C0_BASE, I2C1_BASE, 
+    I2C0_BASE, I2C1_BASE,
 	I2C2_BASE, I2C3_BASE
 #else
 #ifdef __TM4C129XNCZAD__
-    I2C0_BASE, I2C1_BASE, 
+    I2C0_BASE, I2C1_BASE,
 	I2C2_BASE, I2C3_BASE
 #endif
 #ifdef __TM4C1294NCPDT__
-    I2C0_BASE, I2C2_BASE, 
+    I2C0_BASE, I2C2_BASE,
 	I2C8_BASE, I2C7_BASE
 #endif
 #endif
@@ -80,15 +80,15 @@ static const unsigned long g_uli2cMasterBase[4] =
 static const unsigned long g_uli2cSlaveBase[4] =
 {
 #ifdef TARGET_IS_BLIZZARD_RB1
-    I2C0_BASE, I2C1_BASE, 
+    I2C0_BASE, I2C1_BASE,
 	I2C2_BASE, I2C3_BASE
 #else
 #ifdef __TM4C129XNCZAD__
-    I2C0_BASE, I2C1_BASE, 
+    I2C0_BASE, I2C1_BASE,
 	I2C2_BASE, I2C3_BASE
 #endif
 #ifdef __TM4C1294NCPDT__
-    I2C0_BASE, I2C2_BASE, 
+    I2C0_BASE, I2C2_BASE,
 	I2C8_BASE, I2C7_BASE
 #endif
 #endif
@@ -122,15 +122,15 @@ static const unsigned long g_uli2cInt[4] =
 static const unsigned long g_uli2cPeriph[4] =
 {
 #ifdef TARGET_IS_BLIZZARD_RB1
-    SYSCTL_PERIPH_I2C0, SYSCTL_PERIPH_I2C1, 
+    SYSCTL_PERIPH_I2C0, SYSCTL_PERIPH_I2C1,
     SYSCTL_PERIPH_I2C2, SYSCTL_PERIPH_I2C3
 #else
 #ifdef __TM4C129XNCZAD__
-    SYSCTL_PERIPH_I2C0, SYSCTL_PERIPH_I2C1, 
+    SYSCTL_PERIPH_I2C0, SYSCTL_PERIPH_I2C1,
     SYSCTL_PERIPH_I2C2, SYSCTL_PERIPH_I2C3
 #endif
 #ifdef __TM4C1294NCPDT__
-    SYSCTL_PERIPH_I2C0, SYSCTL_PERIPH_I2C2, 
+    SYSCTL_PERIPH_I2C0, SYSCTL_PERIPH_I2C2,
     SYSCTL_PERIPH_I2C8, SYSCTL_PERIPH_I2C7
 #endif
 #endif
@@ -246,6 +246,7 @@ TwoWire::TwoWire()
 TwoWire::TwoWire(unsigned long module)
 {
 	i2cModule = module;
+	fastMode = false; //FastMode disabled by default for backward compatibility
 }
 
 // Private Methods //////////////////////////////////////////////////////////////
@@ -267,7 +268,8 @@ uint8_t TwoWire::getRxData(unsigned long cmd) {
         ROM_I2CMasterControl(MASTER_BASE, I2C_MASTER_CMD_BURST_RECEIVE_ERROR_STOP);
 	}
 	else {
-		delay(1);
+	    if(!fastMode) //Fast mode works without delay (Tested on stellaris&GY-80)
+            delay(1);
 		rxBuffer[rxWriteIndex] = ROM_I2CMasterDataGet(MASTER_BASE);
 		rxWriteIndex = (rxWriteIndex + 1) % BUFFER_LENGTH;
 	}
@@ -276,7 +278,8 @@ uint8_t TwoWire::getRxData(unsigned long cmd) {
 }
 
 uint8_t TwoWire::sendTxData(unsigned long cmd, uint8_t data) {
-    delay(1);
+    if(!fastMode) //Fast mode works without delay (Tested on stellaris&GY-80)
+        delay(1);
     ROM_I2CMasterDataPut(MASTER_BASE, data);
 
     HWREG(MASTER_BASE + I2C_O_MCS) = cmd;
@@ -305,7 +308,7 @@ void TwoWire::forceStop(void) {
     //bring the bus back to it's erroneous state
     ROM_SysCtlPeripheralReset(g_uli2cPeriph[i2cModule]);
     while(!ROM_SysCtlPeripheralReady(g_uli2cPeriph[i2cModule]));
-    ROM_I2CMasterInitExpClk(MASTER_BASE, F_CPU, false);
+    ROM_I2CMasterInitExpClk(MASTER_BASE, F_CPU, fastMode);
 }
 
 // Public Methods //////////////////////////////////////////////////////////////
@@ -325,20 +328,23 @@ void TwoWire::begin(void)
   ROM_GPIOPinConfigure(g_uli2cConfig[i2cModule][1]);
   ROM_GPIOPinTypeI2C(g_uli2cBase[i2cModule], g_uli2cSDAPins[i2cModule]);
   ROM_GPIOPinTypeI2CSCL(g_uli2cBase[i2cModule], g_uli2cSCLPins[i2cModule]);
-  ROM_I2CMasterInitExpClk(MASTER_BASE, F_CPU, false);//max bus speed=400kHz for gyroscope
+  ROM_I2CMasterInitExpClk(MASTER_BASE, F_CPU, fastMode);//Bus speed ( true=400kHz false=100kHz)
 
   //force a stop condition
   if(!ROM_GPIOPinRead(g_uli2cBase[i2cModule], g_uli2cSCLPins[i2cModule]))
 	  forceStop();
 
   //Handle any startup issues by pulsing SCL
-  if(ROM_I2CMasterBusBusy(MASTER_BASE) || ROM_I2CMasterErr(MASTER_BASE) 
+  if(ROM_I2CMasterBusBusy(MASTER_BASE) || ROM_I2CMasterErr(MASTER_BASE)
 	|| !ROM_GPIOPinRead(g_uli2cBase[i2cModule], g_uli2cSCLPins[i2cModule])){
 	  uint8_t doI = 0;
   	  ROM_GPIOPinTypeGPIOOutput(g_uli2cBase[i2cModule], g_uli2cSCLPins[i2cModule]);
   	  unsigned long mask = 0;
   	  do{
   		  for(unsigned long i = 0; i < 10 ; i++) {
+  		      if(fastMode)
+  			  ROM_SysCtlDelay(F_CPU/400000/3);//400Hz=desired frequency, delay iteration=3 cycles
+  			  else
   			  ROM_SysCtlDelay(F_CPU/100000/3);//100Hz=desired frequency, delay iteration=3 cycles
   			  mask = (i%2) ? g_uli2cSCLPins[i2cModule] : 0;
   			  ROM_GPIOPinWrite(g_uli2cBase[i2cModule], g_uli2cSCLPins[i2cModule], mask);
@@ -378,8 +384,8 @@ void TwoWire::begin(uint8_t address)
   //Setup as a slave device
   ROM_I2CMasterDisable(MASTER_BASE);
   I2CSlaveEnable(SLAVE_BASE);
-  I2CSlaveInit(SLAVE_BASE, address); 
-  
+  I2CSlaveInit(SLAVE_BASE, address);
+
   ROM_IntMasterEnable();
 
 }
@@ -569,7 +575,7 @@ int TwoWire::available(void)
 int TwoWire::read(void)
 {
   int value = -1;
-  
+
   // get each successive byte on each call
   if(!RX_BUFFER_FULL){
     value = rxBuffer[rxReadIndex];
@@ -585,7 +591,7 @@ int TwoWire::read(void)
 int TwoWire::peek(void)
 {
   int value = -1;
-  
+
   if(!RX_BUFFER_EMPTY){
     value = rxBuffer[rxReadIndex];
   }
@@ -638,7 +644,7 @@ void TwoWire::I2CIntHandler(void) {
 
 			break;
 
-		case(I2C_SLAVE_ACT_TREQ)://data requested 
+		case(I2C_SLAVE_ACT_TREQ)://data requested
 
 		    if(startDetected) {
 		        uint8_t oldWriteIndex = txWriteIndex;
@@ -682,12 +688,16 @@ I2CIntHandler(void)
 {
     Wire.I2CIntHandler();
 }
-
-void TwoWire::setModule(unsigned long _i2cModule)
+void TwoWire::setModule(unsigned long _i2cModule,bool _fastMode)
 {
     i2cModule = _i2cModule;
+    fastMode = _fastMode;
     if(slaveAddress != 0) begin(slaveAddress);
     else begin();
+}
+void TwoWire::setModule(unsigned long _i2cModule)
+{
+    setModule(_i2cModule,false); //FastMode disabled by default for backward compatibility
 }
 
 //Preinstantiate Object
