@@ -70,9 +70,17 @@ static uint8_t twi_slarw;
 static uint8_t twi_my_addr;
 #endif
 
+//#define USE_USCI_B1 1
+
 #if defined(__MSP430_HAS_USCI__) || defined(__MSP430_HAS_USCI_B0__) \
  || defined(__MSP430_HAS_USCI_B1__)
+
 #ifndef USE_USCI_B1
+#define TWISDAx       TWISDA
+#define TWISCLx       TWISCL
+#define TWISDA_SET_MODEx       TWISDA_SET_MODE
+#define TWISCL_SET_MODEx       TWISCL_SET_MODE
+
 #define UCBxCTLW0     UCB0CTLW0
 #define UCBxCTL0      UCB0CTL0
 #define UCBxCTL1      UCB0CTL1
@@ -94,7 +102,13 @@ static uint8_t twi_my_addr;
 #define UCBxIV        UCB0IV
 #define UCBxI2COA     UCB0I2COA
 #define UCBxI2CSA     UCB0I2CSA
+
 #else
+#define TWISDAx       TWISDA2
+#define TWISCLx       TWISCL2
+#define TWISDA_SET_MODEx       TWISDA_SET_MODE1
+#define TWISCL_SET_MODEx       TWISCL_SET_MODE1
+
 #define UCBxCTLW0     UCB1CTLW0
 #define UCBxCTL0      UCB1CTL0
 #define UCBxCTL1      UCB1CTL1
@@ -164,20 +178,18 @@ void twi_init(void)
      * from stripping the USCI interupt vectors.*/ 
     usci_isr_install();
 
-    /* Set pins to I2C mode */
-    pinMode_int(TWISDA, TWISDA_SET_MODE);
-    pinMode_int(TWISCL, TWISCL_SET_MODE);
-
     //Disable the USCI module and clears the other bits of control register
     UCBxCTL1 = UCSWRST;
 
      /*
-     * Configure as I2C Slave.
+     * Configure as I2C Master, in transit mode
      * UCMODE_3 = I2C mode
      * UCSYNC = Synchronous mode
      * UCCLK = SMCLK
      */
-    UCBxCTL0 = UCMODE_3 | UCSYNC;
+    UCBxCTL0 = UCMST | UCMODE_3 | UCSYNC;
+    UCBxCTL1 |= UCSSEL_2 | UCTR;
+
     /*
      * Compute the clock divider that achieves less than or
      * equal to 100kHz.  The numerator is biased to favor a larger
@@ -187,6 +199,11 @@ void twi_init(void)
     UCBxBR0 = (unsigned char)((F_CPU / TWI_FREQ) & 0xFF);
     UCBxBR1 = (unsigned char)((F_CPU / TWI_FREQ) >> 8);
 
+    /* Set pins to I2C mode */
+    pinMode_int(TWISCLx, TWISCL_SET_MODEx);
+    pinMode_int(TWISDAx, TWISDA_SET_MODEx);
+
+    // Enable the USCI module
     UCBxCTL1 &= ~(UCSWRST);
 
 #if defined(__MSP430_HAS_USCI__)
@@ -197,6 +214,7 @@ void twi_init(void)
 #else
     /* Set I2C state change interrupt mask and TX/RX interrupts */
     UCBxIE |= (UCALIE|UCNACKIE|UCSTTIE|UCSTPIE|UCRXIE|UCTXIE);
+    UCBxIFG = ~(UCALIE|UCNACKIE|UCSTTIE|UCSTPIE|UCRXIE|UCTXIE);  // Clear I2C interrupt sources
 #endif
 
 #elif defined(__MSP430_HAS_EUSCI_B0__)
@@ -270,9 +288,9 @@ uint8_t twi_readFrom(uint8_t address, uint8_t* data, uint8_t length, uint8_t sen
 	/* I2C master mode */
 	USICTL0 |= USIMST;
 #elif defined(__MSP430_HAS_USCI__) || defined(__MSP430_HAS_USCI_B0__) || defined(__MSP430_HAS_USCI_B1__)
-    UCBxCTL1 = UCSWRST;                      // Enable SW reset
-    UCBxCTL1 |= (UCSSEL_2);                  // I2C Master, synchronous mode
-    UCBxCTL0 |= (UCMST | UCMODE_3 | UCSYNC); // I2C Master, synchronous mode
+    UCBxCTL1 |= UCSWRST;                     // Enable SW reset
+//    UCBxCTL1 |= (UCSSEL_2);                  // I2C Master, synchronous mode
+//    UCBxCTL0 |= (UCMST | UCMODE_3 | UCSYNC); // I2C Master, synchronous mode
     UCBxCTL1 &= ~(UCTR);                     // Configure in receive mode
     UCBxI2CSA = address;                     // Set Slave Address
     UCBxCTL1 &= ~UCSWRST;                    // Clear SW reset, resume operation
@@ -281,6 +299,7 @@ uint8_t twi_readFrom(uint8_t address, uint8_t* data, uint8_t length, uint8_t sen
     UC0IE |= (UCB0RXIE | UCB0TXIE);          // Enable I2C interrupts
 #else
     UCBxIE |= (UCALIE|UCNACKIE|UCSTPIE|UCRXIE|UCTXIE);  // Enable I2C interrupts
+    UCBxIFG = ~(UCALIE|UCNACKIE|UCSTTIE|UCSTPIE|UCRXIE|UCTXIE); // Clear I2C interrupt sources
 #endif
 
 #elif defined(__MSP430_HAS_EUSCI_B0__)
@@ -376,9 +395,9 @@ uint8_t twi_writeTo(uint8_t address, uint8_t* data, uint8_t length, uint8_t wait
 	USICTL0 |= USIMST;
 
 #elif defined(__MSP430_HAS_USCI__) || defined(__MSP430_HAS_USCI_B0__) || defined(__MSP430_HAS_USCI_B1__)
-    UCBxCTL1 = UCSWRST;                      // Enable SW reset
-    UCBxCTL1 |= UCSSEL_2;                    // SMCLK
-    UCBxCTL0 |= (UCMST | UCMODE_3 | UCSYNC); // I2C Master, synchronous mode
+    UCBxCTL1 |= UCSWRST;                     // Enable SW reset
+//    UCBxCTL1 |= UCSSEL_2;                    // SMCLK
+//    UCBxCTL0 |= (UCMST | UCMODE_3 | UCSYNC); // I2C Master, synchronous mode
     UCBxCTL1 |= UCTR;                        // Configure in transmit mode
     UCBxI2CSA = address;                     // Set Slave Address
     UCBxCTL1 &= ~UCSWRST;                    // Clear SW reset, resume operation
@@ -387,6 +406,7 @@ uint8_t twi_writeTo(uint8_t address, uint8_t* data, uint8_t length, uint8_t wait
     UC0IE |= UCB0TXIE;                     // Enable I2C interrupts
 #else
     UCBxIE |= (UCALIE|UCNACKIE|UCSTPIE|UCTXIE);  // Enable I2C interrupts
+    UCBxIFG = ~(UCALIE|UCNACKIE|UCSTTIE|UCSTPIE|UCRXIE|UCTXIE);  // Clear I2C interrupt sources
 #endif
 
 #elif defined(__MSP430_HAS_EUSCI_B0__)
@@ -834,8 +854,8 @@ void USCI_B0_ISR(void)
     case USCI_I2C_UCSTTIFG:    // USCI I2C Mode: UCSTTIFG
 		UCB0IFG &= ~UCSTTIFG;
 		if (twi_state ==  TWI_IDLE){
-			if (UCB0CTLW0 &  UCTR){
-				twi_state =  TWI_STX;      // Slave Transmit mode
+			if (UCB0CTLW0 & UCTR){
+				twi_state = TWI_STX;      // Slave Transmit mode
 				// ready the tx buffer index for iteration
 				twi_txBufferIndex = 0;
 				// set tx buffer length to be zero, to verify if user changes it

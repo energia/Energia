@@ -48,8 +48,7 @@ void USCIA1_ISR(void)
 }
 #endif
 
-#if defined(__MSP430_HAS_USCI_B0__) || defined(__MSP430_HAS_USCI_B1__)
-#ifndef USE_USCI_B1
+#if defined(__MSP430_HAS_USCI_B0__)
 __attribute__((interrupt(USCI_B0_VECTOR)))
 void USCIB0_ISR(void)
 {
@@ -60,7 +59,8 @@ void USCIB0_ISR(void)
 	if ((UCB0CTL0 & UCMODE_3) == UCMODE_3 && (UCB0IFG & (UCTXIFG | UCRXIFG)) != 0)
 		i2c_txrx_isr();
 }
-#else
+#endif
+#if defined(__MSP430_HAS_USCI_B1__)
 __attribute__((interrupt(USCI_B1_VECTOR)))
 void USCIB1_ISR(void)
 {
@@ -71,7 +71,6 @@ void USCIB1_ISR(void)
 	if ((UCB1CTL0 & UCMODE_3) == UCMODE_3 && (UCB1IFG & (UCTXIFG | UCRXIFG)) != 0)
 		i2c_txrx_isr();
 }
-#endif
 #endif
 
 #endif /* defined(__MSP430_HAS_USCI__) || defined(__MSP430_HAS_USCI_A0__) || defined(__MSP430_HAS_USCI_A1__) ||
