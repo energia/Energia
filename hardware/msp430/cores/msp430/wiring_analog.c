@@ -1,4 +1,4 @@
-/*
+﻿/*
   ************************************************************************
   *	wiring_analog.c
   *
@@ -181,7 +181,7 @@ void analogWrite(uint8_t pin, int val)
                                 TA2CTL = TASSEL_2 + MC_1+ analog_div;       // SMCLK, up mode
                                 break;
 #endif
-#if defined(__MSP430_HAS_T0B3__) || defined(__MSP430_HAS_T0B7__) 
+#if defined(__MSP430_HAS_T0B3__) || defined(__MSP430_HAS_T0B7__) || defined(__MSP430_HAS_TB3__)
  			//case: T0B0                            // CCR0 used as period register
  			case T0B1:                              // TimerB0 / CCR1
                                 TB0CCR0 = PWM_PERIOD;           // PWM Period

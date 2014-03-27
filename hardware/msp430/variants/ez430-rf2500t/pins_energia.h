@@ -177,10 +177,10 @@ const uint8_t digital_pin_to_timer[] = {
 	NOT_ON_TIMER, /*  2 - VCC */
 	NOT_ON_TIMER, /*  3 - P2.0 */
 	NOT_ON_TIMER, /*  4 - P2.1 */
-	T0A0,         /*  5 - P2.2 */
+	T0A0,         /*  5 - P2.2, note: A0 output cannot be used with analogWrite */
 	T0A1,         /*  6 - P2.3 */
 	NOT_ON_TIMER, /*  7 - P2.4 */
-	T0B0,         /*  8 - P4.3 */
+	T0B0,         /*  8 - P4.3, note: B0 output cannot be used with analogWrite */
 	T0B1,         /*  9 - P4.4 */
 	NOT_ON_TIMER, /* 10 - P4.5 */
 	NOT_ON_TIMER, /* 11 - P4.6 */
@@ -193,7 +193,7 @@ const uint8_t digital_pin_to_timer[] = {
 	NOT_ON_TIMER, /* 18 - P3.1 */
 	NOT_ON_TIMER, /* 19 - dummy */
 	NOT_ON_TIMER, /* 20 - P1.0 */
-	T0A0,         /* 21 - P1.1 */
+	T0A0,         /* 21 - P1.1, note: A0 output cannot be used with analogWrite */
 	T0A1,         /* 22 - P1.2 */
 	NOT_ON_TIMER, /* 23 - dummy */
 	NOT_ON_TIMER, /* 24 - P3.4 */
