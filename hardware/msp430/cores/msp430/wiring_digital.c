@@ -177,28 +177,6 @@ int digitalRead(uint8_t pin)
 
 	if (port == NOT_A_PORT) return LOW;
 
-	/*
-	 * Clear bit in PxSEL register to select GPIO function. Other functions like analogWrite(...) 
-	 * will set this bit so need to clear it.
-	 */
-#if (defined(P1SEL_) || defined(P1SEL))
-	sel = portSel0Register(port);	/* get the port function select register address */
-	*sel &= ~bit;			/* clear bit in pin function select register */
-#endif
-#if (defined(P1SEL2_) || defined(P1SEL2))
-	sel = portSel2Register(port);	/* get the port function select register address */
-	*sel &= ~bit;			/* clear bit in pin function select register */
-#endif
-#if (defined(P1SEL0_) || defined(P1SEL0))
-	sel = portSel0Register(port);	/* get the port function select register address */
-	*sel &= ~bit;			/* clear bit in pin function select register */
-#endif
-#if (defined(P1SEL1_) || defined(P1SEL1))
-	sel = portSel1Register(port);	/* get the port function select register address */
-	*sel &= ~bit;			/* clear bit in pin function select register */
-#endif
-
-
 	if (*portInputRegister(port) & bit) return HIGH;
 	return LOW;
 }

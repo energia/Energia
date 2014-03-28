@@ -37,7 +37,7 @@
 #endif
 
 #if defined(__MSP430_HAS_USCI__)
-static const uint8_t SS      = 17;  /* P3.0 ? */
+static const uint8_t SS      = 17;  /* P3.0 */
 static const uint8_t SCK     = 16;  /* P3.3 */
 static const uint8_t MOSI    = 18;  /* P3.1 */
 static const uint8_t MISO    = 15;  /* P3.2 */
@@ -45,13 +45,13 @@ static const uint8_t TWISDA  = 18;  /* P3.1 */
 static const uint8_t TWISCL  = 15;  /* P3.2 */
 static const uint8_t DEBUG_UARTTXD = 24;  /* Transmit Data (TXD) at P3.4 (UCA0) */
 static const uint8_t DEBUG_UARTRXD = 25;  /* Receive  Data (RXD) at P3.5 (UCA0) */
-#define TWISDA_SET_MODE (PORT_SELECTION0 | PORT_SELECTION1 /* | INPUT_PULLUP*/) /* do not enable the pull ups for this device */
-#define TWISCL_SET_MODE (PORT_SELECTION0 | PORT_SELECTION1 /* | INPUT_PULLUP*/)
-#define DEBUG_UARTRXD_SET_MODE (PORT_SELECTION0 | PORT_SELECTION1 | INPUT)
-#define DEBUG_UARTTXD_SET_MODE (PORT_SELECTION0 | PORT_SELECTION1 | OUTPUT)
-#define SPISCK_SET_MODE (PORT_SELECTION0 | PORT_SELECTION1)
-#define SPIMOSI_SET_MODE (PORT_SELECTION0 | PORT_SELECTION1)
-#define SPIMISO_SET_MODE (PORT_SELECTION0 | PORT_SELECTION1)
+#define TWISDA_SET_MODE (PORT_SELECTION0)
+#define TWISCL_SET_MODE (PORT_SELECTION0)
+#define DEBUG_UARTRXD_SET_MODE (PORT_SELECTION0 | INPUT)
+#define DEBUG_UARTTXD_SET_MODE (PORT_SELECTION0 | OUTPUT)
+#define SPISCK_SET_MODE (PORT_SELECTION0)
+#define SPIMOSI_SET_MODE (PORT_SELECTION0)
+#define SPIMISO_SET_MODE (PORT_SELECTION0)
 #endif
 
 #define DEBUG_UART_MODULE_OFFSET 0x0
