@@ -89,120 +89,50 @@
 #define TWI_ERROR_OTHER 4
 
 
-#define USE_USCI_B1 1
-
-#if defined(__MSP430_HAS_USCI__) || defined(__MSP430_HAS_USCI_B0__) \
- || defined(__MSP430_HAS_USCI_B1__)
-
-#ifndef USE_USCI_B1
-#define TWISDAx       TWISDA
-#define TWISCLx       TWISCL
-#define TWISDA_SET_MODEx       TWISDA_SET_MODE
-#define TWISCL_SET_MODEx       TWISCL_SET_MODE
-
-#define UCBxCTLW0     UCB0CTLW0
-#define UCBxCTL0      UCB0CTL0
-#define UCBxCTL1      UCB0CTL1
-#define UCBxBRW       UCB0BRW
-#define UCBxBR0       UCB0BR0
-#define UCBxBR1       UCB0BR1
-#define UCBxMCTL      UCB0MCTL
-#define UCBxMCTLW     UCB0MCTLW
-#define UCBxSTAT      UCB0STAT
-#define UCBxRXBUF     UCB0RXBUF
-#define UCBxTXBUF     UCB0TXBUF
-#define UCBxABCTL     UCB0ABCTL
-#define UCBxIRCTL     UCB0IRCTL
-#define UCBxIRTCTL    UCB0IRTCTL
-#define UCBxIRRCTL    UCB0IRRCTL
-#define UCBxICTL      UCB0ICTL
-#define UCBxIE        UCB0IE
-#define UCBxIFG       UCB0IFG
-#define UCBxIV        UCB0IV
-#define UCBxI2COA     UCB0I2COA
-#define UCBxI2CSA     UCB0I2CSA
-
-#else
-#define TWISDAx       TWISDA2
-#define TWISCLx       TWISCL2
-#define TWISDA_SET_MODEx       TWISDA_SET_MODE1
-#define TWISCL_SET_MODEx       TWISCL_SET_MODE1
-
-#define UCBxCTLW0     UCB1CTLW0
-#define UCBxCTL0      UCB1CTL0
-#define UCBxCTL1      UCB1CTL1
-#define UCBxBRW       UCB1BRW
-#define UCBxBR0       UCB1BR0
-#define UCBxBR1       UCB1BR1
-#define UCBxMCTL      UCB1MCTL
-#define UCBxMCTLW     UCB1MCTLW
-#define UCBxSTAT      UCB1STAT
-#define UCBxRXBUF     UCB1RXBUF
-#define UCBxTXBUF     UCB1TXBUF
-#define UCBxABCTL     UCB1ABCTL
-#define UCBxIRCTL     UCB1IRCTL
-#define UCBxIRTCTL    UCB1IRTCTL
-#define UCBxIRRCTL    UCB1IRRCTL
-#define UCBxICTL      UCB1ICTL
-#define UCBxIE        UCB1IE
-#define UCBxIFG       UCB1IFG
-#define UCBxIV        UCB1IV
-#define UCBxI2COA     UCB1I2COA
-#define UCBxI2CSA     UCB1I2CSA
-#endif
-#endif
-
-#if defined(__MSP430_HAS_USCI__)
-#endif
-
-#if defined(__MSP430_HAS_EUSCI_B0__)
-#endif
-
-
-
 class TwoWire : public Stream
 {
   private:
-    static uint8_t rxBuffer[];
-    static uint8_t rxBufferIndex;
-    static uint8_t rxBufferLength;
+	uint8_t moduleNbr;
+    uint8_t rxBuffer[BUFFER_LENGTH];
+    uint8_t rxBufferIndex;
+    uint8_t rxBufferLength;
 
-    static uint8_t txAddress;
-    static uint8_t txBuffer[];
-    static uint8_t txBufferIndex;
-    static uint8_t txBufferLength;
+    uint8_t txAddress;
+    uint8_t txBuffer[BUFFER_LENGTH];
+    uint8_t txBufferIndex;
+    uint8_t txBufferLength;
 
-    static uint8_t transmitting;
-    static void (*user_onRequest)(void);
-    static void (*user_onReceive)(int);
-    static void onRequestService(void);
-    static void onReceiveService(uint8_t*, int);
+    uint8_t transmitting;
+    void (*user_onRequest)(void);
+    void (*user_onReceive)(int);
+    void onRequestService(void);
+    void onReceiveService(uint8_t*, int);
 
-    static uint8_t twi_state;
-    static uint8_t twi_sendStop;           // should the transaction end with a stop
-    static uint8_t twi_inRepStart;         // in the middle of a repeated start
+    uint8_t twi_state;
+    uint8_t twi_sendStop;           // should the transaction end with a stop
+    uint8_t twi_inRepStart;         // in the middle of a repeated start
 
-    static void (*twi_onSlaveTransmit)(void);
-    static void (*twi_onSlaveReceive)(uint8_t*, int);
+    void (*twi_onSlaveTransmit)(void);
+    void (*twi_onSlaveReceive)(uint8_t*, int);
 
-    static uint8_t twi_masterBuffer[];
-    static uint8_t twi_masterBufferIndex;
-    static uint8_t twi_masterBufferLength;
+    uint8_t twi_masterBuffer[TWI_BUFFER_LENGTH];
+    uint8_t twi_masterBufferIndex;
+    uint8_t twi_masterBufferLength;
 
-    static uint8_t twi_txBuffer[];
-    static uint8_t twi_txBufferIndex;
-    static uint8_t twi_txBufferLength;
+    uint8_t twi_txBuffer[TWI_BUFFER_LENGTH];
+    uint8_t twi_txBufferIndex;
+    uint8_t twi_txBufferLength;
     #if defined(__MSP430_HAS_USCI__) || defined(__MSP430_HAS_USCI_B0__) \
      || defined(__MSP430_HAS_USCI_B1__) || defined(__MSP430_HAS_EUSCI_B0__)
-    static uint8_t twi_rxBuffer[];
-    static uint8_t twi_rxBufferIndex;
+    uint8_t twi_rxBuffer[TWI_BUFFER_LENGTH];
+    uint8_t twi_rxBufferIndex;
     #endif
 
-    static uint8_t twi_error;
+    uint8_t twi_error;
 
     #if defined(__MSP430_HAS_USI__)
-    static uint8_t twi_slarw;
-    static uint8_t twi_my_addr;
+    uint8_t twi_slarw;
+    uint8_t twi_my_addr;
     #endif
 
     void twi_init(void);
@@ -210,13 +140,31 @@ class TwoWire : public Stream
     uint8_t twi_readFrom(uint8_t address, uint8_t* data, uint8_t length, uint8_t sendStop);
     uint8_t twi_writeTo(uint8_t address, uint8_t* data, uint8_t length, uint8_t wait, uint8_t sendStop);
     uint8_t twi_transmit(const uint8_t* data, uint8_t length);
-    void twi_attachSlaveRxEvent( void (*function)(uint8_t*, int) );
-    void twi_attachSlaveTxEvent( void (*function)(void) );
     void send_start();
 
+    uint16_t sclPinMode;
+    uint16_t sdaPinMode;
+    uint8_t sclPin;
+    uint8_t sdaPin;
+
+#if defined(__MSP430_HAS_USCI__) || defined(__MSP430_HAS_USCI_B0__) \
+ || defined(__MSP430_HAS_USCI_B1__)
+    volatile unsigned char* UCBxCTL0;
+    volatile unsigned char* UCBxCTL1;
+    volatile unsigned char* UCBxBR0;
+    volatile unsigned char* UCBxBR1;
+    volatile unsigned char* UCBxSTAT;
+    const volatile unsigned char* UCBxRXBUF;
+    volatile unsigned char* UCBxTXBUF;
+    volatile unsigned char* UCBxIE;
+    volatile unsigned char* UCBxIFG;
+    volatile unsigned int* UCBxIV;
+    volatile unsigned int* UCBxI2COA;
+    volatile unsigned int* UCBxI2CSA;
+#endif
 
   public:
-    TwoWire();
+    TwoWire(uint8_t moduleNbr, uint16_t sclPinMode, uint16_t sdaPinMode, uint8_t sclPin, uint8_t sdaPin);
     void begin();
     void begin(uint8_t);
     void begin(int);
@@ -256,6 +204,8 @@ class TwoWire : public Stream
 };
 
 extern TwoWire Wire;
-
+#if defined(__MSP430_HAS_USCI_B1__)
+extern TwoWire Wire1;
 #endif
 
+#endif
