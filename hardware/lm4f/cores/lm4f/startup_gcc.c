@@ -84,6 +84,9 @@ extern void SysTickIntHandler(void);
 /*
  * create some overridable default signal handlers
  */
+__attribute__((weak)) void CANIntHandler(void) {}
+__attribute__((weak)) void CANIntHandler1(void) {}
+__attribute__((weak)) void CANIntHandler2(void) {}
 __attribute__((weak)) void UARTIntHandler(void) {}
 __attribute__((weak)) void UARTIntHandler1(void) {}
 __attribute__((weak)) void UARTIntHandler2(void) {}
@@ -166,9 +169,9 @@ void (* const g_pfnVectors[])(void) =
     IntDefaultHandler,                      // Timer 3 subtimer B
     I2CIntHandler,                          // I2C1 Master and Slave
     IntDefaultHandler,                      // Quadrature Encoder 1
-    IntDefaultHandler,                      // CAN0
-    IntDefaultHandler,                      // CAN1
-    IntDefaultHandler,                      // CAN2
+    CANIntHandler,                      // CAN0
+    CANIntHandler1,                      // CAN1
+    CANIntHandler2,                      // CAN2
     IntDefaultHandler,                      // Ethernet
     IntDefaultHandler,                      // Hibernate
     IntDefaultHandler,                      // USB0
@@ -325,8 +328,8 @@ void (* const g_pfnVectors[])(void) =
     IntDefaultHandler,                      // Timer 3 subtimer A
     IntDefaultHandler,                      // Timer 3 subtimer B
     IntDefaultHandler,                      // I2C1 Master and Slave
-    IntDefaultHandler,                      // CAN0
-    IntDefaultHandler,                      // CAN1
+    CANIntHandler,                      // CAN0
+    CANIntHandler1,                      // CAN1
     lwIPEthernetIntHandler,                 // Ethernet
     IntDefaultHandler,                      // Hibernate
     IntDefaultHandler,                      // USB0
