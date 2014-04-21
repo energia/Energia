@@ -216,7 +216,7 @@ void analogWrite(uint8_t pin, int val)
 					TA0CCR1 = ccrval;       // PWM duty cycle
 					timera0_ccr_dblbuf[0] = ccrval;
 					SET_PXSEL(bit);
-					TA0CTL = TASSEL_2 + MC_1 + analog_div;       // SMCLK, up mode
+					TA0CTL = TASSEL_2 | MC_1 | analog_div;       // SMCLK, up mode
 				} else {
 					timera0_ccr_dblbuf[0] = ccrval;
 					TA0CCTL0 &= ~CCIFG;
@@ -231,7 +231,7 @@ void analogWrite(uint8_t pin, int val)
 					TA0CCR2 = ccrval;       // PWM duty cycle
 					timera0_ccr_dblbuf[1] = ccrval;
 					SET_PXSEL(bit);
-					TA0CTL = TASSEL_2 + MC_1 + analog_div;       // SMCLK, up mode
+					TA0CTL = TASSEL_2 | MC_1 | analog_div;       // SMCLK, up mode
 				} else {
 					timera0_ccr_dblbuf[1] = ccrval;
 					TA0CCTL0 &= ~CCIFG;
@@ -247,7 +247,7 @@ void analogWrite(uint8_t pin, int val)
 					TA0CCR3 = ccrval;       // PWM duty cycle
 					timera0_ccr_dblbuf[2] = ccrval;
 					SET_PXSEL(bit);
-					TA0CTL = TASSEL_2 + MC_1 + analog_div;       // SMCLK, up mode
+					TA0CTL = TASSEL_2 | MC_1 | analog_div;       // SMCLK, up mode
 				} else {
 					timera0_ccr_dblbuf[2] = ccrval;
 					TA0CCTL0 &= ~CCIFG;
@@ -261,7 +261,7 @@ void analogWrite(uint8_t pin, int val)
 					TA0CCR4 = ccrval;       // PWM duty cycle
 					timera0_ccr_dblbuf[3] = ccrval;
 					SET_PXSEL(bit);
-					TA0CTL = TASSEL_2 + MC_1 + analog_div;       // SMCLK, up mode
+					TA0CTL = TASSEL_2 | MC_1 | analog_div;       // SMCLK, up mode
 				} else {
 					timera0_ccr_dblbuf[3] = ccrval;
 					TA0CCTL0 &= ~CCIFG;
@@ -278,7 +278,7 @@ void analogWrite(uint8_t pin, int val)
 					TA1CCR1 = ccrval;       // PWM duty cycle
 					timera1_ccr_dblbuf[0] = ccrval;
 					SET_PXSEL(bit);
-					TA1CTL = TASSEL_2 + MC_1 + analog_div;       // SMCLK, up mode
+					TA1CTL = TASSEL_2 | MC_1 | analog_div;       // SMCLK, up mode
 				} else {
 					timera1_ccr_dblbuf[0] = ccrval;
 					TA1CCTL0 &= ~CCIFG;
@@ -292,7 +292,7 @@ void analogWrite(uint8_t pin, int val)
 					TA1CCR2 = ccrval;       // PWM duty cycle
 					timera1_ccr_dblbuf[1] = ccrval;
 					SET_PXSEL(bit);
-					TA1CTL = TASSEL_2 + MC_1 + analog_div;       // SMCLK, up mode
+					TA1CTL = TASSEL_2 | MC_1 | analog_div;       // SMCLK, up mode
 				} else {
 					timera1_ccr_dblbuf[1] = ccrval;
 					TA1CCTL0 &= ~CCIFG;
@@ -309,7 +309,7 @@ void analogWrite(uint8_t pin, int val)
 					TA2CCR1 = ccrval;       // PWM duty cycle
 					timera2_ccr_dblbuf[0] = ccrval;
 					SET_PXSEL(bit);
-					TA2CTL = TASSEL_2 + MC_1 + analog_div;       // SMCLK, up mode
+					TA2CTL = TASSEL_2 | MC_1 | analog_div;       // SMCLK, up mode
 				} else {
 					timera2_ccr_dblbuf[0] = ccrval;
 					TA2CCTL0 &= ~CCIFG;
@@ -323,7 +323,7 @@ void analogWrite(uint8_t pin, int val)
 					TA2CCR2 = ccrval;       // PWM duty cycle
 					timera2_ccr_dblbuf[1] = ccrval;
 					SET_PXSEL(bit);
-					TA2CTL = TASSEL_2 + MC_1 + analog_div;       // SMCLK, up mode
+					TA2CTL = TASSEL_2 | MC_1 | analog_div;       // SMCLK, up mode
 				} else {
 					timera2_ccr_dblbuf[1] = ccrval;
 					TA2CCTL0 &= ~CCIFG;
@@ -340,7 +340,7 @@ void analogWrite(uint8_t pin, int val)
 					TB0CCR1 = ccrval;       // PWM duty cycle
 					SET_PXSEL(bit);
 					TB0CCTL1 |= CLLD_1; // Future CCR updates will be double-buffered
-					TB0CTL = TBSSEL_2 + MC_1 + analog_div;       // SMCLK, up mode
+					TB0CTL = TBSSEL_2 | MC_1 | analog_div;       // SMCLK, up mode
 				} else {
 					TB0CCR1 = ccrval;       // PWM duty cycle
 				}
@@ -352,7 +352,7 @@ void analogWrite(uint8_t pin, int val)
 					TB0CCR2 = ccrval;       // PWM duty cycle
 					SET_PXSEL(bit);
 					TB0CCTL2 |= CLLD_1; // Future CCR updates will be double-buffered
-					TB0CTL = TBSSEL_2 + MC_1 + analog_div;       // SMCLK, up mode
+					TB0CTL = TBSSEL_2 | MC_1 | analog_div;       // SMCLK, up mode
 				} else {
 					TB0CCR2 = ccrval;       // PWM duty cycle
 				}
@@ -366,7 +366,7 @@ void analogWrite(uint8_t pin, int val)
 					TB0CCR3 = ccrval;       // PWM duty cycle
 					SET_PXSEL(bit);
 					TB0CCTL3 |= CLLD_1; // Future CCR updates will be double-buffered
-					TB0CTL = TBSSEL_2 + MC_1 + analog_div;       // SMCLK, up mode
+					TB0CTL = TBSSEL_2 | MC_1 | analog_div;       // SMCLK, up mode
 				} else {
 					TB0CCR3 = ccrval;       // PWM duty cycle
 				}
@@ -378,7 +378,7 @@ void analogWrite(uint8_t pin, int val)
 					TB0CCR4 = ccrval;       // PWM duty cycle
 					SET_PXSEL(bit);
 					TB0CCTL4 |= CLLD_1; // Future CCR updates will be double-buffered
-					TB0CTL = TBSSEL_2 + MC_1 + analog_div;       // SMCLK, up mode
+					TB0CTL = TBSSEL_2 | MC_1 | analog_div;       // SMCLK, up mode
 				} else {
 					TB0CCR4 = ccrval;       // PWM duty cycle
 				}
@@ -390,7 +390,7 @@ void analogWrite(uint8_t pin, int val)
 					TB0CCR5 = ccrval;       // PWM duty cycle
 					SET_PXSEL(bit);
 					TB0CCTL5 |= CLLD_1; // Future CCR updates will be double-buffered
-					TB0CTL = TBSSEL_2 + MC_1 + analog_div;       // SMCLK, up mode
+					TB0CTL = TBSSEL_2 | MC_1 | analog_div;       // SMCLK, up mode
 				} else {
 					TB0CCR5 = ccrval;       // PWM duty cycle
 				}
@@ -402,7 +402,7 @@ void analogWrite(uint8_t pin, int val)
 					TB0CCR6 = ccrval;       // PWM duty cycle
 					SET_PXSEL(bit);
 					TB0CCTL6 |= CLLD_1; // Future CCR updates will be double-buffered
-					TB0CTL = TBSSEL_2 + MC_1 + analog_div;       // SMCLK, up mode
+					TB0CTL = TBSSEL_2 | MC_1 | analog_div;       // SMCLK, up mode
 				} else {
 					TB0CCR6 = ccrval;       // PWM duty cycle
 				}
@@ -417,7 +417,7 @@ void analogWrite(uint8_t pin, int val)
 					TB1CCR1 = ccrval;       // PWM duty cycle
 					SET_PXSEL(bit);
 					TB1CCTL1 |= CLLD_1; // Future CCR updates will be double-buffered
-					TB1CTL = TBSSEL_2 + MC_1 + analog_div;       // SMCLK, up mode
+					TB1CTL = TBSSEL_2 | MC_1 | analog_div;       // SMCLK, up mode
 				} else {
 					TB1CCR1 = ccrval;       // PWM duty cycle
 				}
@@ -429,7 +429,7 @@ void analogWrite(uint8_t pin, int val)
 					TB1CCR2 = ccrval;       // PWM duty cycle
 					SET_PXSEL(bit);
 					TB1CCTL2 |= CLLD_1; // Future CCR updates will be double-buffered
-					TB1CTL = TBSSEL_2 + MC_1 + analog_div;       // SMCLK, up mode
+					TB1CTL = TBSSEL_2 | MC_1 | analog_div;       // SMCLK, up mode
 				} else {
 					TB1CCR2 = ccrval;       // PWM duty cycle
 				}
@@ -444,7 +444,7 @@ void analogWrite(uint8_t pin, int val)
 					TB2CCR1 = ccrval;       // PWM duty cycle
 					SET_PXSEL(bit);
 					TB2CCTL1 |= CLLD_1; // Future CCR updates will be double-buffered
-					TB2CTL = TBSSEL_2 + MC_1 + analog_div;       // SMCLK, up mode
+					TB2CTL = TBSSEL_2 | MC_1 | analog_div;       // SMCLK, up mode
 				} else {
 					TB2CCR1 = ccrval;       // PWM duty cycle
 				}
@@ -456,7 +456,7 @@ void analogWrite(uint8_t pin, int val)
 					TB2CCR2 = ccrval;       // PWM duty cycle
 					SET_PXSEL(bit);
 					TB2CCTL2 |= CLLD_1; // Future CCR updates will be double-buffered
-					TB2CTL = TBSSEL_2 + MC_1 + analog_div;       // SMCLK, up mode
+					TB2CTL = TBSSEL_2 | MC_1 | analog_div;       // SMCLK, up mode
 				} else {
 					TB2CCR2 = ccrval;       // PWM duty cycle
 				}
