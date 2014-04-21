@@ -104,6 +104,54 @@ void analogResolution(uint16_t res)
 	analog_res = res;
 }
 
+/* Timer_A delayed-CCR-update ISRs. */
+
+#if defined(__MSP430_HAS_TA3__) || defined(__MSP430_HAS_T0A3__)
+uint16_t timera0_ccr_dblbuf[2];
+#pragma vector=TIMER0_A0_VECTOR
+__interrupt void TA0_CCR_updater()
+{
+	TA0CCR1 = timera0_ccr_dblbuf[0];
+	TA0CCR2 = timera0_ccr_dblbuf[1];
+	TA0CCTL0 &= ~CCIE;
+}
+#endif
+
+#if defined(__MSP430_HAS_TA5__) || defined(__MSP430_HAS_T0A5__) 
+uint16_t timera0_ccr_dblbuf[4];
+#pragma vector=TIMER0_A0_VECTOR
+__interrupt void TA0_CCR_updater()
+{
+	TA0CCR1 = timera0_ccr_dblbuf[0];
+	TA0CCR2 = timera0_ccr_dblbuf[1];
+	TA0CCR3 = timera0_ccr_dblbuf[2];
+	TA0CCR4 = timera0_ccr_dblbuf[3];
+	TA0CCTL0 &= ~CCIE;
+}
+#endif
+
+#if defined(__MSP430_HAS_T1A3__) 
+uint16_t timera1_ccr_dblbuf[2];
+#pragma vector=TIMER1_A0_VECTOR
+__interrupt void TA1_CCR_updater()
+{
+	TA1CCR1 = timera1_ccr_dblbuf[0];
+	TA1CCR2 = timera1_ccr_dblbuf[1];
+	TA1CCTL0 &= ~CCIE;
+}
+#endif
+
+#if defined(__MSP430_HAS_T2A3__)  
+uint16_t timera2_ccr_dblbuf[2];
+#pragma vector=TIMER2_A0_VECTOR
+__interrupt void TA2_CCR_updater()
+{
+	TA2CCR1 = timera2_ccr_dblbuf[0];
+	TA2CCR2 = timera2_ccr_dblbuf[1];
+	TA2CCTL0 &= ~CCIE;
+}
+#endif
+
 
 //Arduino specifies ~490 Hz for analog out PWM so we follow suit.
 #define PWM_PERIOD analog_period // F_CPU/490
@@ -162,10 +210,11 @@ void analogWrite(uint8_t pin, int val)
 					TA0CCR0 = PWM_PERIOD;           // PWM Period
 					TA0CCTL1 = OUTMOD_7;            // reset/set
 					TA0CCR1 = ccrval;       // PWM duty cycle
+					timera0_ccr_dblbuf[0] = ccrval;
 					TA0CTL = TASSEL_2 + MC_1 + analog_div;       // SMCLK, up mode
 				} else {
-					while (TA0R < PWM_PERIOD-1) ;  // Synchronize to avoid glitching
-					TA0CCR1 = ccrval;       // PWM duty cycle
+					timera0_ccr_dblbuf[0] = ccrval;
+					TA0CCTL0 |= CCIE;
 				}
                                 break;
 #if defined(__MSP430_HAS_TA3__) || defined(__MSP430_HAS_T0A3__) || defined(__MSP430_HAS_T0A5__) || defined(__MSP430_HAS_TA5__) 
@@ -174,10 +223,11 @@ void analogWrite(uint8_t pin, int val)
 					TA0CCR0 = PWM_PERIOD;           // PWM Period
 					TA0CCTL2 = OUTMOD_7;            // reset/set
 					TA0CCR2 = ccrval;       // PWM duty cycle
+					timera0_ccr_dblbuf[1] = ccrval;
 					TA0CTL = TASSEL_2 + MC_1 + analog_div;       // SMCLK, up mode
 				} else {
-					while (TA0R < PWM_PERIOD-1) ;  // Synchronize to avoid glitching
-					TA0CCR2 = ccrval;       // PWM duty cycle
+					timera0_ccr_dblbuf[1] = ccrval;
+					TA0CCTL0 |= CCIE;
 				}
                                 break;
 #endif
@@ -187,10 +237,11 @@ void analogWrite(uint8_t pin, int val)
 					TA0CCR0 = PWM_PERIOD;           // PWM Period
 					TA0CCTL3 = OUTMOD_7;            // reset/set
 					TA0CCR3 = ccrval;       // PWM duty cycle
+					timera0_ccr_dblbuf[2] = ccrval;
 					TA0CTL = TASSEL_2 + MC_1 + analog_div;       // SMCLK, up mode
 				} else {
-					while (TA0R < PWM_PERIOD-1) ;  // Synchronize to avoid glitching
-					TA0CCR3 = ccrval;       // PWM duty cycle
+					timera0_ccr_dblbuf[2] = ccrval;
+					TA0CCTL0 |= CCIE;
 				}
                                 break;
  			case T0A4:                              // TimerA0 / CCR4
@@ -198,10 +249,11 @@ void analogWrite(uint8_t pin, int val)
 					TA0CCR0 = PWM_PERIOD;           // PWM Period
 					TA0CCTL4 = OUTMOD_7;            // reset/set
 					TA0CCR4 = ccrval;       // PWM duty cycle
+					timera0_ccr_dblbuf[3] = ccrval;
 					TA0CTL = TASSEL_2 + MC_1 + analog_div;       // SMCLK, up mode
 				} else {
-					while (TA0R < PWM_PERIOD-1) ;  // Synchronize to avoid glitching
-					TA0CCR4 = ccrval;       // PWM duty cycle
+					timera0_ccr_dblbuf[3] = ccrval;
+					TA0CCTL0 |= CCIE;
 				}
                                 break;
 #endif
@@ -212,10 +264,11 @@ void analogWrite(uint8_t pin, int val)
 					TA1CCR0 = PWM_PERIOD;           // PWM Period
 					TA1CCTL1 = OUTMOD_7;            // reset/set
 					TA1CCR1 = ccrval;       // PWM duty cycle
+					timera1_ccr_dblbuf[0] = ccrval;
 					TA1CTL = TASSEL_2 + MC_1 + analog_div;       // SMCLK, up mode
 				} else {
-					while (TA1R < PWM_PERIOD-1) ;  // Synchronize to avoid glitching
-					TA1CCR1 = ccrval;       // PWM duty cycle
+					timera1_ccr_dblbuf[0] = ccrval;
+					TA1CCTL0 |= CCIE;
 				}
                                 break;
  			case T1A2:                              // TimerA1 / CCR2
@@ -223,10 +276,11 @@ void analogWrite(uint8_t pin, int val)
 					TA1CCR0 = PWM_PERIOD;           // PWM Period
 					TA1CCTL2 = OUTMOD_7;            // reset/set
 					TA1CCR2 = ccrval;       // PWM duty cycle
+					timera1_ccr_dblbuf[1] = ccrval;
 					TA1CTL = TASSEL_2 + MC_1 + analog_div;       // SMCLK, up mode
 				} else {
-					while (TA1R < PWM_PERIOD-1) ;  // Synchronize to avoid glitching
-					TA1CCR2 = ccrval;       // PWM duty cycle
+					timera1_ccr_dblbuf[1] = ccrval;
+					TA1CCTL0 |= CCIE;
 				}
                                 break;
 #endif
@@ -237,10 +291,11 @@ void analogWrite(uint8_t pin, int val)
 					TA2CCR0 = PWM_PERIOD;           // PWM Period
 					TA2CCTL1 = OUTMOD_7;            // reset/set
 					TA2CCR1 = ccrval;       // PWM duty cycle
+					timera2_ccr_dblbuf[0] = ccrval;
 					TA2CTL = TASSEL_2 + MC_1 + analog_div;       // SMCLK, up mode
 				} else {
-					while (TA2R < PWM_PERIOD-1) ;  // Synchronize to avoid glitching
-					TA2CCR1 = ccrval;       // PWM duty cycle
+					timera2_ccr_dblbuf[0] = ccrval;
+					TA2CCTL0 |= CCIE;
 				}
                                 break;
  			case T2A2:                              // TimerA2 / CCR2
@@ -248,10 +303,11 @@ void analogWrite(uint8_t pin, int val)
 					TA2CCR0 = PWM_PERIOD;           // PWM Period
 					TA2CCTL2 = OUTMOD_7;            // reset/set
 					TA2CCR2 = ccrval;       // PWM duty cycle
+					timera2_ccr_dblbuf[1] = ccrval;
 					TA2CTL = TASSEL_2 + MC_1 + analog_div;       // SMCLK, up mode
 				} else {
-					while (TA2R < PWM_PERIOD-1) ;  // Synchronize to avoid glitching
-					TA2CCR2 = ccrval;       // PWM duty cycle
+					timera2_ccr_dblbuf[1] = ccrval;
+					TA2CCTL0 |= CCIE;
 				}
                                 break;
 #endif
@@ -378,6 +434,7 @@ void analogWrite(uint8_t pin, int val)
                 }
         }
 }
+
 
 uint16_t analogRead(uint8_t pin)
 {
