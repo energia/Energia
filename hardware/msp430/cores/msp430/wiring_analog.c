@@ -132,7 +132,7 @@ void analogWrite(uint8_t pin, int val)
                 if (port == NOT_A_PORT) return; // pin on timer?
 
 	        sel = portSelRegister(port); // get the port function select register address
-		uint16_t is_already_pwm = false;
+		uint16_t is_already_pwm = false;  // uint16_t is fine since this gets optimized away using a register anyhow
 #if (defined(P1SEL2_) || defined(P1SEL2))
 #define is_using_two_pxsel
 		volatile uint8_t *selx = portSel2Register(port);
@@ -260,22 +260,20 @@ void analogWrite(uint8_t pin, int val)
  			case T0B1:                              // TimerB0 / CCR1
 				if (!is_already_pwm) {
 					TB0CCR0 = PWM_PERIOD;           // PWM Period
-					TB0CCTL1 = OUTMOD_7;            // reset/set
+					TB0CCTL1 = OUTMOD_7 | CLLD_1;   // reset/set, CCR updates when TBR counts back to 0
 					TB0CCR1 = ccrval;       // PWM duty cycle
 					TB0CTL = TBSSEL_2 + MC_1 + analog_div;       // SMCLK, up mode
 				} else {
-					while (TB0R < PWM_PERIOD-1) ;  // Synchronize to avoid glitching
 					TB0CCR1 = ccrval;       // PWM duty cycle
 				}
                                 break;
  			case T0B2:                              // TimerB0 / CCR1
 				if (!is_already_pwm) {
 					TB0CCR0 = PWM_PERIOD;           // PWM Period
-					TB0CCTL2 = OUTMOD_7;            // reset/set
+					TB0CCTL2 = OUTMOD_7 | CLLD_1;   // reset/set, CCR updates when TBR counts back to 0
 					TB0CCR2 = ccrval;       // PWM duty cycle
 					TB0CTL = TBSSEL_2 + MC_1 + analog_div;       // SMCLK, up mode
 				} else {
-					while (TB0R < PWM_PERIOD-1) ;  // Synchronize to avoid glitching
 					TB0CCR2 = ccrval;       // PWM duty cycle
 				}
                                 break;
@@ -284,44 +282,40 @@ void analogWrite(uint8_t pin, int val)
  			case T0B3:                              // TimerB0 / CCR3
 				if (!is_already_pwm) {
 					TB0CCR0 = PWM_PERIOD;           // PWM Period
-					TB0CCTL3 = OUTMOD_7;            // reset/set
+					TB0CCTL3 = OUTMOD_7 | CLLD_1;   // reset/set, CCR updates when TBR counts back to 0
 					TB0CCR3 = ccrval;       // PWM duty cycle
 					TB0CTL = TBSSEL_2 + MC_1 + analog_div;       // SMCLK, up mode
 				} else {
-					while (TB0R < PWM_PERIOD-1) ;  // Synchronize to avoid glitching
 					TB0CCR3 = ccrval;       // PWM duty cycle
 				}
                                 break;
  			case T0B4:                              // TimerB0 / CCR4
 				if (!is_already_pwm) {
 					TB0CCR0 = PWM_PERIOD;           // PWM Period
-					TB0CCTL4 = OUTMOD_7;            // reset/set
+					TB0CCTL4 = OUTMOD_7 | CLLD_1;   // reset/set, CCR updates when TBR counts back to 0
 					TB0CCR4 = ccrval;       // PWM duty cycle
 					TB0CTL = TBSSEL_2 + MC_1 + analog_div;       // SMCLK, up mode
 				} else {
-					while (TB0R < PWM_PERIOD-1) ;  // Synchronize to avoid glitching
 					TB0CCR4 = ccrval;       // PWM duty cycle
 				}
                                 break;
  			case T0B5:                              // TimerB0 / CCR5
 				if (!is_already_pwm) {
 					TB0CCR0 = PWM_PERIOD;           // PWM Period
-					TB0CCTL5 = OUTMOD_7;            // reset/set
+					TB0CCTL5 = OUTMOD_7 | CLLD_1;   // reset/set, CCR updates when TBR counts back to 0
 					TB0CCR5 = ccrval;       // PWM duty cycle
 					TB0CTL = TBSSEL_2 + MC_1 + analog_div;       // SMCLK, up mode
 				} else {
-					while (TB0R < PWM_PERIOD-1) ;  // Synchronize to avoid glitching
 					TB0CCR5 = ccrval;       // PWM duty cycle
 				}
                                 break;
  			case T0B6:                              // TimerB0 / CCR6
 				if (!is_already_pwm) {
 					TB0CCR0 = PWM_PERIOD;           // PWM Period
-					TB0CCTL6 = OUTMOD_7;            // reset/set
+					TB0CCTL6 = OUTMOD_7 | CLLD_1;   // reset/set, CCR updates when TBR counts back to 0
 					TB0CCR6 = ccrval;       // PWM duty cycle
 					TB0CTL = TBSSEL_2 + MC_1 + analog_div;       // SMCLK, up mode
 				} else {
-					while (TB0R < PWM_PERIOD-1) ;  // Synchronize to avoid glitching
 					TB0CCR6 = ccrval;       // PWM duty cycle
 				}
                                 break;
@@ -331,22 +325,20 @@ void analogWrite(uint8_t pin, int val)
  			case T1B1:                              // TimerB0 / CCR1
 				if (!is_already_pwm) {
 					TB1CCR0 = PWM_PERIOD;           // PWM Period
-					TB1CCTL1 = OUTMOD_7;            // reset/set
+					TB1CCTL1 = OUTMOD_7 | CLLD_1;   // reset/set, CCR updates when TBR counts back to 0
 					TB1CCR1 = ccrval;       // PWM duty cycle
 					TB1CTL = TBSSEL_2 + MC_1 + analog_div;       // SMCLK, up mode
 				} else {
-					while (TB1R < PWM_PERIOD-1) ;  // Synchronize to avoid glitching
 					TB1CCR1 = ccrval;       // PWM duty cycle
 				}
                                 break;
  			case T1B2:                              // TimerB0 / CCR1
 				if (!is_already_pwm) {
 					TB1CCR0 = PWM_PERIOD;           // PWM Period
-					TB1CCTL2 = OUTMOD_7;            // reset/set
+					TB1CCTL2 = OUTMOD_7 | CLLD_1;   // reset/set, CCR updates when TBR counts back to 0
 					TB1CCR2 = ccrval;       // PWM duty cycle
 					TB1CTL = TBSSEL_2 + MC_1 + analog_div;       // SMCLK, up mode
 				} else {
-					while (TB1R < PWM_PERIOD-1) ;  // Synchronize to avoid glitching
 					TB1CCR2 = ccrval;       // PWM duty cycle
 				}
                                 break;
@@ -356,22 +348,20 @@ void analogWrite(uint8_t pin, int val)
  			case T2B1:                              // TimerB0 / CCR1
 				if (!is_already_pwm) {
 					TB2CCR0 = PWM_PERIOD;           // PWM Period
-					TB2CCTL1 = OUTMOD_7;            // reset/set
+					TB2CCTL1 = OUTMOD_7 | CLLD_1;   // reset/set, CCR updates when TBR counts back to 0
 					TB2CCR1 = ccrval;       // PWM duty cycle
 					TB2CTL = TBSSEL_2 + MC_1 + analog_div;       // SMCLK, up mode
 				} else {
-					while (TB2R < PWM_PERIOD-1) ;  // Synchronize to avoid glitching
 					TB2CCR1 = ccrval;       // PWM duty cycle
 				}
                                 break;
  			case T2B2:                              // TimerB0 / CCR1
 				if (!is_already_pwm) {
 					TB2CCR0 = PWM_PERIOD;           // PWM Period
-					TB2CCTL2 = OUTMOD_7;            // reset/set
+					TB2CCTL2 = OUTMOD_7 | CLLD_1;   // reset/set, CCR updates when TBR counts back to 0
 					TB2CCR2 = ccrval;       // PWM duty cycle
 					TB2CTL = TBSSEL_2 + MC_1 + analog_div;       // SMCLK, up mode
 				} else {
-					while (TB2R < PWM_PERIOD-1) ;  // Synchronize to avoid glitching
 					TB2CCR2 = ccrval;       // PWM duty cycle
 				}
                                 break;
