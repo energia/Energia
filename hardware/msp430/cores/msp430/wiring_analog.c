@@ -108,8 +108,8 @@ void analogResolution(uint16_t res)
 
 #if defined(__MSP430_HAS_TA3__) || defined(__MSP430_HAS_T0A3__)
 volatile uint16_t timera0_ccr_dblbuf[2];
-#pragma vector=TIMER0_A0_VECTOR
-__interrupt void TA0_CCR_updater()
+__attribute__((interrupt(TIMER0_A0_VECTOR)))
+void TA0_CCR_updater()
 {
 	TA0CCR1 = timera0_ccr_dblbuf[0];
 	TA0CCR2 = timera0_ccr_dblbuf[1];
@@ -119,8 +119,8 @@ __interrupt void TA0_CCR_updater()
 
 #if defined(__MSP430_HAS_TA5__) || defined(__MSP430_HAS_T0A5__) 
 volatile uint16_t timera0_ccr_dblbuf[4];
-#pragma vector=TIMER0_A0_VECTOR
-__interrupt void TA0_CCR_updater()
+__attribute__((interrupt(TIMER0_A0_VECTOR)))
+void TA0_CCR_updater()
 {
 	TA0CCR1 = timera0_ccr_dblbuf[0];
 	TA0CCR2 = timera0_ccr_dblbuf[1];
@@ -132,8 +132,8 @@ __interrupt void TA0_CCR_updater()
 
 #if defined(__MSP430_HAS_T1A3__) 
 volatile uint16_t timera1_ccr_dblbuf[2];
-#pragma vector=TIMER1_A0_VECTOR
-__interrupt void TA1_CCR_updater()
+__attribute__((interrupt(TIMER1_A0_VECTOR)))
+void TA1_CCR_updater()
 {
 	TA1CCR1 = timera1_ccr_dblbuf[0];
 	TA1CCR2 = timera1_ccr_dblbuf[1];
@@ -143,8 +143,8 @@ __interrupt void TA1_CCR_updater()
 
 #if defined(__MSP430_HAS_T2A3__)  
 volatile uint16_t timera2_ccr_dblbuf[2];
-#pragma vector=TIMER2_A0_VECTOR
-__interrupt void TA2_CCR_updater()
+__attribute__((interrupt(TIMER2_A0_VECTOR)))
+void TA2_CCR_updater()
 {
 	TA2CCR1 = timera2_ccr_dblbuf[0];
 	TA2CCR2 = timera2_ccr_dblbuf[1];
@@ -219,6 +219,7 @@ void analogWrite(uint8_t pin, int val)
 					TA0CTL = TASSEL_2 + MC_1 + analog_div;       // SMCLK, up mode
 				} else {
 					timera0_ccr_dblbuf[0] = ccrval;
+					TA0CCTL0 &= ~CCIFG;
 					TA0CCTL0 |= CCIE;
 				}
                                 break;
@@ -233,6 +234,7 @@ void analogWrite(uint8_t pin, int val)
 					TA0CTL = TASSEL_2 + MC_1 + analog_div;       // SMCLK, up mode
 				} else {
 					timera0_ccr_dblbuf[1] = ccrval;
+					TA0CCTL0 &= ~CCIFG;
 					TA0CCTL0 |= CCIE;
 				}
                                 break;
@@ -248,6 +250,7 @@ void analogWrite(uint8_t pin, int val)
 					TA0CTL = TASSEL_2 + MC_1 + analog_div;       // SMCLK, up mode
 				} else {
 					timera0_ccr_dblbuf[2] = ccrval;
+					TA0CCTL0 &= ~CCIFG;
 					TA0CCTL0 |= CCIE;
 				}
                                 break;
@@ -261,6 +264,7 @@ void analogWrite(uint8_t pin, int val)
 					TA0CTL = TASSEL_2 + MC_1 + analog_div;       // SMCLK, up mode
 				} else {
 					timera0_ccr_dblbuf[3] = ccrval;
+					TA0CCTL0 &= ~CCIFG;
 					TA0CCTL0 |= CCIE;
 				}
                                 break;
@@ -277,6 +281,7 @@ void analogWrite(uint8_t pin, int val)
 					TA1CTL = TASSEL_2 + MC_1 + analog_div;       // SMCLK, up mode
 				} else {
 					timera1_ccr_dblbuf[0] = ccrval;
+					TA1CCTL0 &= ~CCIFG;
 					TA1CCTL0 |= CCIE;
 				}
                                 break;
@@ -290,6 +295,7 @@ void analogWrite(uint8_t pin, int val)
 					TA1CTL = TASSEL_2 + MC_1 + analog_div;       // SMCLK, up mode
 				} else {
 					timera1_ccr_dblbuf[1] = ccrval;
+					TA1CCTL0 &= ~CCIFG;
 					TA1CCTL0 |= CCIE;
 				}
                                 break;
@@ -306,6 +312,7 @@ void analogWrite(uint8_t pin, int val)
 					TA2CTL = TASSEL_2 + MC_1 + analog_div;       // SMCLK, up mode
 				} else {
 					timera2_ccr_dblbuf[0] = ccrval;
+					TA2CCTL0 &= ~CCIFG;
 					TA2CCTL0 |= CCIE;
 				}
                                 break;
@@ -319,6 +326,7 @@ void analogWrite(uint8_t pin, int val)
 					TA2CTL = TASSEL_2 + MC_1 + analog_div;       // SMCLK, up mode
 				} else {
 					timera2_ccr_dblbuf[1] = ccrval;
+					TA2CCTL0 &= ~CCIFG;
 					TA2CCTL0 |= CCIE;
 				}
                                 break;
