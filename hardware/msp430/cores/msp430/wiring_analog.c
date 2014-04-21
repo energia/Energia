@@ -107,7 +107,7 @@ void analogResolution(uint16_t res)
 /* Timer_A delayed-CCR-update ISRs. */
 
 #if defined(__MSP430_HAS_TA3__) || defined(__MSP430_HAS_T0A3__)
-uint16_t timera0_ccr_dblbuf[2];
+volatile uint16_t timera0_ccr_dblbuf[2];
 #pragma vector=TIMER0_A0_VECTOR
 __interrupt void TA0_CCR_updater()
 {
@@ -118,7 +118,7 @@ __interrupt void TA0_CCR_updater()
 #endif
 
 #if defined(__MSP430_HAS_TA5__) || defined(__MSP430_HAS_T0A5__) 
-uint16_t timera0_ccr_dblbuf[4];
+volatile uint16_t timera0_ccr_dblbuf[4];
 #pragma vector=TIMER0_A0_VECTOR
 __interrupt void TA0_CCR_updater()
 {
@@ -131,7 +131,7 @@ __interrupt void TA0_CCR_updater()
 #endif
 
 #if defined(__MSP430_HAS_T1A3__) 
-uint16_t timera1_ccr_dblbuf[2];
+volatile uint16_t timera1_ccr_dblbuf[2];
 #pragma vector=TIMER1_A0_VECTOR
 __interrupt void TA1_CCR_updater()
 {
@@ -142,7 +142,7 @@ __interrupt void TA1_CCR_updater()
 #endif
 
 #if defined(__MSP430_HAS_T2A3__)  
-uint16_t timera2_ccr_dblbuf[2];
+volatile uint16_t timera2_ccr_dblbuf[2];
 #pragma vector=TIMER2_A0_VECTOR
 __interrupt void TA2_CCR_updater()
 {
