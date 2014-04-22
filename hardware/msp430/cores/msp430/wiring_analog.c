@@ -331,7 +331,7 @@ void analogWrite(uint8_t pin, int val)
 				}
                                 break;
 #endif
-#if defined(__MSP430_HAS_T0B3__) || defined(__MSP430_HAS_T0B7__) 
+#if defined(__MSP430_HAS_TB3__) || defined(__MSP430_HAS_T0B3__) || defined(__MSP430_HAS_TB7__) || defined(__MSP430_HAS_T0B7__) 
  			//case: T0B0                            // CCR0 used as period register
  			case T0B1:                              // TimerB0 / CCR1
 				if (!is_already_pwm) {
@@ -358,7 +358,7 @@ void analogWrite(uint8_t pin, int val)
 				}
                                 break;
 #endif
-#if defined(__MSP430_HAS_T0B7__) 
+#if defined(__MSP430_HAS_TB7__) || defined(__MSP430_HAS_T0B7__) 
  			case T0B3:                              // TimerB0 / CCR3
 				if (!is_already_pwm) {
 					TB0CCR0 = PWM_PERIOD;           // PWM Period
