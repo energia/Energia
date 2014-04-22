@@ -200,9 +200,11 @@ void analogWrite(uint8_t pin, int val)
 		#ifdef is_using_two_pxsel
 		if ( (*sel & bit) && !(*selx & bit) ) {
 		#else
-		if ( *sel & bit ) {
+		if (*sel & bit) {
 		#endif
 			is_already_pwm = true;
+		} else {
+			pinMode(pin, OUTPUT);  // Get PxDIR set
 		}
 
 		uint16_t ccrval = PWM_DUTY(val);  // get the 32-bit math done early
