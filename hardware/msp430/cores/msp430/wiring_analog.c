@@ -106,6 +106,16 @@ void analogResolution(uint16_t res)
 
 /* Timer_A delayed-CCR-update ISRs. */
 
+#if defined(__MSP430_HAS_TA2__) || defined(__MSP430_HAS_T0A2__)
+volatile uint16_t timera0_ccr_dblbuf[1];
+__attribute__((interrupt(TIMER0_A0_VECTOR)))
+void TA0_CCR_updater()
+{
+	TA0CCR1 = timera0_ccr_dblbuf[0];
+	TA0CCTL0 &= ~CCIE;
+}
+#endif
+
 #if defined(__MSP430_HAS_TA3__) || defined(__MSP430_HAS_T0A3__)
 volatile uint16_t timera0_ccr_dblbuf[2];
 __attribute__((interrupt(TIMER0_A0_VECTOR)))
