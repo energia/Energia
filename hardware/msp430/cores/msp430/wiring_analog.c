@@ -58,7 +58,7 @@
 #endif
 
 #if defined(__MSP430_HAS_ADC10__) || defined(__MSP430_HAS_ADC10_B__) || defined(__MSP430_HAS_ADC12_PLUS__) || defined(__MSP430_HAS_ADC12_B__)
-uint16_t analog_reference = DEFAULT, analog_period = F_CPU/490, analog_div = ID_0, analog_res=255; // devide clock with 0, 2, 4, 8
+uint16_t analog_reference = DEFAULT;
 
 void analogReference(uint16_t mode)
 {
@@ -69,6 +69,7 @@ void analogReference(uint16_t mode)
 }
 #endif
 
+uint16_t analog_period = F_CPU/490, analog_div = ID_0, analog_res = 255;
 
 //TODO: Can be a lot more efficiant.
 //      - lower clock rated / input devider to conserve Energia.
@@ -162,10 +163,16 @@ void TA2_CCR_updater()
 }
 #endif
 
+/* MSP430's with Port Mappers (F5xxx series, etc) need the correct Port Mapping ID for their timers. */
+#if defined(__MSP430_HAS_PORT_MAPPING__)
+extern const uint8_t pmap_timer_ids[];
+#endif
+
 
 //Arduino specifies ~490 Hz for analog out PWM so we follow suit.
 #define PWM_PERIOD analog_period // F_CPU/490
 #define PWM_DUTY(x) ( (unsigned long)x*PWM_PERIOD / (unsigned long)analog_res )
+
 void analogWrite(uint8_t pin, int val)
 {
  	if (val == 0)
@@ -207,6 +214,13 @@ void analogWrite(uint8_t pin, int val)
 #define SET_PXSEL(bit) *sel |= bit
 #endif
 
+		uint8_t timerID = digitalPinToTimer(pin);
+		#if defined(__MSP430_HAS_PORT_MAPPING__)
+		uint16_t pmapID = (uint16_t)pmap_timer_ids[timerID] << 8;
+		#else
+		#define pmapID 0
+		#endif
+
 		#ifdef is_using_two_pxsel
 		if ( (*sel & bit) && !(*selx & bit) ) {
 		#else
@@ -214,12 +228,12 @@ void analogWrite(uint8_t pin, int val)
 		#endif
 			is_already_pwm = true;
 		} else {
-			pinMode(pin, OUTPUT);  // Get PxDIR set
+			pinMode_int(pin, OUTPUT | pmapID);  // Get PxDIR set
 		}
 
 		uint16_t ccrval = PWM_DUTY(val);  // get the 32-bit math done early
 
-		switch(digitalPinToTimer(pin)) {                // which timer and CCR?
+		switch(timerID) {                // which timer and CCR?
  			//case: T0A0                            // CCR0 used as period register
 			case T0A1:                              // TimerA0 / CCR1
 				if (!is_already_pwm) {
@@ -351,7 +365,7 @@ void analogWrite(uint8_t pin, int val)
 					TB0CCTL1 = OUTMOD_7 | CLLD_0;   // reset/set, CCR updates immediately on initial setting
 					TB0CCR1 = ccrval;       // PWM duty cycle
 					SET_PXSEL(bit);
-					TB0CCTL1 |= CLLD_1; // Future CCR updates will be double-buffered
+					TB0CCTL1 |= CLLD_2; // Future CCR updates will be double-buffered
 					TB0CTL = TBSSEL_2 | MC_1 | analog_div;       // SMCLK, up mode
 				} else {
 					TB0CCR1 = ccrval;       // PWM duty cycle
