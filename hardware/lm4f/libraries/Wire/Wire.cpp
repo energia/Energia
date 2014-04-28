@@ -27,7 +27,7 @@
 
   Modified 23 November 2006 by David A. Mellis
   Modified 28 September 2010 by Mark Sproul
-  Modified 16 March 2014 by Alessio Graziano
+  Modified 29 April 2014 by Alessio Graziano
  */
 
 #include <stdlib.h>
