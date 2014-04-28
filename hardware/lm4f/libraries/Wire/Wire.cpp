@@ -249,7 +249,7 @@ TwoWire::TwoWire()
 TwoWire::TwoWire(unsigned long module)
 {
 	i2cModule = module;
-	fastMode = false; //FastMode disabled by default for backward compatibility
+	speedMode = I2C_SPEED_STANDARD; //Standard Speed by default for backward compatibility
 }
 
 // Private Methods //////////////////////////////////////////////////////////////
@@ -271,7 +271,7 @@ uint8_t TwoWire::getRxData(unsigned long cmd) {
         ROM_I2CMasterControl(MASTER_BASE, I2C_MASTER_CMD_BURST_RECEIVE_ERROR_STOP);
 	}
 	else {
-	    if(!fastMode) //Fast mode works without delay (Tested on stellaris&GY-80)
+	    if(speedMode==I2C_SPEED_STANDARD) //Fast modes works without delay (Tested on stellaris&GY-80)
             delayMicroseconds(SLOWMODE_DELAYUS);
 		rxBuffer[rxWriteIndex] = ROM_I2CMasterDataGet(MASTER_BASE);
 		rxWriteIndex = (rxWriteIndex + 1) % BUFFER_LENGTH;
@@ -281,7 +281,7 @@ uint8_t TwoWire::getRxData(unsigned long cmd) {
 }
 
 uint8_t TwoWire::sendTxData(unsigned long cmd, uint8_t data) {
-    if(!fastMode) //Fast mode works without delay (Tested on stellaris&GY-80)
+    if(speedMode==I2C_SPEED_STANDARD) //Fast mode works without delay (Tested on stellaris&GY-80)
         delayMicroseconds(SLOWMODE_DELAYUS);
     ROM_I2CMasterDataPut(MASTER_BASE, data);
 
@@ -311,7 +311,13 @@ void TwoWire::forceStop(void) {
     //bring the bus back to it's erroneous state
     ROM_SysCtlPeripheralReset(g_uli2cPeriph[i2cModule]);
     while(!ROM_SysCtlPeripheralReady(g_uli2cPeriph[i2cModule]));
-    ROM_I2CMasterInitExpClk(MASTER_BASE, F_CPU, fastMode);
+    ROM_I2CMasterInitExpClk(MASTER_BASE, F_CPU, speedMode);//Bus speed
+
+  if(speedMode==I2C_SPEED_FASTMODE_PLUS)//Force 1Mhz
+  {
+       uint32_t ui32TPR = ((F_CPU + (2 * 10 * 1000000l) - 1) / (2 * 10 * 1000000l)) - 1;
+       HWREG(MASTER_BASE + I2C_O_MTPR) = ui32TPR;
+  }
 }
 
 // Public Methods //////////////////////////////////////////////////////////////
@@ -331,7 +337,14 @@ void TwoWire::begin(void)
   ROM_GPIOPinConfigure(g_uli2cConfig[i2cModule][1]);
   ROM_GPIOPinTypeI2C(g_uli2cBase[i2cModule], g_uli2cSDAPins[i2cModule]);
   ROM_GPIOPinTypeI2CSCL(g_uli2cBase[i2cModule], g_uli2cSCLPins[i2cModule]);
-  ROM_I2CMasterInitExpClk(MASTER_BASE, F_CPU, fastMode);//Bus speed ( true=400kHz false=100kHz)
+  ROM_I2CMasterInitExpClk(MASTER_BASE, F_CPU, speedMode);//Bus speed
+
+  if(speedMode==I2C_SPEED_FASTMODE_PLUS)//Force 1Mhz
+  {
+       uint32_t ui32TPR = ((F_CPU + (2 * 10 * 1000000l) - 1) / (2 * 10 * 1000000l)) - 1;
+       HWREG(MASTER_BASE + I2C_O_MTPR) = ui32TPR;
+  }
+
 
   //force a stop condition
   if(!ROM_GPIOPinRead(g_uli2cBase[i2cModule], g_uli2cSCLPins[i2cModule]))
@@ -345,7 +358,9 @@ void TwoWire::begin(void)
   	  unsigned long mask = 0;
   	  do{
   		  for(unsigned long i = 0; i < 10 ; i++) {
-  		      if(fastMode)
+  		      if(speedMode==I2C_SPEED_FASTMODE_PLUS)
+  			  ROM_SysCtlDelay(F_CPU/1000000/3);//1000Hz=desired frequency, delay iteration=3 cycles
+  		      else if(speedMode==I2C_SPEED_FASTMODE)
   			  ROM_SysCtlDelay(F_CPU/400000/3);//400Hz=desired frequency, delay iteration=3 cycles
   			  else
   			  ROM_SysCtlDelay(F_CPU/100000/3);//100Hz=desired frequency, delay iteration=3 cycles
@@ -696,16 +711,16 @@ I2CIntHandler(void)
 * _fastMode = true //400KHz
 * _fastMode = false //100KHz (Default)
 **/
-void TwoWire::setModule(unsigned long _i2cModule,bool _fastMode)
+void TwoWire::setModule(unsigned long _i2cModule,uint8_t _speedMode)
 {
     i2cModule = _i2cModule;
-    fastMode = _fastMode;
+    speedMode = _speedMode;
     if(slaveAddress != 0) begin(slaveAddress);
     else begin();
 }
 void TwoWire::setModule(unsigned long _i2cModule)
 {
-    setModule(_i2cModule,false); //FastMode disabled by default for backward compatibility
+    setModule(_i2cModule,I2C_SPEED_STANDARD); //Standard mode (100k) by default for backward compatibility
 }
 
 //Preinstantiate Object
