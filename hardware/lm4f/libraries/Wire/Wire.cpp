@@ -707,9 +707,11 @@ I2CIntHandler(void)
     Wire.I2CIntHandler();
 }
 /***
-* Set module and mode
-* _fastMode = true //400KHz
-* _fastMode = false //100KHz (Default)
+* @brief: Set module and mode
+* @param: _speedMode:   I2C Speed selection
+*                       I2C_SPEED_STANDARD:         100kbps
+*                       I2C_SPEED_FASTMODE:         400kbps
+*                       I2C_SPEED_FASTMODE_PLUS:    1Mbps
 **/
 void TwoWire::setModule(unsigned long _i2cModule,uint8_t _speedMode)
 {
