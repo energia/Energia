@@ -1,7 +1,3 @@
-Fast I2C on lm4f device by Ax.
-For more data: http://axengineering.wordpress.com/2014/03/16/fast-i2c-on-energia-stellarpad/
-
-
 ![IMG](http://energia.nu/img/Energia.png)
 
 ## What Is Energia?
