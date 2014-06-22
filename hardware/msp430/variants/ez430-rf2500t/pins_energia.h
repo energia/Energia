@@ -127,7 +127,7 @@ static const uint8_t P3_5 = 25;
 static const uint8_t RED_LED = 20;
 static const uint8_t GREEN_LED = 21;
 static const uint8_t PUSH1 = 22;
-static const uint8_t TEMPSENSOR = A10;
+static const uint8_t TEMPSENSOR = 128 + 10;
 
 #ifdef ARDUINO_MAIN
 
