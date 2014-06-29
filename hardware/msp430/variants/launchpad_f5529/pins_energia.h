@@ -295,7 +295,6 @@ const uint16_t port_to_sel0[] = {  /* put this PxSEL register under the group of
 #endif
 };
 
-
 const uint16_t port_to_pmap[] = {
 	NOT_A_PORT,	/* PMAP starts at port P1 */
 	NOT_A_PORT,
