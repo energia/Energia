@@ -81,3 +81,13 @@ lpmsp430fr5969.build.variant=launchpad_fr5969
 lpmsp430fr5969.upload.maximum_ram_size=1024
 
 ##############################################################
+ez430_f2013.name=eZ430-F2013
+ez430_f2013.upload.protocol=uif
+ez430_f2013.upload.maximum_size=2048
+ez430_f2013.build.mcu=msp430f2013
+ez430_f2013.build.f_cpu=16000000L
+ez430_f2013.build.core=msp430
+ez430_f2013.build.variant=launchpad_f2013
+ez430_f2013.upload.maximum_ram_size=128
+
+##############################################################

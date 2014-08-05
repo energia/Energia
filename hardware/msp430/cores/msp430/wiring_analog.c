@@ -57,7 +57,7 @@
 #define ADCxMEM0 ADC12MEM0 
 #endif
 
-#if defined(__MSP430_HAS_ADC10__) || defined(__MSP430_HAS_ADC10_B__) || defined(__MSP430_HAS_ADC12_PLUS__) || defined(__MSP430_HAS_ADC12_B__) || defined(__MSP430_HAS_SD16_A__)
+#if defined(__MSP430_HAS_ADC10__) || defined(__MSP430_HAS_ADC10_B__) || defined(__MSP430_HAS_ADC12_PLUS__) || defined(__MSP430_HAS_ADC12_B__) || defined(__MSP430_HAS_SD16_A1__)
 uint16_t analog_reference = DEFAULT, analog_period = F_CPU/490, analog_div = ID_0, analog_res=255; // devide clock with 0, 2, 4, 8
 
 void analogReference(uint16_t mode)
