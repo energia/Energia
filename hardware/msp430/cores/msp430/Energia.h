@@ -73,6 +73,10 @@ extern "C"{
 #define EXTERNAL ADC12VRSEL_2
 #endif
 
+#if defined(__MSP430_HAS_SD16_A1__)
+#define DEFAULT SD16REFON
+#endif
+
 enum{
   P1 = 1,
   P2,
