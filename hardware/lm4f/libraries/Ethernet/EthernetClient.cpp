@@ -234,7 +234,7 @@ int EthernetClient::read(uint8_t *buf, size_t size)
 {
 	uint16_t avail = available();
 	uint16_t i;
-	int8_t b;
+	int b;
 
 	if(!avail)
 		return -1;
