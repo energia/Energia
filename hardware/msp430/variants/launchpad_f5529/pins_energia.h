@@ -43,6 +43,8 @@ static const uint8_t MOSI    = 15;  /* P3.0 */
 static const uint8_t MISO    = 14;  /* P3.1 */
 static const uint8_t TWISDA  = 15;  /* P3.0 */
 static const uint8_t TWISCL  = 14;  /* P3.1 */
+static const uint8_t TWISDA2  = 10; /* P4.1 */
+static const uint8_t TWISCL2  = 9;  /* P4.2 */
 static const uint8_t DEBUG_UARTRXD = 45;  /* Receive  Data (RXD) at P4.5 */
 static const uint8_t DEBUG_UARTTXD = 46;  /* Transmit Data (TXD) at P4.4 */
 static const uint8_t AUX_UARTRXD = 3;  /* Receive  Data (RXD) at P4.5 */
@@ -56,6 +58,10 @@ static const uint8_t AUX_UARTTXD = 4;  /* Transmit Data (TXD) at P4.4 */
 #define SPISCK_SET_MODE (PORT_SELECTION0)
 #define SPIMOSI_SET_MODE (PORT_SELECTION0)
 #define SPIMISO_SET_MODE (PORT_SELECTION0)
+
+#define TWISDA_SET_MODE1 (PORT_SELECTION0 | (PM_UCB1SDA << 8) | INPUT)
+#define TWISCL_SET_MODE1 (PORT_SELECTION0 | (PM_UCB1SCL << 8) | INPUT)
+
 #endif
 
 #define DEBUG_UART_MODULE_OFFSET 0x40
@@ -316,7 +322,7 @@ const uint8_t digital_pin_to_timer[] = {
 	NOT_ON_TIMER, /* 11 - P8.1 */
 	T2A0,         /* 12 - P2.3 */
 	NOT_ON_TIMER, /* 13 - P2.6 */
-	NOT_ON_TIMER, /* 14 - P3.2 */
+	NOT_ON_TIMER, /* 14 - P3.1 */
 	NOT_ON_TIMER, /* 15 - P3.0 */
 	NOT_ON_TIMER, /* 16 - RST */
 	T0B2,         /* 17 - P7.4 */
