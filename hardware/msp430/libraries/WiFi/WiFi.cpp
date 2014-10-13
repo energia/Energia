@@ -66,8 +66,18 @@ unsigned char WiFiClass::connected_bssid[6] = {0,0,0,0,0,0};
 //a better way of keeping track of servers, clients, ports, and handles
 //these provide a central hub for WiFiClient, WiFiServer, WiFiUDP to keep track
 //
+
+#ifdef __MSP430_HAS_FRAM__
+__attribute__((section(".text")))
+#endif
 int16_t WiFiClass::_handleArray[MAX_SOCK_NUM];
+#ifdef __MSP430_HAS_FRAM__
+__attribute__((section(".text")))
+#endif
 int16_t WiFiClass::_portArray[MAX_SOCK_NUM];
+#ifdef __MSP430_HAS_FRAM__
+__attribute__((section(".text")))
+#endif
 int16_t WiFiClass::_typeArray[MAX_SOCK_NUM];
 
 //
@@ -76,6 +86,9 @@ int16_t WiFiClass::_typeArray[MAX_SOCK_NUM];
 uint8_t WiFiClass::pin_nhib = 5;
 uint8_t WiFiClass::pin_cs = 18;
 uint8_t WiFiClass::pin_irq = 19;
+#ifdef __MSP430_HAS_FRAM__
+__attribute__((section(".text")))
+#endif
 WiFiClient WiFiClass::clients[MAX_SOCK_NUM];
 //
 //These "buffers" are used to "return" strings and IpAddress objects
