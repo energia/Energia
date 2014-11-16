@@ -56,15 +56,35 @@ void _init(void)
 	HWREG(GPIO_PORTD_BASE + GPIO_O_CR) |= 0x80;
 } /* void _init(void) */
 
+
+// RTOS framework
+#include "freertos/FreeRTOS.h"
+#include "freertos/task.h"
+#include "freertos/queue.h"
+#include "freertos/semphr.h"
+#include "freertos/osi.h"
+
+void vTaskDefault( void *pvParameters ){
+	for (;;) {
+      loop();
+	  if (serialEventRun) serialEventRun();
+	}
+}
+
+
+
 } /* extern "C" */
+
 #endif
 
 int main(void)
 {
+    // do legacy setup function and create new task if needed
 	setup();
 
-	for (;;) {
-		loop();
-		if (serialEventRun) serialEventRun();
-	}
+	// create a task to run legacy loop function 
+    osi_TaskCreate( vTaskDefault, ( signed portCHAR * ) "Default", OSI_DEFAULT_STACK_SIZE, NULL, 1, NULL );
+	
+	//RTOS start
+	osi_start();
 }
