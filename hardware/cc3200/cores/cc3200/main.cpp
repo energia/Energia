@@ -14,7 +14,26 @@ extern void (* const g_pfnVectors[])(void);
 extern "C" {
 #endif
 
-void _init(void)
+// RTOS framework
+#include "freertos/FreeRTOS.h"
+#include "freertos/task.h"
+#include "freertos/queue.h"
+#include "freertos/semphr.h"
+#include "freertos/osi.h"
+
+void vTaskDefault( void *pvParameters ){
+	for (;;) {
+      loop();
+	  if (serialEventRun) serialEventRun();
+	}
+}
+
+#ifdef __cplusplus
+} /* extern "C" */
+#endif
+
+
+int main(void)
 {
 	IntVTableBaseSet((unsigned long)&g_pfnVectors[0]);
 
@@ -28,18 +47,14 @@ void _init(void)
 	MAP_SysTickIntEnable();
 	MAP_SysTickPeriodSet(F_CPU / 1000);
 	MAP_SysTickEnable();
-}
 
-#ifdef __cplusplus
-} /* extern "C" */
-#endif
-
-int main(void)
-{
+	// do legacy setup function and create new task if needed
 	setup();
 
-	for (;;) {
-		loop();
-		if (serialEventRun) serialEventRun();
-	}
+	// create a task to run legacy loop function 
+    osi_TaskCreate( vTaskDefault, ( signed portCHAR * ) "Default", OSI_DEFAULT_STACK_SIZE, NULL, 1, NULL );
+	
+	//RTOS start
+	osi_start();
+
 }
