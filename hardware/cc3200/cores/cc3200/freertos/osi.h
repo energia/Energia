@@ -51,7 +51,10 @@ extern "C" {
   
 #define OSI_FAILURE      			-1
   
-#define OSI_DEFAULT_STACK_SIZE 512  
+//in 32bits words
+//gcc stack-usage indicate a maximum stack of 903 bytes to single network scan function,
+//if stack to be 1024 / 4 bytes words = 256
+#define OSI_DEFAULT_STACK_SIZE 256  
   
 typedef enum
 {
