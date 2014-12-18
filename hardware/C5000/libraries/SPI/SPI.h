@@ -110,8 +110,8 @@ class SPI_Class
         void setLoopBackMode(int value);
         void setBitOrder(int order);
         int transfer (int value);
-        int write (unsigned long buffer[], int length);
-        int read (unsigned long buffer[], int length);
+        int write (unsigned int buffer[], int length);
+        int read (unsigned int buffer[], int length);
 } ;
 
 extern SPI_Class SPI;

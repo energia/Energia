@@ -90,7 +90,7 @@ void filter_iirSecondOrder(const int length,
                            const int *input,
                            int       *output,
                            const int *coeffs,
-                           int       *delayBuf);
+                           long       *delayBuf);
 
 /** ===========================================================================
  *
@@ -138,7 +138,54 @@ void filter_iirArbitraryOrder(int       length,
                               int       *input,
                               int       *output,
                               const int *coeffs,
-                              int       *delayBuf,
+                              long       *delayBuf,
+                              int       order);
+/** ===========================================================================
+ *
+ * Arbitrary order IIR filter. This function cascades multiple second order
+ * filter sections to achieve arbitrary order IIR filter
+ * In place variant
+ * This function supports only even 'order' as it cascades multiple
+ * second order sections. However, first order filter can be realized
+ * by setting the coefficients a2x = b2x = 0 of any second order section x.
+ *
+ *         b0 + b1 z^-1 + b2 z^-2
+ * H(z) = ------------------------
+ *         a0 + a1 z^-1 + a2 z^-2
+ * Note: a0 must be a power of two, i.e. a0 = 2^n0
+ *
+ * PARAMETERS:
+ * length   -> (const int) number of output samples to be processed
+ * input    -> (const int *) pointer to input buffer.
+ * output   -> (int *) pointer to output buffer.
+ * coeffs   -> (const int *) array of both denominator and numerator filter
+ *            coefficients. The coefficients must be arranged like
+ *            short coeffs[6*N] = {n01, a11, a21, b01, b11, b21
+ *                                 n02, a12, a22, b02, b12, b22
+ *                                 ....
+ *                                 ....
+ *                                 n0N, a1N, a2N, b0N, b1N, b2N};
+ *            where a0 = 2^n0, this is a0 must be a power of two.
+ *            N is number of second order sections which is equal to 'order/2'
+ *            It is mandatory that filter coefficient buffer length is 6*(order/2)
+ * delayBuf -> (int *) pointer to a memory location were the last delay
+ *           element is to be stored.  This "array" must be initialized to zeros
+ *           before calling this function for first time and undisturbed
+ *           from iteration to iteration.
+ *           Note: 'delayBuf' MUST be at least of length 4*(order/2) (8 bytes half word aligned).
+ * order    -> order of the filter, which should be an even value
+ *
+ * IMPLEMENTATION NOTES:
+ * - The array delayBuf is updated with last two values of the input and outputs.
+ *   i.e. delayBuf[] -> {input[-1], input[-2], output[-1], output[-2]}.
+ *   This is to allow proper block operation.
+ *
+ *  ===========================================================================
+ */
+void filter_iirArbitraryOrder(int       length,
+                              int       *input,
+                              const int *coeffs,
+                              long       *delayBuf,
                               int       order);
 
 /** ===========================================================================

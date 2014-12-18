@@ -57,7 +57,7 @@ extern "C" {
 /** I2C clock */
 #define I2C_SYS_CLK          (150)
 /** I2C bus frequency */
-#define I2C_BUS_FREQ         (100)
+#define I2C_BUS_FREQ         (400)
 /** Codec address */
 #define I2C_CODEC_ADDR		 (0x18)
 /** LCD address */

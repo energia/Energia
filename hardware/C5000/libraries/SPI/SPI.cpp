@@ -117,8 +117,8 @@ void SPI_Class::begin ()
             else
             {
                 /* Set the SPI hardware configuration */
-                spiConfig.spiClkDiv    = SPI_CLK_DIV;
-                spiConfig.wLen        = SPI_WORD_LENGTH_32;
+                spiConfig.spiClkDiv    = SPI_CLOCK_DIV128;
+                spiConfig.wLen        = SPI_WORD_LENGTH_8;
                 spiConfig.frLen        = SPI_FRAME_LENGTH;
                 spiConfig.wcEnable    = SPI_WORD_IRQ_ENABLE;
                 spiConfig.fcEnable    = SPI_FRAME_IRQ_DISABLE;
@@ -513,7 +513,7 @@ int SPI_Class::transfer (int value)
  *
  *  ===========================================================================
  */
-int SPI_Class::write (unsigned long *buffer, int length)
+int SPI_Class::write (unsigned int *buffer, int length)
 {
     CSL_Status status;
 
@@ -523,16 +523,16 @@ int SPI_Class::write (unsigned long *buffer, int length)
         return ((int)CSL_ESYS_INVPARAMS);
     }
 
-    if (LSBFIRST == order)
-    {
-		/* If the User requests to send LSB first, then swap all the 32 bits
-		   of the User data */
-        swap32Bits (buffer, length);
-    }
+   //  if (LSBFIRST == order)
+   //  {
+		 // If the User requests to send LSB first, then swap all the 32 bits
+		 //   of the User data 
+   //      swap32Bits (buffer, length);
+   //  }
 
     status = SPI_dataTransaction(spiHandle,
                                  (Uint16 *)buffer,
-                                 (Uint16)(length * 2),
+                                 (Uint16)(length),
                                  SPI_WRITE);
     if(CSL_SOK != status)
     {
@@ -560,7 +560,7 @@ int SPI_Class::write (unsigned long *buffer, int length)
  *
  *  ===========================================================================
  */
-int SPI_Class::read (unsigned long *buffer, int length)
+int SPI_Class::read (unsigned int *buffer, int length)
 {
     CSL_Status status;
 
@@ -572,7 +572,7 @@ int SPI_Class::read (unsigned long *buffer, int length)
 
     status = SPI_dataTransaction(spiHandle,
                                  (Uint16 *)buffer,
-                                 (Uint16)(length * 2),
+                                 (Uint16)(length),
                                  SPI_READ);
     if(CSL_SOK != status)
     {
@@ -580,14 +580,14 @@ int SPI_Class::read (unsigned long *buffer, int length)
     }
     else
     {
-        swapWords (buffer, length);
+       //  swapWords (buffer, length);
 
-        if (LSBFIRST == order)
-        {
-		    /* If the User requests to receive LSB first, then swap all the 32
-		       bits of the User data */
-            swap32Bits (buffer, length);
-        }
+       //  if (LSBFIRST == order)
+       //  {
+		     // If the User requests to receive LSB first, then swap all the 32
+		     //   bits of the User data 
+       //      swap32Bits (buffer, length);
+       //  }
     }
 
     return ((int)status);

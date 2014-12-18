@@ -49,7 +49,7 @@ extern "C" {
 #endif
 
 /** Buffer length */
-#define I2S_DMA_BUF_LEN        (512)
+#define I2S_DMA_BUF_LEN        (512)  // Must be power of 2
 /** DMA left read channel */
 #define DMA_CHAN_ReadL         (CSL_DMA_CHAN4)
 /** DMA right read channel */
@@ -121,10 +121,11 @@ class AudioClass {
         int I2SDmaReadRight(void);
         int I2SDmaWriteLeft(void);
         int I2SDmaWriteRight(void);
+        int bufferSize;
 
     public:
         int Audio(void);
-        int Audio(int process);
+        int Audio(int process, int buffer_size = I2S_DMA_BUF_LEN);
         /** Audio input - left channel */
         Uint16 *audioInLeft[2];
         /** Audio input - right channel */
@@ -154,10 +155,41 @@ class AudioClass {
         int audioUnmute(void);
         int setSamplingRate(long);
 
+        int dacSetFirstOrderIirFilter(long N0, long N1, long D1);
+        int dacSetFirstOrderIirFilter(long LN0, long LN1, long LD1, long RN0, long RN1, long RD1);
+        int dacSetBiquadIirFilter(int filter, long LN0, long LN1, long LN2, long LD1, long LD2, long RN0, long RN1, long RN2, long RD1, long RD2);
+        int dacSetBiquadIirFilter(int filter, long N0, long N1, long N2, long D1, long D2);
+
+        int adcSetFirstOrderIirFilter(long N0, long N1, long D1);
+        int adcSetFirstOrderIirFilter(long LN0, long LN1, long LD1, long RN0, long RN1, long RD1);
+        int adcSetBiquadIirFilter(int filter, long LN0, long LN1, long LN2, long LD1, long LD2, long RN0, long RN1, long RN2, long RD1, long RD2);
+        int adcSetBiquadIirFilter(int filter, long N0, long N1, long N2, long D1, long D2);
+        int adcSet25TapFirFilter(const long *filterLeft, const long *filterRight);
+        int adcSet25TapFirFilter(const long *filter);
+        
+        int adcSetAdaptiveFilterMode(int mode);
+        int adcAdaptiveFilterSwitch(void);
+        
+        int dacSetAdaptiveFilterMode(int mode);
+        int dacAdaptiveFilterSwitch(void);
+        
+        int dacPowerUp(void);
+        int dacPowerDown(void);
+        int adcPowerUp(void);
+        int adcPowerDown(void);
+        
+        // Codec register access functions
+        static int rset( Uint16 regnum, Uint16 regval);
+        static int rset24bit( Uint16 regnum, Uint32 regval );
+        static int rget( Uint16 page, Uint16 regnum, Uint16 *regval);
+        static int codecConfig(Uint16 configStruct[][2], int noOfElems);
+        
         int HPL_RConF_Routing(int left);
         int HPR_RConF_Routing(int left, int right);
         int LOL_RConF_Routing(int left, int right);
         int LOR_RConF_Routing(int right);
+
+        ~AudioClass(void); // Destructor
 };
 
 extern AudioClass AudioC;
@@ -170,5 +202,4 @@ extern AudioClass AudioC;
 #endif
 
 #endif //_AUDIO_H_
-
 

@@ -47,23 +47,27 @@
 AudioClass AudioC;
 
 #pragma DATA_SECTION("audio_buffers");
-#pragma DATA_ALIGN(32);
+#pragma DATA_ALIGN(1024);//I2S_DMA_BUF_LEN);
 /** DMA left channel buffer */
-Uint16 i2sDmaLeftBuff1[2][I2S_DMA_BUF_LEN];
+//Uint16 i2sDmaLeftBuff1[2][I2S_DMA_BUF_LEN];
+Uint16 **i2sDmaLeftBuff1;
 
 #pragma DATA_SECTION("audio_buffers");
-#pragma DATA_ALIGN(32);
+#pragma DATA_ALIGN(1024);//I2S_DMA_BUF_LEN);
 /** DMA right channel buffer */
-Uint16 i2sDmaRightBuff1[2][I2S_DMA_BUF_LEN];
+//Uint16 i2sDmaRightBuff1[2][I2S_DMA_BUF_LEN];
+Uint16 **i2sDmaRightBuff1;
 
 #pragma DATA_SECTION("audio_buffers");
-#pragma DATA_ALIGN(32);
+#pragma DATA_ALIGN(1024);//I2S_DMA_BUF_LEN);
 /** DMA left channel buffer 2 */
-Uint16 i2sDmaLeftBuff2[2][I2S_DMA_BUF_LEN];
+//Uint16 i2sDmaLeftBuff2[2][I2S_DMA_BUF_LEN];
+Uint16 **i2sDmaLeftBuff2;
 #pragma DATA_SECTION("audio_buffers");
-#pragma DATA_ALIGN(32);
+#pragma DATA_ALIGN(1024);//I2S_DMA_BUF_LEN);
 /** DMA right channel buffer 2 */
-Uint16 i2sDmaRightBuff2[2][I2S_DMA_BUF_LEN];
+//Uint16 i2sDmaRightBuff2[2][I2S_DMA_BUF_LEN];
+Uint16 **i2sDmaRightBuff2;
 
 /** Defining the static variables */
 int AudioClass::isInitialized = 0;
@@ -294,7 +298,7 @@ static int writeI2C(Uint16 address, Uint16 *data, Uint16 quantity)
  *
  *  ===========================================================================
  */
-static int rset( Uint16 regnum, Uint16 regval )
+int AudioClass::rset(Uint16 regnum, Uint16 regval)
 {
     CSL_Status status;
 
@@ -306,6 +310,56 @@ static int rset( Uint16 regnum, Uint16 regval )
 
     return (status);
 }
+
+int readI2C(Uint16 address, Uint16 regnum, Uint16 *data, Uint16 quantity) //more general purpose I2C Readback function.
+{
+    CSL_Status status;
+    Uint16     i2cWriteBuf[2];
+    i2cWriteBuf[0] = regnum;
+
+    status = Wire.requestFrom(address, quantity, (unsigned int *)i2cWriteBuf, 1);
+    
+    if (status != CSL_SOK) //check for bad transmission
+    {
+        Wire.endTransmission();
+        Wire.begin();
+        return (status);
+    }
+
+    for(int i = 0; (i < quantity) && Wire.available(); i++)
+    {
+      int value = Wire.read();
+      data[i] = value;
+    }
+    return (status);
+}
+
+int AudioClass::rget( Uint16 page, Uint16 regnum, Uint16 *regval) //AIC3204/6 specific register readback function.
+{
+    Wire.endTransmission();
+    Wire.begin();
+    CSL_Status status;
+
+    Uint16 cmd;
+ 
+    rset(0,page); //switch to the selected page.
+
+    status = readI2C(I2C_CODEC_ADDR, regnum, regval, 1); //I2C_CODEC_ADDR
+
+    return (status);
+}
+
+int AudioClass::rset24bit( Uint16 regnum, Uint32 regval )
+{
+    CSL_Status status;
+
+    status |= rset(regnum + 0, (regval >> 16) & 0xFF);
+    status |= rset(regnum + 1, (regval >>  8) & 0xFF);
+    status |= rset(regnum + 2, regval & 0xFF);
+    
+    return (status);
+}
+
 
 /** ===========================================================================
  *   @n@b Audio
@@ -337,12 +391,28 @@ static int rset( Uint16 regnum, Uint16 regval )
 int AudioClass::Audio(void)
 {
     CSL_Status status;
-
+    
+    bufferSize = I2S_DMA_BUF_LEN;
+    
+    i2sDmaLeftBuff1 = new Uint16*[2];
+    i2sDmaRightBuff1 = new Uint16*[2];
+    i2sDmaLeftBuff2 = new Uint16*[2];
+    i2sDmaRightBuff2 = new Uint16*[2];
+    
+    i2sDmaLeftBuff1[0] = new Uint16[bufferSize];
+    i2sDmaLeftBuff1[1] = new Uint16[bufferSize];
+    i2sDmaRightBuff1[0] = new Uint16[bufferSize];
+    i2sDmaRightBuff1[1] = new Uint16[bufferSize];
+    i2sDmaLeftBuff2[0] = new Uint16[bufferSize];
+    i2sDmaLeftBuff2[1] = new Uint16[bufferSize];
+    i2sDmaRightBuff2[0] = new Uint16[bufferSize];
+    i2sDmaRightBuff2[1] = new Uint16[bufferSize];
+    
     status = CSL_SOK;
 
     if (!this->isInitialized)
     {
-		/* Initialize the DMA transfer buffers */
+    /* Initialize the DMA transfer buffers */
         audioOutLeft[0] = &i2sDmaLeftBuff1[1][0];
         audioOutLeft[1] = &i2sDmaLeftBuff1[0][0];
 
@@ -386,15 +456,31 @@ int AudioClass::Audio(void)
  *
  *  ===========================================================================
  */
-int AudioClass::Audio(int process)
+int AudioClass::Audio(int process, int buffer_size)
 {
     CSL_Status status;
 
     status = CSL_SOK;
 
+    bufferSize = buffer_size;
+
+    i2sDmaLeftBuff1 = new Uint16*[2];
+    i2sDmaRightBuff1 = new Uint16*[2];
+    i2sDmaLeftBuff2 = new Uint16*[2];
+    i2sDmaRightBuff2 = new Uint16*[2];
+    
+    i2sDmaLeftBuff1[0] = new Uint16[bufferSize];
+    i2sDmaLeftBuff1[1] = new Uint16[bufferSize];
+    i2sDmaRightBuff1[0] = new Uint16[bufferSize];
+    i2sDmaRightBuff1[1] = new Uint16[bufferSize];
+    i2sDmaLeftBuff2[0] = new Uint16[bufferSize];
+    i2sDmaLeftBuff2[1] = new Uint16[bufferSize];
+    i2sDmaRightBuff2[0] = new Uint16[bufferSize];
+    i2sDmaRightBuff2[1] = new Uint16[bufferSize]; 
+    
     if (!this->isInitialized)
     {
-		/* Initialize the DMA transfer buffers */
+    /* Initialize the DMA transfer buffers */
         if (process == TRUE)
         {
             audioOutLeft[0] = &i2sDmaLeftBuff2[0][0];
@@ -416,6 +502,23 @@ int AudioClass::Audio(int process)
     }
 
     return (status);
+}
+
+AudioClass::~AudioClass(void) //destructor
+{
+    delete i2sDmaLeftBuff1[0];
+    delete i2sDmaLeftBuff1[1];
+    delete i2sDmaRightBuff1[0];
+    delete i2sDmaRightBuff1[1];
+    delete i2sDmaLeftBuff2[0];
+    delete i2sDmaLeftBuff2[1];
+    delete i2sDmaRightBuff2[0];
+    delete i2sDmaRightBuff2[1];
+    
+    delete i2sDmaLeftBuff1;
+    delete i2sDmaRightBuff1;
+    delete i2sDmaLeftBuff2;
+    delete i2sDmaRightBuff2;
 }
 
 /** ===========================================================================
@@ -459,8 +562,13 @@ int AudioClass::init(void)
         rset(0, 0);         // Select Page 0
         rset(1, 0x01);      // Software Reset
 
-        rset(0, 1);         // Select Page 1
+        adcPowerDown();
+        dacPowerDown();
+        adcSetAdaptiveFilterMode(TRUE);
+        dacSetAdaptiveFilterMode(TRUE);
 
+        rset(0, 1);         // Select Page 1
+        
         /* Disable crude AVDD generation from DVDD */
         rset(1, 0x08);
 
@@ -525,7 +633,9 @@ int AudioClass::init(void)
                             // MADC is powered down and ADC_MOD_CLK <- DAC_MOD_CLK by default in  Pg 0 - Reg 19
 
         /* PRB_P2 and PRB_R2 selected */
+        rset(60, 0x02);
         rset(61, 0x02);
+        
 
         rset(00, 0x01);     // Select Page 1
 #if 1
@@ -562,7 +672,7 @@ int AudioClass::init(void)
         I2S.enable();
 
         /* Initialize DMA buffers with zeroes */
-        for(index = 0; index < I2S_DMA_BUF_LEN; index++)
+        for(index = 0; index < bufferSize; index++)
         {
             i2sDmaLeftBuff1[0][index] = 0;
             i2sDmaRightBuff1[0][index] = 0;
@@ -692,7 +802,7 @@ int AudioClass::I2SDmaReadLeft(void)
     dmaConfig.dmaEvent         = DMA_EVENT_I2S2_RX;
     dmaConfig.enableDmaInt     = 0;
     dmaConfig.chanDir          = DMA_CHANNEL_DIRECTION_READ;
-    dmaConfig.dataLen          = I2S_DMA_BUF_LEN* 2;
+    dmaConfig.dataLen          = bufferSize* 2;
     dmaConfig.destAddr         = audioInLeft[activeInBuf];
 #ifdef CHIP_C5517
     dmaConfig.srcAddr          = (unsigned short *)&CSL_I2S2_REGS->I2SRXLTL;
@@ -738,7 +848,7 @@ int AudioClass::I2SDmaReadRight(void)
     dmaConfig.dmaEvent         = DMA_EVENT_I2S2_RX;
     dmaConfig.enableDmaInt     = 1;
     dmaConfig.chanDir          = DMA_CHANNEL_DIRECTION_READ;
-    dmaConfig.dataLen          = I2S_DMA_BUF_LEN * 2;
+    dmaConfig.dataLen          = bufferSize * 2;
     dmaConfig.destAddr         = audioInRight[activeInBuf];
 #ifdef CHIP_C5517
     dmaConfig.srcAddr          = (unsigned short *)&CSL_I2S2_REGS->I2SRXRTL;
@@ -830,7 +940,7 @@ int AudioClass::I2SDmaWriteLeft(void)
     dmaConfig.dmaEvent         = DMA_EVENT_I2S2_TX;
     dmaConfig.enableDmaInt     = 0;
     dmaConfig.chanDir          = DMA_CHANNEL_DIRECTION_WRITE;
-    dmaConfig.dataLen          = I2S_DMA_BUF_LEN * 2;
+    dmaConfig.dataLen          = bufferSize * 2;
 #ifdef CHIP_C5517
     dmaConfig.destAddr         = (unsigned short *)&CSL_I2S2_REGS->I2STXLTL;
 #else
@@ -876,7 +986,7 @@ int AudioClass::I2SDmaWriteRight(void)
     dmaConfig.dmaEvent         = DMA_EVENT_I2S2_TX;
     dmaConfig.enableDmaInt     = 1;
     dmaConfig.chanDir          = DMA_CHANNEL_DIRECTION_WRITE;
-    dmaConfig.dataLen          = I2S_DMA_BUF_LEN * 2;
+    dmaConfig.dataLen          = bufferSize * 2;
 #ifdef CHIP_C5517
     dmaConfig.destAddr         = (unsigned short *)&CSL_I2S2_REGS->I2STXRTL;
 #else
@@ -1317,6 +1427,381 @@ int AudioClass::audioUnmute(void)
     return (status);
 }
 
+int AudioClass::dacSetFirstOrderIirFilter(long LN0, long LN1, long LD1, long RN0, long RN1, long RD1)
+{
+    CSL_Status status = CSL_SOK;
+
+    status |= rset(0, 46);         // Set 1st order IIR coefficients, Left channel
+    status |= rset24bit(28, LN0);
+    status |= rset24bit(32, LN1);
+    status |= rset24bit(36, LD1);
+        
+    status |= rset(0, 46);         // Set 1st order IIR coefficients, Right channel
+    status |= rset24bit(40, RN0);
+    status |= rset24bit(44, RN1);
+    status |= rset24bit(48, RD1);
+
+    return (status);
+}
+
+int AudioClass::dacSetFirstOrderIirFilter(long N0, long N1, long D1)
+{
+    return (dacSetFirstOrderIirFilter(N0, N1, D1, N0, N1, D1));
+}
+
+int AudioClass::dacSetBiquadIirFilter(int filter, long LN0, long LN1, long LN2, long LD1, long LD2, long RN0, long RN1, long RN2, long RD1, long RD2)
+{
+    CSL_Status status = CSL_SOK;
+    
+    if (filter == 1)
+    {
+        status |= rset(0, 44);         // Set biquad coefficients, Left channel
+        status |= rset24bit( 12, LN0);
+        status |= rset24bit( 16, LN1);
+        status |= rset24bit( 20, LN2);
+        status |= rset24bit( 24, LD1);
+        status |= rset24bit( 28, LD2);
+            
+        status |= rset(0, 45);         // Set biquad coefficients, Right channel
+        status |= rset24bit( 20, RN0);
+        status |= rset24bit( 24, RN1);
+        status |= rset24bit( 28, RN2);
+        status |= rset24bit( 32, RD1);
+        status |= rset24bit( 36, RD2);
+    }
+    else if (filter == 2)
+    {
+        status |= rset(0, 44);         // Set biquad coefficients, Left channel
+        status |= rset24bit(32, LN0);
+        status |= rset24bit(36, LN1);
+        status |= rset24bit(40, LN2);
+        status |= rset24bit(44, LD1);
+        status |= rset24bit(48, LD2);
+            
+        status |= rset(0, 45);         // Set biquad coefficients, Right channel
+        status |= rset24bit( 40, RN0);
+        status |= rset24bit( 44, RN1);
+        status |= rset24bit( 48, RN2);
+        status |= rset24bit( 52, RD1);
+        status |= rset24bit( 56, RD2);
+    }
+    else if (filter == 3)
+    {
+        status |= rset(0, 44);         // Set biquad coefficients, Left channel
+        status |= rset24bit( 52, LN0);
+        status |= rset24bit( 56, LN1);
+        status |= rset24bit( 60, LN2);
+        status |= rset24bit( 64, LD1);
+        status |= rset24bit( 68, LD2);
+            
+        status |= rset(0, 45);         // Set biquad coefficients, Right channel
+        status |= rset24bit( 60, RN0);
+        status |= rset24bit( 64, RN1);
+        status |= rset24bit( 68, RN2);
+        status |= rset24bit( 72, RD1);
+        status |= rset24bit( 76, RD2);
+    }
+    else if (filter == 4)
+    {
+        status |= rset(0, 44);         // Set biquad coefficients, Left channel
+        status |= rset24bit( 72, LN0);
+        status |= rset24bit( 76, LN1);
+        status |= rset24bit( 80, LN2);
+        status |= rset24bit( 84, LD1);
+        status |= rset24bit( 88, LD2);
+            
+        status |= rset(0, 45);         // Set biquad coefficients, Right channel
+        status |= rset24bit( 80, RN0);
+        status |= rset24bit( 84, RN1);
+        status |= rset24bit( 88, RN2);
+        status |= rset24bit( 92, RD1);
+        status |= rset24bit( 96, RD2);
+    }
+    else if (filter == 5)
+    {
+        status |= rset(0, 44);         // Set biquad coefficients, Left channel
+        status |= rset24bit( 92, LN0);
+        status |= rset24bit( 96, LN1);
+        status |= rset24bit(100, LN2);
+        status |= rset24bit(104, LD1);
+        status |= rset24bit(108, LD2);   
+        
+        status |= rset(0, 45);         // Set biquad coefficients, Right channel
+        status |= rset24bit(100, RN0);
+        status |= rset24bit(104, RN1);
+        status |= rset24bit(108, RN2);
+        status |= rset24bit(112, RD1);
+        status |= rset24bit(116, RD2);
+    }
+    else if (filter == 6)
+    {
+        status |= rset(0, 44);         // Set biquad coefficients, Left channel
+        status |= rset24bit(112, LN0);
+        status |= rset24bit(116, LN1);
+        status |= rset24bit(120, LN2);
+        status |= rset24bit(124, LD1);
+        status |= rset(0, 45);
+        status |= rset24bit(  8, LD2);   
+        
+                                      // Set biquad coefficients, Right channel
+        status |= rset24bit(120, RN0);
+        status |= rset24bit(124, RN1);
+        status |= rset(0, 46);
+        status |= rset24bit(  8, RN2);
+        status |= rset24bit( 12, RD1);
+        status |= rset24bit( 16, RD2);
+    }
+    return (status);
+}
+
+int AudioClass::dacSetBiquadIirFilter(int filter, long N0, long N1, long N2, long D1, long D2)
+{
+    return (adcSetBiquadIirFilter(filter, N0, N1, N2, D1, D2, N0, N1, N2, D1, D2));
+}
+
+int AudioClass::adcSetFirstOrderIirFilter(long LN0, long LN1, long LD1, long RN0, long RN1, long RD1)
+{
+    CSL_Status status = CSL_SOK;
+
+    status |= rset(0, 8);         // Set 1st order IIR coefficients, Left channel
+    status |= rset24bit(24, LN0);
+    status |= rset24bit(28, LN1);
+    status |= rset24bit(32, LD1);
+        
+    status |= rset(0, 9);         // Set 1st order IIR coefficients, Right channel
+    status |= rset24bit(32, RN0);
+    status |= rset24bit(36, RN1);
+    status |= rset24bit(40, RD1);
+
+    return (status);
+}
+
+int AudioClass::adcSetFirstOrderIirFilter(long N0, long N1, long D1)
+{
+    return (adcSetFirstOrderIirFilter(N0, N1, D1, N0, N1, D1));
+}
+
+int AudioClass::adcSetBiquadIirFilter(int filter, long LN0, long LN1, long LN2, long LD1, long LD2, long RN0, long RN1, long RN2, long RD1, long RD2)
+{
+    CSL_Status status = CSL_SOK;
+    
+    if (filter == 1)
+    {
+        status |= rset(0, 8);         // Set biquad coefficients, Left channel
+        status |= rset24bit( 36, LN0);
+        status |= rset24bit( 40, LN1);
+        status |= rset24bit( 44, LN2);
+        status |= rset24bit( 48, LD1);
+        status |= rset24bit( 52, LD2);
+            
+        status |= rset(0, 9);         // Set biquad coefficients, Right channel
+        status |= rset24bit( 44, RN0);
+        status |= rset24bit( 48, RN1);
+        status |= rset24bit( 52, RN2);
+        status |= rset24bit( 56, RD1);
+        status |= rset24bit( 60, RD2);
+    }
+    else if (filter == 2)
+    {
+        status |= rset(0, 8);         // Set biquad coefficients, Left channel
+        status |= rset24bit(56, LN0);
+        status |= rset24bit(60, LN1);
+        status |= rset24bit(64, LN2);
+        status |= rset24bit(68, LD1);
+        status |= rset24bit(72, LD2);
+            
+        status |= rset(0, 9);         // Set biquad coefficients, Right channel
+        status |= rset24bit( 64, RN0);
+        status |= rset24bit( 68, RN1);
+        status |= rset24bit( 72, RN2);
+        status |= rset24bit( 76, RD1);
+        status |= rset24bit( 80, RD2);
+    }
+    else if (filter == 3)
+    {
+        status |= rset(0, 8);         // Set biquad coefficients, Left channel
+        status |= rset24bit( 76, LN0);
+        status |= rset24bit( 80, LN1);
+        status |= rset24bit( 84, LN2);
+        status |= rset24bit( 88, LD1);
+        status |= rset24bit( 92, LD2);
+            
+        status |= rset(0, 9);         // Set biquad coefficients, Right channel
+        status |= rset24bit( 84, RN0);
+        status |= rset24bit( 88, RN1);
+        status |= rset24bit( 92, RN2);
+        status |= rset24bit( 96, RD1);
+        status |= rset24bit(100, RD2);
+    }
+    else if (filter == 4)
+    {
+        status |= rset(0, 8);         // Set biquad coefficients, Left channel
+        status |= rset24bit( 96, LN0);
+        status |= rset24bit(100, LN1);
+        status |= rset24bit(104, LN2);
+        status |= rset24bit(108, LD1);
+        status |= rset24bit(112, LD2);
+            
+        status |= rset(0, 9);         // Set biquad coefficients, Right channel
+        status |= rset24bit(104, RN0);
+        status |= rset24bit(108, RN1);
+        status |= rset24bit(112, RN2);
+        status |= rset24bit(116, RD1);
+        status |= rset24bit(120, RD2);
+    }
+    else if (filter == 5)
+    {
+        status |= rset(0, 8);         // Set biquad coefficients, Left channel
+        status |= rset24bit(116, LN0);
+        status |= rset24bit(120, LN1);
+        status |= rset24bit(124, LN2);
+        status |= rset(0, 9);
+        status |= rset24bit(  8, LD1);
+        status |= rset24bit( 12, LD2);   
+        
+                                      // Set biquad coefficients, Right channel
+        status |= rset24bit(124, RN0);
+        status |= rset(0, 10);
+        status |= rset24bit(  8, RN1);
+        status |= rset24bit( 12, RN2);
+        status |= rset24bit( 16, RD1);
+        status |= rset24bit( 20, RD2);
+    }
+    return (status);
+}
+
+int AudioClass::adcSetBiquadIirFilter(int filter, long N0, long N1, long N2, long D1, long D2)
+{
+    return (adcSetBiquadIirFilter(filter, N0, N1, N2, D1, D2, N0, N1, N2, D1, D2));
+}
+
+int AudioClass::adcSet25TapFirFilter(const long *filterLeft, const long *filterRight)
+{
+    CSL_Status status = CSL_SOK;
+
+    // Set FIR coefficients, Left channel
+    // Taps 0 - 22
+    status |= rset(0, 8);
+    for (int n = 0; n < 23; n++)
+    {
+      status |= rset24bit( 36 + 4 * n, filterLeft[n]);
+    }
+    // Taps 23-24
+    status |= rset(0, 9);
+    status |= rset24bit(  8, filterLeft[23]);
+    status |= rset24bit( 12, filterLeft[24]);
+    
+    // Set FIR coefficients, Right channel
+    // Taps 0 - 20
+    status |= rset(0, 9);
+    for (int n = 0; n < 21; n++)
+    {
+      status |= rset24bit( 44 + 4 * n, filterLeft[n]);
+    }
+    // Taps 21-24
+    status |= rset(0, 10);
+    status |= rset24bit(  8, filterLeft[21]);
+    status |= rset24bit( 12, filterLeft[22]);
+    status |= rset24bit( 16, filterLeft[23]);
+    status |= rset24bit( 20, filterLeft[24]);
+ 
+    return(status);
+}
+
+int AudioClass::adcSet25TapFirFilter(const long *filter)
+{
+  return(adcSet25TapFirFilter(filter, filter));
+}
+
+int AudioClass::dacSetAdaptiveFilterMode(int mode)
+{
+    CSL_Status      status;
+
+    status = rset(0, 44);
+    if (mode == TRUE)
+      status |= rset(1, 0x04);
+    else
+      status |= rset(1, 0x00);
+      
+    return (status);
+}
+
+
+int AudioClass::adcSetAdaptiveFilterMode(int mode)
+{
+    CSL_Status      status;
+
+    status = rset(0, 8);
+    if (mode == TRUE)
+      status |= rset(1, 0x04);
+    else
+      status |= rset(1, 0x00);
+      
+    return (status);
+}
+
+
+int AudioClass::dacAdaptiveFilterSwitch(void)
+{
+    CSL_Status      status;
+
+    status = rset(0, 44);
+    status |= rset(1, 0x05);
+    
+    return (status);
+}
+
+int AudioClass::adcAdaptiveFilterSwitch(void)
+{
+    CSL_Status      status;
+
+    status = rset(0, 8);
+    status |= rset(1, 0x05);
+    
+    return (status);
+}
+
+int AudioClass::dacPowerDown(void) 
+{
+    CSL_Status      status;
+
+    status = rset(0, 0);
+    status |= rset(63, 0x14);
+    
+    return(status);
+}
+    
+int AudioClass::adcPowerDown(void) 
+{
+    CSL_Status      status;
+
+    status = rset(0, 0);
+    status |= rset(81, 0x00);
+    
+    return(status);
+}
+    
+int AudioClass::dacPowerUp(void)
+{
+    CSL_Status      status;
+
+    status = rset(0, 0);
+    status |= rset(63, 0xD4);
+    
+    return(status);
+}
+    
+int AudioClass::adcPowerUp(void)
+{
+    CSL_Status      status;
+
+    status = rset(0, 0);
+    status |= rset(81, 0xC0);
+    
+    return(status);
+}
+    
+        
 /** ===========================================================================
  *   @n@b codecConfig
  *
@@ -1337,7 +1822,7 @@ int AudioClass::audioUnmute(void)
  *
  *  ===========================================================================
  */
-static int codecConfig(Uint16 configStruct[][2], int noOfElems)
+int AudioClass::codecConfig(Uint16 configStruct[][2], int noOfElems)
 {
     int index;
     int status;

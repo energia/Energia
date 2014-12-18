@@ -191,7 +191,7 @@ Uint16 updateBootLoader(void)
 	                   &bytesRead);
 #else
     /* Read the command to update the Bootloader */
-    status = read_UART(hUart, buffer, COMMAND_SIZE_LENGTH, 2000,
+    status = read_UART(hUart, buffer, COMMAND_SIZE_LENGTH, 3500, //2000
 	                   &bytesRead);
 #endif
 

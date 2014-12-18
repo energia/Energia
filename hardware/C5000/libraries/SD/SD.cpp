@@ -1137,9 +1137,9 @@ File SD_Class::open (char *filePath)
     AtaError      ata_error;
     char          *tempPtr;
     char          *prevPtr;
-    char          directoryName[9];
+    char          directoryName[32];
     int           dirNameLen;
-    char          fileName[13];
+    char          fileName[32];
     char          ext[4];
 
     prevPtr     = filePath;
@@ -1373,9 +1373,9 @@ File SD_Class::open (char *filePath, FILE_MODE mode)
     AtaError      ata_error;
     AtaFile       *pAtaFile;
     fileNodesList *newFileNode;
-    char          fileName[13];
+    char          fileName[32];
     char          extension[4];
-    char          directoryName[9];
+    char          directoryName[32];
     int           dirNameLen;
     char          *tempPtr;
     char          *prevPtr;

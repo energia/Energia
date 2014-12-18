@@ -41,7 +41,7 @@
  */
 
 #include "Wire_lib.h"
-
+#define CSL_TIMEOUT 0x01FF//CSL_I2C_MAX_TIMEOUT//0x07FF //0x01FF
 TwoWire Wire;
 
 /**
@@ -145,7 +145,6 @@ int TwoWire::requestFrom(unsigned int address,
 {
     CSL_Status   status;
 	unsigned int startStop;
-
 	if(isInitialized != 1)
 	{
 	    status = CSL_ESYS_FAIL;
@@ -158,19 +157,20 @@ int TwoWire::requestFrom(unsigned int address,
 	    }
 
 		startStop = ((CSL_I2C_START) | (CSL_I2C_STOP));
-
+		//asm(" BIT(ST1, #13) = #1");
 		status = I2C_read((Uint16 *)rxBuffer, quantity, address,
 		                  (Uint16 *)subAddr, subAddrLen,TRUE, startStop,
-		                  CSL_I2C_MAX_TIMEOUT, FALSE);
+		                  CSL_TIMEOUT, FALSE); //CSL_I2C_MAX_TIMEOUT 
+							//changed bus busy flag FALSE -> TRUE
+		//asm(" BIT(ST1, #13) = #0");
 	    if(status == CSL_SOK)
 		{
 	        rxBufferIndex = 0;
 	        rxBufferLength = quantity;
 		}
 
-		delay(8);
+		//delayMicroseconds(250);
 	}
-
 	return ((int)status);
 }
 
@@ -214,7 +214,6 @@ int TwoWire::requestFrom(unsigned int address,
 {
     CSL_Status   status;
 	unsigned int startStop;
-
 	if(isInitialized != 1)
 	{
 	    status = CSL_ESYS_FAIL;
@@ -237,14 +236,14 @@ int TwoWire::requestFrom(unsigned int address,
 
 		status = I2C_read((Uint16 *)rxBuffer, quantity, address,
 		                  (Uint16 *)subAddr, subAddrLen,TRUE, startStop,
-		                  CSL_I2C_MAX_TIMEOUT, FALSE);
+		                  CSL_TIMEOUT, FALSE); //CSL_I2C_MAX_TIMEOUT
 	    if(status == CSL_SOK)
 		{
 	        rxBufferIndex = 0;
 	        rxBufferLength = quantity;
 		}
 
-		delay(8);
+		//delayMicroseconds(250);
 	}
 
 	return ((int)status);
@@ -332,7 +331,7 @@ int TwoWire::endTransmission(void)
 	    startStop = ((CSL_I2C_START) | (CSL_I2C_STOP));
 
 		status = I2C_write((Uint16 *)txBuffer, txBufferLength, txAddress,
-		                   TRUE, startStop, CSL_I2C_MAX_TIMEOUT);
+		                   TRUE, startStop, CSL_TIMEOUT); //CSL_I2C_MAX_TIMEOUT
 		if(status == CSL_SOK)
 		{
 		    /* reset tx buffer iterator vars */
@@ -343,7 +342,7 @@ int TwoWire::endTransmission(void)
 	    }
 
 		/* Small delay is required to execute consecutive write operations successfully */
-		delayMilliseconds(8);
+		delayMicroseconds(80);
 	}
 
 	return ((int)status);
@@ -403,7 +402,7 @@ int TwoWire::endTransmission(bool stop)
 		}
 
 		status = I2C_write((Uint16 *)txBuffer, txBufferLength, txAddress,
-		                   TRUE, startStop, CSL_I2C_MAX_TIMEOUT);
+		                   TRUE, startStop, CSL_TIMEOUT); //CSL_I2C_MAX_TIMEOUT
 		if(status == CSL_SOK)
 		{
 		    /* reset tx buffer iterator vars */
@@ -414,7 +413,7 @@ int TwoWire::endTransmission(bool stop)
 	    }
 
 		/* Small delay is required to execute consecutive write operations successfully */
-		delayMilliseconds(2);
+		delayMicroseconds(80);
 	}
 
 	return ((int)status);

@@ -275,6 +275,11 @@ void SerialClass::end(void)
     this->timeOut          = 0;
     this->uartObj.uartRegs = (CSL_UartRegsOvly)NULL;
     this->uartObj.sysAddr  = (CSL_SysRegsOvly)NULL;
+
+        ioExpander_Write(1, 2, 0); /* For Stacked Mode */
+        ioExpander_Write(1, 3, 1);
+        ioExpander_Write(1, 4, 0);
+        ioExpander_Write(1, 5, 1);    
 }
 
 /**

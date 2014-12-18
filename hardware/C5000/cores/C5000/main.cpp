@@ -160,7 +160,7 @@ void setupPll(int speed)	//This function sets the DSP up to operate at a defined
 void sys_init(void)
 {
 	DMA.init();
-	Serial.begin(9600);
+	//Serial.begin(9600);
 	Wire.begin();
 	gpioOpen();
 	initInterrupt(0x0000);

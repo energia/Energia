@@ -74,7 +74,7 @@ void attachInterrupt (INTERRUPT_NUMBER intNumber,
 
 	IRQ_clearAll();
 
-	IRQ_disableAll();
+	//IRQ_disableAll();
 
     /* Set the Vector API address, which fetches the address of the ISRs of
        the corresponding interrupts */
