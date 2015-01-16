@@ -239,8 +239,7 @@ uint8_t TwoWire::i2cModule = NOT_ACTIVE;
 uint8_t TwoWire::slaveAddress = 0;
 
 uint32_t TwoWire::local_timeout = 0;
-uint8_t TwoWire::timeout_enabled = 0x00;
-uint32_t TwoWire::timeout = 100; // default ms timeout
+uint32_t TwoWire::timeout = 0; // 0 is disabled
 // Constructors ////////////////////////////////////////////////////////////////
 
 TwoWire::TwoWire()
@@ -267,7 +266,7 @@ uint8_t TwoWire::getRxData(unsigned long cmd) {
 	HWREG(MASTER_BASE + I2C_O_MCS) = cmd;
 	local_timeout = millis() + timeout;
     while(ROM_I2CMasterBusy(MASTER_BASE)){
-		if(local_timeout<millis()&timeout_enabled){
+		if(local_timeout<millis()&timeout>0){
 			return(4);
 		}
 	}
@@ -291,7 +290,7 @@ uint8_t TwoWire::sendTxData(unsigned long cmd, uint8_t data) {
     HWREG(MASTER_BASE + I2C_O_MCS) = cmd;
     local_timeout = millis() + timeout;
     while(ROM_I2CMasterBusy(MASTER_BASE)){
-		if(local_timeout<millis()&timeout_enabled){
+		if(local_timeout<millis()&timeout>0){
 			return(4);
 		}
 	}
@@ -487,13 +486,13 @@ uint8_t TwoWire::endTransmission(uint8_t sendStop)
   //Wait for any previous transaction to complete
   local_timeout = millis() + timeout;
 	while(ROM_I2CMasterBusBusy(MASTER_BASE)){
-		if(local_timeout<millis()&timeout_enabled){
+		if(local_timeout<millis()&timeout>0){
 			return(4);
 		}
 	};
   local_timeout = millis() + timeout;
     while(ROM_I2CMasterBusy(MASTER_BASE)){
-		if(local_timeout<millis()&timeout_enabled){
+		if(local_timeout<millis()&timeout>0){
 			return(4);
 		}
 	}
@@ -503,7 +502,7 @@ uint8_t TwoWire::endTransmission(uint8_t sendStop)
 
   local_timeout = millis() + timeout;
     while(ROM_I2CMasterBusy(MASTER_BASE)){
-		if(local_timeout<millis()&timeout_enabled){
+		if(local_timeout<millis()&timeout>0){
 			return(4);
 		}
 	}
@@ -719,17 +718,8 @@ void TwoWire::setModule(unsigned long _i2cModule)
 
 void TwoWire::setTimeout(unsigned int user_timeout)
 {
-	if(user_timeout>0)
-	{
-		timeout = user_timeout;
-		timeout_enabled = 0xff; //enable timeout
-	}
-	else
-	{
-		timeout_enabled = 0; //disable timeout
-	}
+	timeout = user_timeout;
 }
 
 //Preinstantiate Object
 TwoWire Wire;
-po
