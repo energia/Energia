@@ -31,7 +31,6 @@ class TwoWire : public Stream
 		static uint8_t slaveAddress;
 		
 		static uint32_t local_timeout;
-		static uint8_t timeout_enabled;
 		static uint32_t timeout;
 
 		static uint8_t transmitting;
