@@ -30,11 +30,11 @@
 #include <stdlib.h>
 #include "Energia.h" // for digitalWrite
  
-#ifndef cbi
+#if !defined(cbi)
 #define cbi(sfr, bit) (_SFR_BYTE(sfr) &= ~_BV(bit))
 #endif
 
-#ifndef sbi
+#if !defined(sbi)
 #define sbi(sfr, bit) (_SFR_BYTE(sfr) |= _BV(bit))
 #endif
 
@@ -65,7 +65,7 @@ static volatile uint8_t twi_rxBufferIndex;
 
 static volatile uint8_t twi_error;
 
-#ifdef __MSP430_HAS_USI__
+#if defined(__MSP430_HAS_USI__)
 static uint8_t twi_slarw;
 static uint8_t twi_my_addr;
 
@@ -73,7 +73,7 @@ static uint8_t twi_my_addr;
 
 #if defined(__MSP430_HAS_USCI__) || defined(__MSP430_HAS_USCI_B0__) \
  || defined(__MSP430_HAS_USCI_B1__)
-#ifndef USE_USCI_B1
+#if !defined(USE_USCI_B1)
 #define UCBxCTLW0     UCB0CTLW0
 #define UCBxCTL0      UCB0CTL0
 #define UCBxCTL1      UCB0CTL1
@@ -118,10 +118,10 @@ static uint8_t twi_my_addr;
 #endif
 #endif
 
-#ifdef __MSP430_HAS_USCI__
+#if defined(__MSP430_HAS_USCI__)
 #endif
 
-#ifdef __MSP430_HAS_EUSCI_B0__
+#if defined(__MSP430_HAS_EUSCI_B0__)
 #endif
 
 /*
@@ -137,7 +137,7 @@ void twi_init(void)
 	twi_sendStop = true;		// default value
 	twi_inRepStart = false;
 
-#ifdef __MSP430_HAS_USI__
+#if defined(__MSP430_HAS_USI__)
 
 	/* 100 KHz for all */
 #if (F_CPU >= 16000000L) || (F_CPU >= 12000000L)
@@ -202,7 +202,7 @@ void twi_init(void)
 #endif
 
 #endif
-#ifdef __MSP430_HAS_EUSCI_B0__
+#if defined(__MSP430_HAS_EUSCI_B0__)
 
     P1SEL1 |= BIT6 + BIT7;                  // Pin init
 
@@ -244,14 +244,14 @@ void twi_init(void)
  */
 void twi_setAddress(uint8_t address)
 {
-#ifdef __MSP430_HAS_USI__
+#if defined(__MSP430_HAS_USI__)
 	twi_my_addr = address << 1;
 #endif
 #if defined(__MSP430_HAS_USCI__) || defined(__MSP430_HAS_USCI_B0__) || defined(__MSP430_HAS_USCI_B1__)
 	/* UCGCEN = respond to general Call */
 	UCB0I2COA = (address | UCGCEN);
 #endif
-#ifdef __MSP430_HAS_EUSCI_B0__
+#if defined(__MSP430_HAS_EUSCI_B0__)
 	/* UCGCEN = respond to general Call */
 	UCB0I2COA0 = (address | UCOAEN | UCGCEN);
 #endif
@@ -270,7 +270,7 @@ uint8_t twi_readFrom(uint8_t address, uint8_t* data, uint8_t length, uint8_t sen
 {
 	uint8_t i;
 
-#ifdef __MSP430_HAS_USI__
+#if defined(__MSP430_HAS_USI__)
 	/* Disable START condition interrupt */
 	USICTL1 &= ~USISTTIE;
 	/* I2C master mode */
@@ -283,14 +283,14 @@ uint8_t twi_readFrom(uint8_t address, uint8_t* data, uint8_t length, uint8_t sen
     UCB0CTL1 &= ~(UCTR);                     // Configure in receive mode
     UCB0I2CSA = address;                     // Set Slave Address
     UCB0CTL1 &= ~UCSWRST;                    // Clear SW reset, resume operation
-#ifdef __MSP430_HAS_USCI__
+#if defined(__MSP430_HAS_USCI__)
     UCB0I2CIE |= (UCALIE|UCNACKIE|UCSTPIE);  // Enable I2C interrupts
     UC0IE |= (UCB0RXIE | UCB0TXIE);          // Enable I2C interrupts
 #else
     UCB0IE |= (UCALIE|UCNACKIE|UCSTPIE|UCRXIE|UCTXIE);  // Enable I2C interrupts
 #endif
 #endif
-#ifdef __MSP430_HAS_EUSCI_B0__
+#if defined(__MSP430_HAS_EUSCI_B0__)
     UCB0CTLW0 = UCSWRST;                      // Enable SW reset
     UCB0CTLW0 |= (UCMST | UCMODE_3 | UCSYNC | UCSSEL__SMCLK);   // I2C Master, synchronous mode
     UCB0CTLW0 &= ~(UCTR);                     // Configure in receive mode
@@ -312,7 +312,7 @@ uint8_t twi_readFrom(uint8_t address, uint8_t* data, uint8_t length, uint8_t sen
 	// received, causing that NACK to be sent in response to receiving the last
 	// expected byte of data.
 
-#ifdef __MSP430_HAS_USI__
+#if defined(__MSP430_HAS_USI__)
 	/* build sla+w, slave device address + w bit */
 	twi_slarw = 1;
 	twi_slarw |= address << 1;
@@ -331,7 +331,7 @@ uint8_t twi_readFrom(uint8_t address, uint8_t* data, uint8_t length, uint8_t sen
         UCB0CTL1 |= UCTXSTP;                  // Send I2C stop condition after recv
     }
 #endif
-#ifdef __MSP430_HAS_EUSCI_B0__
+#if defined(__MSP430_HAS_EUSCI_B0__)
     twi_state =  TWI_MRX;                     // Master receive mode
     while (UCB0CTLW0 & UCTXSTP);              // Ensure stop condition got sent
     UCB0CTLW0 |= UCTXSTT;                     // I2C start condition
@@ -376,7 +376,7 @@ uint8_t twi_writeTo(uint8_t address, uint8_t* data, uint8_t length, uint8_t wait
 	twi_error = TWI_ERRROR_NO_ERROR;
 	twi_sendStop = sendStop;
 
-#ifdef __MSP430_HAS_USI__
+#if defined(__MSP430_HAS_USI__)
 	/* Disable START condition interrupt */
 	USICTL1 &= ~USISTTIE;
 	/* I2C master mode */
@@ -389,14 +389,14 @@ uint8_t twi_writeTo(uint8_t address, uint8_t* data, uint8_t length, uint8_t wait
     UCB0CTL1 |= UCTR;                        // Configure in transmit mode
     UCB0I2CSA = address;                     // Set Slave Address
     UCB0CTL1 &= ~UCSWRST;                    // Clear SW reset, resume operation
-#ifdef __MSP430_HAS_USCI__
+#if defined(__MSP430_HAS_USCI__)
     UCB0I2CIE |= (UCALIE|UCNACKIE|UCSTPIE);  // Enable I2C interrupts
     UC0IE |= UCB0TXIE;                     // Enable I2C interrupts
 #else
     UCB0IE |= (UCALIE|UCNACKIE|UCSTPIE|UCTXIE);  // Enable I2C interrupts
 #endif
 #endif
-#ifdef __MSP430_HAS_EUSCI_B0__
+#if defined(__MSP430_HAS_EUSCI_B0__)
     UCB0CTLW0 = UCSWRST;                      // Enable SW reset
     UCB0CTLW0 |= (UCMST | UCMODE_3 | UCSSEL__SMCLK | UCSYNC);   // I2C Master, synchronous mode
     UCB0CTLW0 |= UCTR;                        // Configure in transmit mode
@@ -422,7 +422,7 @@ uint8_t twi_writeTo(uint8_t address, uint8_t* data, uint8_t length, uint8_t wait
 		twi_masterBuffer[i] = data[i];
 	}
 
-#ifdef __MSP430_HAS_USI__
+#if defined(__MSP430_HAS_USI__)
 	/* build sla+w, slave device address + w bit */
 	twi_slarw = 0;
 	twi_slarw |= address << 1;
@@ -435,7 +435,7 @@ uint8_t twi_writeTo(uint8_t address, uint8_t* data, uint8_t length, uint8_t wait
     twi_state =  TWI_MTX;                     // Master Transmit mode
     UCB0CTL1 |= UCTXSTT;                      // I2C start condition
 #endif
-#ifdef __MSP430_HAS_EUSCI_B0__
+#if defined(__MSP430_HAS_EUSCI_B0__)
     twi_state =  TWI_MTX;                     // Master Transmit mode
     while (UCB0CTLW0 & UCTXSTP);           // Ensure stop condition got sent
     UCB0CTLW0 |= UCTXSTT;                  // I2C start condition
@@ -514,7 +514,7 @@ void twi_attachSlaveTxEvent( void (*function)(void) )
 
 void send_start()
 {
-#ifdef __MSP430_HAS_USI__
+#if defined(__MSP430_HAS_USI__)
 	USISRL = 0x00;
 	USICTL0 |= USIGE+USIOE;
 	USICTL0 &= ~USIGE;
@@ -523,7 +523,7 @@ void send_start()
 #endif
 }
 
-#ifdef __MSP430_HAS_USI__
+#if defined(__MSP430_HAS_USI__)
 __attribute__((interrupt(USI_VECTOR)))
 void USI_ISR(void)
 {
@@ -647,7 +647,7 @@ void i2c_txrx_isr(void)  // RX/TX Service
 {
 	/* USCI I2C mode. USCI_B0 receive interrupt flag.
 	 * UCB0RXIFG is set when UCB0RXBUF has received a complete character. */
-#ifdef __MSP430_HAS_USCI__
+#if defined(__MSP430_HAS_USCI__)
 	if (UC0IFG & UCB0RXIFG){
 #else
 	if (UCB0IFG & UCRXIFG){
@@ -678,7 +678,7 @@ void i2c_txrx_isr(void)  // RX/TX Service
 	}
 	/* USCI I2C mode. USCI_B0 transmit interrupt flag.
 	 * UCB0TXIFG is set when UCB0TXBUF is empty.*/
-#ifdef __MSP430_HAS_USCI__
+#if defined(__MSP430_HAS_USCI__)
 	if (UC0IFG & UCB0TXIFG){
 #else
 	if (UCB0IFG & UCTXIFG){
@@ -721,7 +721,7 @@ void i2c_txrx_isr(void)  // RX/TX Service
 void i2c_state_isr(void)  // I2C Service
 {
 	/* Arbitration lost interrupt flag */
-#ifdef __MSP430_HAS_USCI__
+#if defined(__MSP430_HAS_USCI__)
 	if (UCB0STAT & UCALIFG) {
 		UCB0STAT &= ~UCALIFG;
 #else
@@ -732,7 +732,7 @@ void i2c_state_isr(void)  // I2C Service
 	}
 	/* Not-acknowledge received interrupt flag. 
 	 * UCNACKIFG is automatically cleared when a START condition is received.*/
-#ifdef __MSP430_HAS_USCI__
+#if defined(__MSP430_HAS_USCI__)
 	if (UCB0STAT & UCNACKIFG) {
 		UCB0STAT &= ~UCNACKIFG;
 #else
@@ -748,7 +748,7 @@ void i2c_state_isr(void)  // I2C Service
 	}
 	/* Start condition interrupt flag.
 	 * UCSTTIFG is automatically cleared if a STOP condition is received. */
-#ifdef __MSP430_HAS_USCI__
+#if defined(__MSP430_HAS_USCI__)
 	 if (UCB0STAT & UCSTTIFG) {
 		UCB0STAT &= ~UCSTTIFG;
 #else
@@ -781,7 +781,7 @@ void i2c_state_isr(void)  // I2C Service
 	}
 	/* Stop condition interrupt flag.
 	 * UCSTPIFG is automatically cleared when a START condition is received. */
-#ifdef __MSP430_HAS_USCI__
+#if defined(__MSP430_HAS_USCI__)
 	if (UCB0STAT & UCSTPIFG) {
 		UCB0STAT &= ~UCSTPIFG;
 #else
@@ -797,7 +797,7 @@ void i2c_state_isr(void)  // I2C Service
 }
 #endif
 
-#ifdef __MSP430_HAS_EUSCI_B0__
+#if defined(__MSP430_HAS_EUSCI_B0__)
 __attribute__((interrupt(USCI_B0_VECTOR)))
 void USCI_B0_ISR(void)
 {
