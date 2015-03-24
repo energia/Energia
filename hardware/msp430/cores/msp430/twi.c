@@ -77,7 +77,6 @@ static uint8_t twi_my_addr;
 #define UCBxCTLW0     UCB0CTLW0
 #define UCBxCTL0      UCB0CTL0
 #define UCBxCTL1      UCB0CTL1
-#define UCBxCTL0      UCB0CTL0
 #define UCBxBRW       UCB0BRW
 #define UCBxBR0       UCB0BR0
 #define UCBxBR1       UCB0BR1
@@ -98,7 +97,6 @@ static uint8_t twi_my_addr;
 #define UCBxCTLW0     UCB1CTLW0
 #define UCBxCTL0      UCB1CTL0
 #define UCBxCTL1      UCB1CTL1
-#define UCBxCTL0      UCB1CTL0
 #define UCBxBRW       UCB1BRW
 #define UCBxBR0       UCB1BR0
 #define UCBxBR1       UCB1BR1
