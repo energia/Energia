@@ -1,6 +1,6 @@
 #include "Energia.h"
 #if defined(__MSP430_HAS_USCI__) || defined(__MSP430_HAS_USCI_A0__) || defined(__MSP430_HAS_USCI_A1__) \
- || defined(__MSP430_HAS_EUSCI_A0__)|| defined(__MSP430_HAS_USCI_B0__) || defined(__MSP430_HAS_USCI_B1__) 
+ || defined(__MSP430_HAS_EUSCI_A0__) || defined(__MSP430_HAS_USCI_B0__) || defined(__MSP430_HAS_USCI_B1__)
 #include "usci_isr_handler.h"
 /* This dummy function ensures that, when called from any module that 
  * is interested in having the USCIAB0TX_VECTOR and USCIAB0TX_VECTOR
