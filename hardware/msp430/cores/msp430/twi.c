@@ -95,6 +95,10 @@ static uint8_t twi_my_addr;
 #define UCBxIV        UCB0IV
 #define UCBxI2COA     UCB0I2COA
 #define UCBxI2CSA     UCB0I2CSA
+#define TWISDAx       TWISDA
+#define TWISCLx       TWISCL
+#define TWISDA_SET_MODEx TWISDA_SET_MODE
+#define TWISCL_SET_MODEx TWISCL_SET_MODE
 #else
 #define UCBxCTLW0     UCB1CTLW0
 #define UCBxCTL0      UCB1CTL0
@@ -117,6 +121,10 @@ static uint8_t twi_my_addr;
 #define UCBxIV        UCB1IV
 #define UCBxI2COA     UCB1I2COA
 #define UCBxI2CSA     UCB1I2CSA
+#define TWISDAx       TWISDA1
+#define TWISCLx       TWISCL1
+#define TWISDA_SET_MODEx TWISDA_SET_MODE1
+#define TWISCL_SET_MODEx TWISCL_SET_MODE1
 #endif
 #endif
 
@@ -169,8 +177,8 @@ void twi_init(void)
     usci_isr_install();
 
     /* Set pins to I2C mode */
-    pinMode_int(TWISDA, TWISDA_SET_MODE);
-    pinMode_int(TWISCL, TWISCL_SET_MODE);
+    pinMode_int(TWISDAx, TWISDA_SET_MODEx);
+    pinMode_int(TWISCLx, TWISCL_SET_MODEx);
 
     //Disable the USCI module and clears the other bits of control register
     UCBxCTL1 = UCSWRST;
