@@ -93,6 +93,8 @@ static uint8_t twi_my_addr;
 #define UCBxIE        UCB0IE
 #define UCBxIFG       UCB0IFG
 #define UCBxIV        UCB0IV
+#define UCBxI2COA     UCB0I2COA
+#define UCBxI2CSA     UCB0I2CSA
 #else
 #define UCBxCTLW0     UCB1CTLW0
 #define UCBxCTL0      UCB1CTL0
@@ -113,6 +115,8 @@ static uint8_t twi_my_addr;
 #define UCBxIE        UCB1IE
 #define UCBxIFG       UCB1IFG
 #define UCBxIV        UCB1IV
+#define UCBxI2COA     UCB1I2COA
+#define UCBxI2CSA     UCB1I2CSA
 #endif
 #endif
 
@@ -246,7 +250,7 @@ void twi_setAddress(uint8_t address)
 #endif
 #if defined(__MSP430_HAS_USCI__) || defined(__MSP430_HAS_USCI_B0__) || defined(__MSP430_HAS_USCI_B1__)
 	/* UCGCEN = respond to general Call */
-	UCB0I2COA = (address | UCGCEN);
+	UCBxI2COA = (address | UCGCEN);
 #endif
 #if defined(__MSP430_HAS_EUSCI_B0__)
 	/* UCGCEN = respond to general Call */
@@ -278,7 +282,7 @@ uint8_t twi_readFrom(uint8_t address, uint8_t* data, uint8_t length, uint8_t sen
     UCBxCTL1 |= (UCSSEL_2);                  // I2C Master, synchronous mode
     UCBxCTL0 |= (UCMST | UCMODE_3 | UCSYNC); // I2C Master, synchronous mode
     UCBxCTL1 &= ~(UCTR);                     // Configure in receive mode
-    UCB0I2CSA = address;                     // Set Slave Address
+    UCBxI2CSA = address;                     // Set Slave Address
     UCBxCTL1 &= ~UCSWRST;                    // Clear SW reset, resume operation
 #if defined(__MSP430_HAS_USCI__)
     UCB0I2CIE |= (UCALIE|UCNACKIE|UCSTPIE);  // Enable I2C interrupts
@@ -384,7 +388,7 @@ uint8_t twi_writeTo(uint8_t address, uint8_t* data, uint8_t length, uint8_t wait
     UCBxCTL1 |= UCSSEL_2;                    // SMCLK
     UCBxCTL0 |= (UCMST | UCMODE_3 | UCSYNC); // I2C Master, synchronous mode
     UCBxCTL1 |= UCTR;                        // Configure in transmit mode
-    UCB0I2CSA = address;                     // Set Slave Address
+    UCBxI2CSA = address;                     // Set Slave Address
     UCBxCTL1 &= ~UCSWRST;                    // Clear SW reset, resume operation
 #if defined(__MSP430_HAS_USCI__)
     UCB0I2CIE |= (UCALIE|UCNACKIE|UCSTPIE);  // Enable I2C interrupts
@@ -642,11 +646,12 @@ mtre:
 #if defined(__MSP430_HAS_USCI__) || defined(__MSP430_HAS_USCI_B0__) || defined(__MSP430_HAS_USCI_B1__)
 void i2c_txrx_isr(void)  // RX/TX Service
 {
-	/* USCI I2C mode. USCI_Bx receive interrupt flag.
-	 * UCBxRXIFG is set when UCBxRXBUF has received a complete character. */
+	/* USCI I2C mode. USCI_Bx receive interrupt flag. */
 #if defined(__MSP430_HAS_USCI__)
+	/* UCB0RXIFG is set when UCBxRXBUF has received a complete character. */
 	if (UC0IFG & UCB0RXIFG){
 #else
+	/* UCRXIFG is set when UCBxRXBUF has received a complete character. */
 	if (UCBxIFG & UCRXIFG){
 #endif
 		/* Master receive mode. */
@@ -673,11 +678,12 @@ void i2c_txrx_isr(void)  // RX/TX Service
 			}
 		}
 	}
-	/* USCI I2C mode. USCI_Bx transmit interrupt flag.
-	 * UCB0TXIFG is set when UCBxTXBUF is empty.*/
+	/* USCI I2C mode. USCI_Bx transmit interrupt flag. */
 #if defined(__MSP430_HAS_USCI__)
+	/* UCB0TXIFG is set when UCBxTXBUF is empty.*/
 	if (UC0IFG & UCB0TXIFG){
 #else
+	/* UCTXIFG is set when UCBxTXBUF is empty.*/
 	if (UCBxIFG & UCTXIFG){
 #endif
 		/* Master transmit mode */
