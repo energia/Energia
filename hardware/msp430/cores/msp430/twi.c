@@ -29,6 +29,8 @@
 #include <math.h>
 #include <stdlib.h>
 #include "Energia.h" // for digitalWrite
+
+#define USE_USCI_B1
  
 #if !defined(cbi)
 #define cbi(sfr, bit) (_SFR_BYTE(sfr) &= ~_BV(bit))
@@ -176,10 +178,6 @@ void twi_init(void)
      * from stripping the USCI interupt vectors.*/ 
     usci_isr_install();
 
-    /* Set pins to I2C mode */
-    pinMode_int(TWISDAx, TWISDA_SET_MODEx);
-    pinMode_int(TWISCLx, TWISCL_SET_MODEx);
-
     //Disable the USCI module and clears the other bits of control register
     UCBxCTL1 = UCSWRST;
 
@@ -199,6 +197,11 @@ void twi_init(void)
     UCBxBR0 = (unsigned char)((F_CPU / TWI_FREQ) & 0xFF);
     UCBxBR1 = (unsigned char)((F_CPU / TWI_FREQ) >> 8);
 
+    /* Set pins to I2C mode */
+    pinMode_int(TWISDAx, TWISDA_SET_MODEx);
+    pinMode_int(TWISCLx, TWISCL_SET_MODEx);
+
+    /* Enable the USCI module */
     UCBxCTL1 &= ~(UCSWRST);
 
 #if defined(__MSP430_HAS_USCI__)

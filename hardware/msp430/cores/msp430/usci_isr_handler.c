@@ -60,6 +60,8 @@ void USCIA1_ISR(void)
 }
 #endif
 
+#define USE_USCI_B1
+
 #if defined(__MSP430_HAS_USCI_B0__) || defined(__MSP430_HAS_USCI_B1__)
 #ifndef USE_USCI_B1
 __attribute__((interrupt(USCI_B0_VECTOR)))
