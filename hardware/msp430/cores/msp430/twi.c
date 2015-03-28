@@ -208,18 +208,13 @@ void twi_init(void)
 
     //Configure Automatic STOP condition generation
     UCB0CTLW1 &= ~UCASTP_3;
-    //UCB0CTLW1 |= autoSTOPGeneration;
 
-    //Byte Count Threshold
-    //UCB0TBCNT = byteCounterThreshold;
     /*
-     * Configure as I2C master mode.
-     * UCMST = Master mode
+     * Configure as I2C slave
      * UCMODE_3 = I2C mode
      * UCSYNC = Synchronous mode
-     * UCCLK = SMCLK
      */
-    UCB0CTLW0 = UCMODE_3 | UCSSEL__SMCLK | UCSYNC | UCSWRST;
+    UCB0CTLW0 |= (UCMODE_3 | UCSYNC);
 
     /*
      * Compute the clock divider that achieves the fastest speed less than or
@@ -228,6 +223,8 @@ void twi_init(void)
      * to the desired clock, never greater.
      */
     UCB0BRW = (unsigned short)(F_CPU / 400000);
+
+    // Enable the USCI module
     UCB0CTLW0 &= ~(UCSWRST);
     UCB0IE |= (UCRXIE0|UCTXIE0|UCSTTIE|UCSTPIE); // Enable I2C interrupts
 #endif
