@@ -41,7 +41,6 @@
 #endif
 #endif
 
-
 #include <inttypes.h>
 
 #ifndef TWI_FREQ
@@ -80,14 +79,11 @@
 #define TWI_EXIT 16
 #define TWI_IDLE 17
 
-
 #define TWI_ERRROR_NO_ERROR 0
 #define TWI_ERROR_BUF_TO_LONG 1
 #define TWI_ERROR_ADDR_NACK 2
 #define TWI_ERROR_DATA_NACK 3
 #define TWI_ERROR_OTHER 4
-
-
 
 void twi_init(void);
 void twi_setAddress(uint8_t);
