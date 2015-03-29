@@ -77,25 +77,15 @@ static uint8_t twi_my_addr;
 #if defined(__MSP430_HAS_USCI__) || defined(__MSP430_HAS_USCI_B0__) \
  || defined(__MSP430_HAS_USCI_B1__)
 #if !defined(USE_USCI_B1)
-#define UCBxCTLW0     UCB0CTLW0
 #define UCBxCTL0      UCB0CTL0
 #define UCBxCTL1      UCB0CTL1
-#define UCBxBRW       UCB0BRW
 #define UCBxBR0       UCB0BR0
 #define UCBxBR1       UCB0BR1
-#define UCBxMCTL      UCB0MCTL
-#define UCBxMCTLW     UCB0MCTLW
 #define UCBxSTAT      UCB0STAT
 #define UCBxRXBUF     UCB0RXBUF
 #define UCBxTXBUF     UCB0TXBUF
-#define UCBxABCTL     UCB0ABCTL
-#define UCBxIRCTL     UCB0IRCTL
-#define UCBxIRTCTL    UCB0IRTCTL
-#define UCBxIRRCTL    UCB0IRRCTL
-#define UCBxICTL      UCB0ICTL
 #define UCBxIE        UCB0IE
 #define UCBxIFG       UCB0IFG
-#define UCBxIV        UCB0IV
 #define UCBxI2COA     UCB0I2COA
 #define UCBxI2CSA     UCB0I2CSA
 #define TWISDAx       TWISDA
@@ -103,25 +93,15 @@ static uint8_t twi_my_addr;
 #define TWISDA_SET_MODEx TWISDA_SET_MODE
 #define TWISCL_SET_MODEx TWISCL_SET_MODE
 #else
-#define UCBxCTLW0     UCB1CTLW0
 #define UCBxCTL0      UCB1CTL0
 #define UCBxCTL1      UCB1CTL1
-#define UCBxBRW       UCB1BRW
 #define UCBxBR0       UCB1BR0
 #define UCBxBR1       UCB1BR1
-#define UCBxMCTL      UCB1MCTL
-#define UCBxMCTLW     UCB1MCTLW
 #define UCBxSTAT      UCB1STAT
 #define UCBxRXBUF     UCB1RXBUF
 #define UCBxTXBUF     UCB1TXBUF
-#define UCBxABCTL     UCB1ABCTL
-#define UCBxIRCTL     UCB1IRCTL
-#define UCBxIRTCTL    UCB1IRTCTL
-#define UCBxIRRCTL    UCB1IRRCTL
-#define UCBxICTL      UCB1ICTL
 #define UCBxIE        UCB1IE
 #define UCBxIFG       UCB1IFG
-#define UCBxIV        UCB1IV
 #define UCBxI2COA     UCB1I2COA
 #define UCBxI2CSA     UCB1I2CSA
 #define TWISDAx       TWISDA1
