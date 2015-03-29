@@ -630,7 +630,6 @@ mtre:
 
 	/* Clear counter interrupt */
 	USICTL1 &= ~USIIFG;
-
 }
 #elif defined(__MSP430_HAS_USCI__) || defined(__MSP430_HAS_USCI_B0__) || defined(__MSP430_HAS_USCI_B1__)
 void i2c_txrx_isr(void)  // RX/TX Service
@@ -788,8 +787,7 @@ void i2c_state_isr(void)  // I2C Service
 	}
 }
 
-#if defined(__MSP430_HAS_USCI_B0__) || defined(__MSP430_HAS_USCI_B1__)
-#ifndef USE_USCI_B1
+#if defined(__MSP430_HAS_USCI_B0__)
 __attribute__((interrupt(USCI_B0_VECTOR)))
 void USCIB0_ISR(void)
 {
@@ -805,7 +803,9 @@ void USCIB0_ISR(void)
 	if (still_asleep != stay_asleep)
 		__bic_SR_register_on_exit(LPM4_bits);
 }
-#else
+#endif
+
+#if defined(__MSP430_HAS_USCI_B1__)
 __attribute__((interrupt(USCI_B1_VECTOR)))
 void USCIB1_ISR(void)
 {
@@ -821,7 +821,6 @@ void USCIB1_ISR(void)
 	if (still_asleep != stay_asleep)
 		__bic_SR_register_on_exit(LPM4_bits);
 }
-#endif
 #endif
 
 #elif defined(__MSP430_HAS_EUSCI_B0__)
