@@ -45,6 +45,10 @@
 #include "twi.h"
 #include "usci_isr_handler.h"
 
+#if defined(__MSP430_HAS_USCI_B0__) || defined(__MSP430_HAS_USCI_B1__) || defined(__MSP430_HAS_EUSCI_B0__)
+static boolean still_asleep;  // Used to validate whether a user ISR has issued wakeup() inside LPM3/LPM4 sleep modes.
+#endif
+
 static volatile uint8_t twi_state;
 static volatile uint8_t twi_sendStop;           // should the transaction end with a stop
 static volatile uint8_t twi_inRepStart;         // in the middle of a repeated start
@@ -783,6 +787,43 @@ void i2c_state_isr(void)  // I2C Service
 		twi_state =  TWI_IDLE;
 	}
 }
+
+#if defined(__MSP430_HAS_USCI_B0__) || defined(__MSP430_HAS_USCI_B1__)
+#ifndef USE_USCI_B1
+__attribute__((interrupt(USCI_B0_VECTOR)))
+void USCIB0_ISR(void)
+{
+	still_asleep = stay_asleep;
+
+	/* USCI_B0 I2C state change interrupt. */
+	if ((UCB0CTL0 & UCMODE_3) == UCMODE_3 && (UCB0IFG & (UCALIFG | UCNACKIFG | UCSTTIFG | UCSTPIFG)) != 0)
+		i2c_state_isr();
+	/* USCI_B0 I2C TX RX interrupt. */
+	if ((UCB0CTL0 & UCMODE_3) == UCMODE_3 && (UCB0IFG & (UCTXIFG | UCRXIFG)) != 0)
+		i2c_txrx_isr();
+
+	if (still_asleep != stay_asleep)
+		__bic_SR_register_on_exit(LPM4_bits);
+}
+#else
+__attribute__((interrupt(USCI_B1_VECTOR)))
+void USCIB1_ISR(void)
+{
+	still_asleep = stay_asleep;
+
+	/* USCI_B1 I2C state change interrupt. */
+	if ((UCB1CTL0 & UCMODE_3) == UCMODE_3 && (UCB1IFG & (UCALIFG | UCNACKIFG | UCSTTIFG | UCSTPIFG)) != 0)
+		i2c_state_isr();
+	/* USCI_B1 I2C TX RX interrupt. */
+	if ((UCB1CTL0 & UCMODE_3) == UCMODE_3 && (UCB1IFG & (UCTXIFG | UCRXIFG)) != 0)
+		i2c_txrx_isr();
+
+	if (still_asleep != stay_asleep)
+		__bic_SR_register_on_exit(LPM4_bits);
+}
+#endif
+#endif
+
 #elif defined(__MSP430_HAS_EUSCI_B0__)
 __attribute__((interrupt(USCI_B0_VECTOR)))
 void USCI_B0_ISR(void)
