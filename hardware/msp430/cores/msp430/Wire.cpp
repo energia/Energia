@@ -302,7 +302,7 @@ void TwoWire::onRequest( void (*function)(void) )
   user_onRequest = function;
 }
 
-void TwoWire::setModule(unsigned long _i2cModule)
+void TwoWire::setModule(uint8_t _i2cModule)
 {
     i2cModule = _i2cModule;
 }
