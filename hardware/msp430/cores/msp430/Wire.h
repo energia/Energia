@@ -53,6 +53,8 @@ class TwoWire : public Stream
     static void (*user_onReceive)(int);
     static void onRequestService(void);
     static void onReceiveService(uint8_t*, int);
+
+    static uint8_t i2cModule;
   public:
     TwoWire();
     void begin();
@@ -86,6 +88,8 @@ class TwoWire : public Stream
     inline size_t write(unsigned int n) { return write((uint8_t)n); }
     inline size_t write(int n) { return write((uint8_t)n); }
     using Print::write;
+
+    void setModule(uint8_t module);
 };
 
 extern TwoWire Wire;

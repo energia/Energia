@@ -89,7 +89,7 @@
 
 
 
-void twi_init(void);
+void twi_init(uint8_t module);
 void twi_setAddress(uint8_t);
 uint8_t twi_readFrom(uint8_t, uint8_t*, uint8_t, uint8_t);
 uint8_t twi_writeTo(uint8_t, uint8_t*, uint8_t, uint8_t, uint8_t);

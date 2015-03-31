@@ -51,6 +51,7 @@ uint8_t TwoWire::txBufferLength = 0;
 uint8_t TwoWire::transmitting = 0;
 void (*TwoWire::user_onRequest)(void);
 void (*TwoWire::user_onReceive)(int);
+uint8_t TwoWire::i2cModule = 0;
 
 // Constructors ////////////////////////////////////////////////////////////////
 
@@ -68,7 +69,7 @@ void TwoWire::begin(void)
   txBufferIndex = 0;
   txBufferLength = 0;
 
-  twi_init();
+  twi_init(i2cModule);
 }
 
 void TwoWire::begin(uint8_t address)
@@ -299,6 +300,11 @@ void TwoWire::onReceive( void (*function)(int) )
 void TwoWire::onRequest( void (*function)(void) )
 {
   user_onRequest = function;
+}
+
+void TwoWire::setModule(uint8_t _i2cModule)
+{
+    i2cModule = _i2cModule;
 }
 
 // Preinstantiate Objects //////////////////////////////////////////////////////
