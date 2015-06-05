@@ -1,6 +1,17 @@
+//
+// Event.cpp
+// Code file
+// ----------------------------------
+//
+// Project EventLibrary for Energia MT 0101E0016
+//
+
 #include "Event.h"
 
-Event::Event(){}
+Event::Event(xdc_UInt eventId_number)
+{
+  event_Id_number = eventId_number;
+}
 
 void Event::begin()
 {
@@ -12,10 +23,10 @@ void Event::begin()
 void Event::waitFor()
 {
   Event_pend(eventHandle, Event_Id_NONE,
-    Event_Id_00, BIOS_WAIT_FOREVER);    
+    event_Id_number, BIOS_WAIT_FOREVER);    
 }
 
 void Event::send()
 {
-  Event_post(eventHandle, Event_Id_00);  
+  Event_post(eventHandle, event_Id_number);  
 }
