@@ -8,25 +8,27 @@
 
 #include "Event.h"
 
-Event::Event(xdc_UInt eventId_number)
+Event::Event()
 {
-  event_Id_number = eventId_number;
+    ;
 }
 
 void Event::begin()
 {
-  Error_Block eb;
-  Error_init(&eb);
-  eventHandle = Event_create(NULL, &eb);
+    Error_Block eb;
+    Error_init(&eb);
+    eventHandle = Event_create(NULL, &eb);
 }
 
-void Event::waitFor()
+uint32_t Event::waitFor(xdc_UInt ANDeventId_number, xdc_UInt OReventId_number)
 {
-  Event_pend(eventHandle, Event_Id_NONE,
-    event_Id_number, BIOS_WAIT_FOREVER);    
+    return Event_pend(eventHandle,
+               ANDeventId_number,
+               OReventId_number,
+               BIOS_WAIT_FOREVER);
 }
 
-void Event::send()
+void Event::send(xdc_UInt eventId_number)
 {
-  Event_post(eventHandle, event_Id_number);  
+    Event_post(eventHandle, eventId_number);
 }

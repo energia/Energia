@@ -51,12 +51,15 @@ void LED2_setup()
 void LED2_loop()
 {
     // AND
-    myEvent2.waitFor(Event_Id_02 + Event_Id_03, Event_Id_NONE);
+    // myEvent2.waitFor(Event_Id_02 + Event_Id_03, Event_Id_NONE);
     // OR
-    //    myEvent2.waitFor(Event_Id_NONE, Event_Id_02 + Event_Id_03);
+    uint32_t events = myEvent2.waitFor(Event_Id_NONE, Event_Id_02 + Event_Id_03);
     
     value2 = 1 - value2;
     digitalWrite(GREEN_LED, value2);
+    Serial.print("(");
+    Serial.print(events, BIN);
+    Serial.print(")");
     Serial.print("G");
 }
 

@@ -3,7 +3,7 @@
 // Code file
 // ----------------------------------
 //
-// Project Energia MT 0101E0016
+// Project EventLibrary for Energia MT 0101E0016
 //
 
 #include "Event.h"
@@ -20,9 +20,9 @@ void Event::begin()
     eventHandle = Event_create(NULL, &eb);
 }
 
-void Event::waitFor(xdc_UInt ANDeventId_number, xdc_UInt OReventId_number)
+uint32_t Event::waitFor(xdc_UInt ANDeventId_number, xdc_UInt OReventId_number)
 {
-    Event_pend(eventHandle,
+    return Event_pend(eventHandle,
                ANDeventId_number,
                OReventId_number,
                BIOS_WAIT_FOREVER);

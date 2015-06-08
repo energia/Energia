@@ -5,7 +5,14 @@
 /// @n
 /// @n @b		Project Energia MT 0101E0016
 ///
-
+/// @author		Energia, base
+/// @author		Rei Vilo, enhancements 
+///
+/// @date		Jun 08, 2015 09:53
+/// @version	103
+///
+/// @see        SYS/BIOS (TI-RTOS Kernel) v6.41 User's Guide (spruex3o)
+///
 
 // Include application, user and local libraries
 #include <Energia.h>
@@ -49,8 +56,11 @@ class Event {
     /// @brief      Wait for the event
     /// @param      ANDeventId_number AND condition, default=Event_Id_NONE
     /// @param      OReventId_number  OR  condition, default=Event_Id_NONE
+    /// @return     events ID numbers as bit, 32-bit
+    /// @example    0b=1100 = Event_Id_03 + Event_Id_02
     ///
-    void waitFor(xdc_UInt ANDeventId_number=Event_Id_NONE, xdc_UInt OReventId_number=Event_Id_NONE);
+    uint32_t waitFor(xdc_UInt ANDeventId_number=Event_Id_NONE, xdc_UInt OReventId_number=Event_Id_NONE);
+
 
 
 };
