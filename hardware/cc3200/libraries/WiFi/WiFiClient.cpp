@@ -353,15 +353,29 @@ size_t WiFiClient::write(const uint8_t *buffer, size_t size)
         return 0;
     }
 
+    size_t origsize = size;
+    boolean did_recurse = false;
+
+    // Limit to 100-byte writes to work around a CC3200 bug found with server-originated client sockets
+    #define WIFICLIENT_WRITE_INCREMENT 100
+    uint8_t *bptr = (uint8_t *)buffer;
+    while (size > WIFICLIENT_WRITE_INCREMENT) {
+        did_recurse = true;
+        if (write((const uint8_t *)bptr, WIFICLIENT_WRITE_INCREMENT) == 0)
+            return 0;  // Error/failure, client already stopped, just bail
+        bptr += WIFICLIENT_WRITE_INCREMENT;
+        size -= WIFICLIENT_WRITE_INCREMENT;
+    }
+
     //
     //write the buffer to the socket
     //
-    int iRet = sl_Send(WiFiClass::_handleArray[_socketIndex], buffer, size, NULL);
+    int iRet = sl_Send(WiFiClass::_handleArray[_socketIndex], (const uint8_t *)bptr, size, NULL);
 
     // Flow control signal; perform a paced-retry.
     while (iRet == SL_EAGAIN) {
         delay(10);
-        iRet = sl_Send(WiFiClass::_handleArray[_socketIndex], buffer, size, NULL);
+        iRet = sl_Send(WiFiClass::_handleArray[_socketIndex], (const uint8_t *)bptr, size, NULL);
     }
 
     if ((iRet < 0) || (iRet != size)) {
@@ -372,6 +386,8 @@ size_t WiFiClient::write(const uint8_t *buffer, size_t size)
         stop();
         return 0;
     } else {
+        if (did_recurse)
+            return origsize;
         return iRet;
     }
 }
