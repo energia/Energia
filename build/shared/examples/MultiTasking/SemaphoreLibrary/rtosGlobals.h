@@ -26,17 +26,10 @@
 #define rtosGlobals_h
 
 // Include application, user and local libraries
-#include "Event.h"
 #include "Semaphore.h"
 
-///
-/// @brief	My events
-///
-Event myEvent1;
-Event myEvent2;
-Event myEvent3;
 
-#define optionSemaphore
+//#define optionSemaphore
 
 ///
 /// @brief	Semaphore for Serial

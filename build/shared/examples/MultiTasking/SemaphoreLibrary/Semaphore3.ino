@@ -39,29 +39,30 @@
 
 
 // Setup
-void Event2_setup()
+void Semaphore3_setup()
 {
-    myEvent2.begin();
+//#if defined(optionSemaphore)
+//    mySemaphore.begin(1);
+//#endif
+
     Serial.begin(115200);
-    delay(10);
+    delay(30);
 }
 
 // Loop
-void Event2_loop()
+void Semaphore3_loop()
 {
-    myEvent2.send(Event_Id_02);
-
 #if defined(optionSemaphore)
     mySemaphore.waitFor();
 #endif
 
     Serial.print(millis(), DEC);
-    Serial.println("\t: myEvent2.post     2 ");
+    Serial.println("\t: mySemaphore3      3");
 
 #if defined(optionSemaphore)
     mySemaphore.post();
 #endif
 
-    delay(300);
+    delay(120);
 }
 

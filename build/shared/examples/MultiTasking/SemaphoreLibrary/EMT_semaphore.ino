@@ -10,7 +10,6 @@
 
 // Include application, user and local libraries
 #include "rtosGlobals.h"
-#include "Event.h"
 #include "Semaphore.h"
 
 // Prototypes
@@ -22,7 +21,6 @@
 // the setup routine runs once when you press reset:
 void setup()
 {
-    myEvent1.begin();
 #if defined(optionSemaphore)
     mySemaphore.begin(1);
 #endif
@@ -33,17 +31,17 @@ void setup()
 // the loop routine runs over and over again forever:
 void loop()
 {
-    myEvent1.send(Event_Id_01);
 #if defined(optionSemaphore)
     mySemaphore.waitFor();
 #endif
+
     Serial.print(millis(), DEC);
-    Serial.println("\t: myEvent1.post    1  ");
+    Serial.println("\t: mySemaphore1    1  ");
 
 #if defined(optionSemaphore)
     mySemaphore.post();
 #endif
 
-    delay(200);
+    delay(70);
 }
 

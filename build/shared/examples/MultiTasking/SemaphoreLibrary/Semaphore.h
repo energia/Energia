@@ -1,7 +1,7 @@
 ///
 /// @file		Semaphore.h
 /// @brief		Library header
-/// @details	Semapore Library for Energia MT
+/// @details	RTOS semaphore as C++ object for Energia MT
 /// @n
 /// @n @b		Project EMT-Semaphore
 /// @n @a		Developed with [embedXcode+](http://embedXcode.weebly.com)
@@ -45,7 +45,7 @@ public:
     
     ///
     /// @brief      Create the semaphore
-    /// @param      count, usually number of ressources to synchronise
+    /// @param      count usually number of ressources to synchronise
     ///
     void begin(uint8_t count);
     

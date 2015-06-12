@@ -7,54 +7,52 @@ Without the semaphore, text is scrambled.
 
 * Without semaphore
 
-1262m .2 r  2  = G
-1262m .3 r   3 = B
-1262m .3 r   3 = B
-1272m .3 r   3 = B
-1272m .3 r   3 = B
-1282m .1 r 1   = R
-1282m .3 r   3 = B
-1282m .3 or   3 = B
-1292m .2 or  2  = G
-1292m .3 r   3 = B
-1292m .3 or   3 = B
-1303m .1 or 1   = R
-1303m .3 r   3 = B
-1303m .3 or   3 = B
-1313m .3 r   3 = B
-1313m .3 or   3 = B
-1323m .1 r 1   = R
-1323m .2 r  2  = G
-1323m .3 r   3 = B
-1323m .3 r   3 = B
-1333m .3 r   3 = B
-1333m .3 r   3 = B
-1343m .1 r 1   = R
-
+0	: mySemaphore1    1
+10	: mySemaphore2     2
+30	: mySemaphore3      3
+42	: mySemaphore2     2
+72	: mySemaphore1    1
+74	: mySemaphore2     2
+106	: mySemaphore2     2
+138	: mySemaphore2     2
+144	: mySemaphore1    1
+152	: mySemaphore3      3
+170	: mySemaphore2     2
+202	: mySemaphore2     2
+216	: mySemaphore1    1
+234	: mySemaphore2     2
+266	: mySemaphore2     2
+274	: mySemaphore3      3
+288	: mySemaphore1    1
+298	: mySemaphore2     2
+330	: mySemaphore2     2
+360	: mySemaphore1    1  362	: mySemaphore2     2
+394	: mySemaphore2     2 396	: mySemaphore3      3
+426	: mySemaphore2     2
+432	: mySemaphore1    1
+458	: mySemaphore2     2
 
 * With semaphore
 
-3632    : myEvent3.waitFor   3 = B
-3637    : myEvent2.post     2
-3639    : myEvent2.waitFor  2  = G
-3645    : myEvent1.post    1
-3647    : myEvent1.waitFor 1   = R
-3682    : myEvent3.post      3
-3684    : myEvent3.waitFor   3 = B
-3734    : myEvent3.post      3
-3736    : myEvent3.waitFor   3 = B
-3786    : myEvent3.post      3
-3788    : myEvent3.waitFor   3 = B
-3838    : myEvent3.post      3
-3840    : myEvent3.waitFor   3 = B
-3847    : myEvent1.post    1
-3849    : myEvent1.waitFor 1   = R
-3890    : myEvent3.post      3
-3892    : myEvent3.waitFor   3 = B
-3939    : myEvent2.post     2
-3941    : myEvent2.waitFor  2  = G
-3944    : myEvent3.post      3
-3947    : myEvent3.waitFor   3 = B
-3997    : myEvent3.post      3
-3999    : myEvent3.waitFor   3 = B
-
+0	: mySemaphore1    1
+10	: mySemaphore2     2
+30	: mySemaphore3      3
+82	: mySemaphore3      3
+134	: mySemaphore3      3
+186	: mySemaphore3      3
+202	: mySemaphore1    1
+238	: mySemaphore3      3
+290	: mySemaphore3      3
+312	: mySemaphore2     2
+342	: mySemaphore3      3
+394	: mySemaphore3      3
+404	: mySemaphore1    1
+446	: mySemaphore3      3
+498	: mySemaphore3      3
+550	: mySemaphore3      3
+602	: mySemaphore3      3
+606	: mySemaphore1    1
+614	: mySemaphore2     2
+654	: mySemaphore3      3
+706	: mySemaphore3      3
+758	: mySemaphore3      3
