@@ -57,7 +57,13 @@ void Semaphore2_loop()
 #endif
 
     Serial.print(millis(), DEC);
-    Serial.println("\t: mySemaphore2     2 ");
+    Serial.print("\t: mySemaphore2     2  (");
+#if defined(optionSemaphore)
+    Serial.print(mySemaphore.available(), DEC);
+#else
+    Serial.print("-");
+#endif
+    Serial.println(")");
 
 #if defined(optionSemaphore)
     mySemaphore.post();

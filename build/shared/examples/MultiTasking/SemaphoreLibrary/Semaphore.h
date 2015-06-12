@@ -10,7 +10,7 @@
 /// @author		http://embeddedcomputing.weebly.com
 ///
 /// @date		Jun 08, 2015 09:53
-/// @version	102
+/// @version	104
 ///
 /// @copyright	(c) Rei Vilo, 2015
 /// @copyright	CC = BY SA NC
@@ -54,6 +54,12 @@ public:
     ///
     void post();
     
+    ///
+    /// @brief	Available count
+    /// @return	number of available count
+    ///
+    uint16_t available();
+
     ///
     /// @brief      Wait for the semaphore
     ///

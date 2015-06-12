@@ -38,6 +38,11 @@ void Semaphore::waitFor()
     Semaphore_pend(SemaphoreHandle, BIOS_WAIT_FOREVER);
 }
 
+uint16_t Semaphore::available()
+{
+    return Semaphore_getCount(SemaphoreHandle);
+}
+
 void Semaphore::post()
 {
     Semaphore_post(SemaphoreHandle);

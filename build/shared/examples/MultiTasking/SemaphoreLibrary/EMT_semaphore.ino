@@ -22,6 +22,9 @@
 void setup()
 {
 #if defined(optionSemaphore)
+
+    // 1 is the recommended value as there is one single Serial port.
+    // Try with 3 to show the remaining count
     mySemaphore.begin(1);
 #endif
     
@@ -36,8 +39,14 @@ void loop()
 #endif
 
     Serial.print(millis(), DEC);
-    Serial.println("\t: mySemaphore1    1  ");
-
+    Serial.print("\t: mySemaphore1    1   (");
+#if defined(optionSemaphore)
+    Serial.print(mySemaphore.available(), DEC);
+#else
+    Serial.print("-");
+#endif
+    Serial.println(")");
+    
 #if defined(optionSemaphore)
     mySemaphore.post();
 #endif

@@ -29,7 +29,11 @@
 #include "Semaphore.h"
 
 
-//#define optionSemaphore
+///
+/// @brief	Comment to remove the semaphore
+///
+#define optionSemaphore
+
 
 ///
 /// @brief	Semaphore for Serial
