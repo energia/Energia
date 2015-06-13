@@ -23,9 +23,9 @@ void Event::begin()
 uint32_t Event::waitFor(xdc_UInt ANDeventId_number, xdc_UInt OReventId_number)
 {
     return Event_pend(eventHandle,
-               ANDeventId_number,
-               OReventId_number,
-               BIOS_WAIT_FOREVER);
+                      ANDeventId_number,
+                      OReventId_number,
+                      BIOS_WAIT_FOREVER);
 }
 
 void Event::send(xdc_UInt eventId_number)

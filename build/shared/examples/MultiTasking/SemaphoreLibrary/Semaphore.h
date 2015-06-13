@@ -20,23 +20,26 @@
 /// @see        SYS/BIOS (TI-RTOS Kernel) v6.41 User's Guide (spruex3o)
 ///
 
+#ifndef Semaphore_h
+#define Semaphore_h
+
 // Include application, user and local libraries
 #include <Energia.h>
 #include <xdc/runtime/Error.h>
 #include <ti/sysbios/knl/Semaphore.h>
 #include <ti/sysbios/BIOS.h>
 
-#ifndef Semaphore_h
-#define Semaphore_h
-
+///
+/// @brief      RTOS semaphore as object
+/// @details    The RTOS semaphore is encapsulated as a C++ object for easier use
+///
 class Semaphore
 {
-    
 private:
     Semaphore_Handle SemaphoreHandle;
     static xdc_UInt SemaphoreId;
     xdc_UInt Semaphore_Id_number;
-
+    
 public:
     ///
     /// @brief      Define the semaphore
@@ -59,13 +62,11 @@ public:
     /// @return	number of available count
     ///
     uint16_t available();
-
+    
     ///
     /// @brief      Wait for the semaphore
     ///
     void waitFor();
-    
-    
 };
 
 
