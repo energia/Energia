@@ -9,7 +9,7 @@
 /// @author		Rei Vilo, enhancements
 ///
 /// @date		Jun 14, 2015 09:53
-/// @version	101
+/// @version	103
 ///
 /// @see        SYS/BIOS (TI-RTOS Kernel) v6.41 User's Guide (spruex3o)
 ///             http://www.ti.com/lit/pdf/spruex3
@@ -42,7 +42,6 @@ private:
     Mailbox_Handle MailboxHandle;
     Mailbox_Params mboxParams;
     
-    Event_Handle myEvent;
     static xdc_UInt MailboxId;
     xdc_UInt Mailbox_Id_number;
     
@@ -61,10 +60,9 @@ public:
     ///
     void begin(uint16_t number =16);
 
-    
     ///
     /// @brief      Post a message to the mailbox
-    /// @param      message message of type to be posted on the mailbox
+    /// @param      message message to be posted on the mailbox
     /// @warning    Message must be of type typename
     ///
     void post(mailboxType &message);
@@ -75,6 +73,13 @@ public:
     /// @warning    Message must be of type typename
     ///
     void waitFor(mailboxType &message);
+    
+    ///
+    /// @brief		Available messages to be read
+    /// @return		number of messages available on the mailbox to be read
+    /// @note       0 = no messages available
+    ///
+    uint16_t available();
 };
 
 
@@ -87,12 +92,6 @@ template <typename mailboxType> void Mailbox<mailboxType>::begin(uint16_t number
 {
     Error_Block eb;
     Error_init(&eb);
-    
-    myEvent = Event_create(NULL, &eb);
-    if (myEvent == NULL)
-    {
-        System_abort("Event create failed");
-    }
     
     MailboxHandle = Mailbox_create(sizeof(mailboxType), number, NULL, &eb);
     if (MailboxHandle == NULL)
@@ -107,7 +106,12 @@ template <typename mailboxType> void Mailbox<mailboxType>::waitFor(mailboxType &
 
 template <typename mailboxType> void Mailbox<mailboxType>::post(mailboxType &message)
 {
-     Mailbox_post(MailboxHandle, &message, BIOS_NO_WAIT);
+     Mailbox_post(MailboxHandle, &message, BIOS_WAIT_FOREVER);
+}
+
+template <typename mailboxType> uint16_t Mailbox<mailboxType>::available()
+{
+    return Mailbox_getNumPendingMsgs(MailboxHandle);
 }
 
 #endif
