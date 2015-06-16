@@ -57,14 +57,17 @@ void MailboxClient_loop()
     myMailbox.waitFor(messageB);
     
     mySemaphore.waitFor();
-    Serial.print("<   Received\t");
+    Serial.print("*<\t");
     Serial.print(millis(), DEC);
-    Serial.print("\t: =(");
+    Serial.print("\tRX\t");
     Serial.print(messageB.chrono, DEC);
-    Serial.print(", ");
+    Serial.print("\t");
     Serial.print(messageB.buffer);
-    Serial.println(")");
+    Serial.print("\t");
+    Serial.print(myMailbox.available());
+    Serial.println("\t:\t");
     mySemaphore.post();
+ 
     delay(300);
 }
 

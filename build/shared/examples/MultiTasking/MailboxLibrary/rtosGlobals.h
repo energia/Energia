@@ -27,18 +27,28 @@
 #define rtosGlobals_h
 
 // Include application, user and local libraries
-//#include "Mailbox.h"
+#include "Mailbox.h"
 #include "Semaphore.h"
 
 ///
 /// @brief	myMessage type for mailbox
 ///
-typedef struct myMessage_t {
+typedef struct myMessage_t
+{
 	uint32_t chrono; ///< for millis()
 	char buffer[10]; ///< for origin
 };
 
+///
+/// @brief	Number of messages of the mailbox
+///
+#define NUMBER 4
 
+///
+/// @brief	Mailbox post modality
+/// @note   Either BIOS_WAIT_FOREVER or BIOS_NO_WAIT
+///
+#define MODALITY BIOS_WAIT_FOREVER
 
 ///
 /// @brief	myMailbox

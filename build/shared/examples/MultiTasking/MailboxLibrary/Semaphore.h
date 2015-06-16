@@ -54,15 +54,14 @@ public:
     ///
     void begin(uint8_t count =1);
 
-    
     ///
     /// @brief      Post a semaphore
     ///
     void post();
     
     ///
-    /// @brief	Available count
-    /// @return	number of available count
+    /// @brief		Available count
+    /// @return		number of available count
     ///
     uint16_t available();
     

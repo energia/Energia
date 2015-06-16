@@ -56,10 +56,27 @@ myMessage_t message1;
 void setup()
 {
     Serial.begin(115200);
-    Serial.println("begin");
+
+    Serial.print("?\tAction\tchrono");
+    Serial.print("\tMessage");
+    Serial.print("\t");
+    Serial.print("");
+    Serial.print("\t");
+    Serial.print("available");
+    Serial.print("\t:\t");
+    Serial.println("result");
+    
+    Serial.print("?\t\t");
+    Serial.print("\t.chrono");
+    Serial.print("\t");
+    Serial.print(".buffer");
+    Serial.print("\t");
+    Serial.print("");
+    Serial.print("\t:\t");
+    Serial.println("");
     
     mySemaphore.begin(1);
-    myMailbox.begin();
+    myMailbox.begin(NUMBER); // default = 16
 }
 
 // Add loop code
@@ -68,18 +85,20 @@ void loop()
     message1.chrono = millis();
     strcpy(message1.buffer, "from 1");
     
+    bool result = myMailbox.post(message1, MODALITY); // default = BIOS_WAIT_FOREVER
+    
     mySemaphore.waitFor();
-    Serial.print("1 > Posted\t");
+    Serial.print("1>\t");
     Serial.print(millis(), DEC);
-    Serial.print("\t: =(");
+    Serial.print("\tTX\t");
     Serial.print(message1.chrono, DEC);
-    Serial.print(", ");
+    Serial.print("\t");
     Serial.print(message1.buffer);
-    Serial.println(")");
-    
-    myMailbox.post(message1);
-    
+    Serial.print("\t");
+    Serial.print(myMailbox.available());
+    Serial.print("\t:\t");
+    Serial.println(result, DEC);
     mySemaphore.post();
     
-    delay(1000);
+    delay(500);
 }

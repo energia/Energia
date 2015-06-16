@@ -68,18 +68,20 @@ void MailboxSender2_loop()
     message2.chrono = millis();
     strcpy(message2.buffer, "from 2");
     
+    bool result = myMailbox.post(message2, MODALITY);
+    
     mySemaphore.waitFor();
-    Serial.print("2 > Posted\t");
+    Serial.print("2>\t");
     Serial.print(millis(), DEC);
-    Serial.print("\t: =(");
+    Serial.print("\tTX\t");
     Serial.print(message2.chrono, DEC);
-    Serial.print(", ");
+    Serial.print("\t");
     Serial.print(message2.buffer);
-    Serial.println(")");
-    
-    myMailbox.post(message2);
-    
+    Serial.print("\t");
+    Serial.print(myMailbox.available());
+    Serial.print("\t:\t");
+    Serial.println(result, DEC);
     mySemaphore.post();
-    
-    delay(800);
+        
+    delay(200);
 }

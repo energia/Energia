@@ -9,7 +9,7 @@
 /// @author		Rei Vilo, enhancements
 ///
 /// @date		Jun 14, 2015 09:53
-/// @version	103
+/// @version	104
 ///
 /// @see        SYS/BIOS (TI-RTOS Kernel) v6.41 User's Guide (spruex3o)
 ///             http://www.ti.com/lit/pdf/spruex3
@@ -34,7 +34,7 @@
 ///
 /// @brief      RTOS mailbox as an object
 /// @details    The RTOS mailbox is encapsulated as a C++ object for easier use
-/// @warning    NOTE: Only a single Task can pend on an Mailbox object at a time.
+/// @warning    Messages must be of type typename used in declaration
 ///
 template <typename mailboxType> class Mailbox
 {
@@ -58,15 +58,19 @@ public:
     /// @brief      Create the mailbox
     /// @param		number number of messages of the mailbox, default = 16
     ///
-    void begin(uint16_t number =16);
+    void begin(uint16_t number = 16);
 
     ///
     /// @brief      Post a message to the mailbox
     /// @param      message message to be posted on the mailbox
+    /// @param      timeout default = BIOS_WAIT_FOREVER, BIOS_NO_WAIT
+    /// @return     true if message posted, false otherwise
+    /// @note       When using BIOS_NO_WAIT, message isn't posted if mailbox full.
+    ///             Check returned bool for result.
     /// @warning    Message must be of type typename
     ///
-    void post(mailboxType &message);
-    
+    bool post(mailboxType &message, uint16_t timeout = BIOS_WAIT_FOREVER);
+
     ///
     /// @brief      Wait for a message from the mailbox
     /// @param      message message read from mailbox when available
@@ -76,7 +80,7 @@ public:
     
     ///
     /// @brief		Available messages to be read
-    /// @return		number of messages available on the mailbox to be read
+    /// @return		number of available messages on the mailbox to be read
     /// @note       0 = no messages available
     ///
     uint16_t available();
@@ -102,11 +106,12 @@ template <typename mailboxType> void Mailbox<mailboxType>::begin(uint16_t number
 
 template <typename mailboxType> void Mailbox<mailboxType>::waitFor(mailboxType &message)
 {
-    Mailbox_pend(MailboxHandle, &message, BIOS_WAIT_FOREVER);}
+    Mailbox_pend(MailboxHandle, &message, BIOS_WAIT_FOREVER);
+}
 
-template <typename mailboxType> void Mailbox<mailboxType>::post(mailboxType &message)
+template <typename mailboxType> bool Mailbox<mailboxType>::post(mailboxType &message, uint16_t timeout)
 {
-     Mailbox_post(MailboxHandle, &message, BIOS_WAIT_FOREVER);
+     return Mailbox_post(MailboxHandle, &message, timeout);
 }
 
 template <typename mailboxType> uint16_t Mailbox<mailboxType>::available()
