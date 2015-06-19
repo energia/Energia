@@ -35,6 +35,7 @@
 ///
 /// @see		ReadMe.txt for references
 /// @n
+/// @example    ReadMe.txt
 ///
 
 
@@ -49,7 +50,7 @@
 
 
 // Define variables and constants
-uint8_t status;
+uint8_t status = 1;
 const uint8_t myLED = BLUE_LED;
 
 

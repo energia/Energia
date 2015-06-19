@@ -40,7 +40,7 @@ void Timer::begin(void (*timerFunction)(void), uint32_t timerPeriod_ms)
     timerParams.period = timerPeriod_ms * 1000; // 1 ms = 1000 us
     timerParams.startMode = Timer_StartMode_USER; // Timer_start
 
-    TimerHandle = Timer_create(TimerId, (ti_sysbios_interfaces_ITimer_FuncPtr)timerFunction, &timerParams, &eb);
+    TimerHandle = Timer_create(TimerId, (Timer_FuncPtr)timerFunction, &timerParams, &eb);
 
     if (TimerHandle == NULL)
     {

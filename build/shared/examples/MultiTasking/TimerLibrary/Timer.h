@@ -10,7 +10,7 @@
 /// @author		http://embeddedcomputing.weebly.com
 ///
 /// @date		Rei Vilo, Jun 17, 2015 09:29
-/// @version	101
+/// @version	102
 /// 
 /// @copyright	(c) Rei Vilo, 2015
 /// @copyright	CC = BY SA NC
@@ -27,6 +27,7 @@
 #include <ti/sysbios/hal/Timer.h>
 /// @warning   for MSP432
 #include <ti/sysbios/family/arm/msp432/Timer.h>
+//#include <ti/sysbios/family/arm/lm4/Timer.h>
 
 #ifndef Timer_h
 #define Timer_h
