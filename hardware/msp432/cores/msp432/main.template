@@ -69,6 +69,41 @@ xdc_Void the_task(xdc_UArg _task_setup, xdc_UArg _task_loop)
 		Task_yield();
 	}
 }
+
+///
+/// @page       Main setup
+///
+/// @author		Rei Vilo
+/// @date		Jun 20, 2015 10:18
+/// @version	101
+///
+/// @copyright	(c) Rei Vilo, 2015
+/// @copyright	CC = BY SA NC
+/// @{
+
+///
+/// @brief      main setup function
+/// @note       rtosSetup() is called before all other tasks
+/// *   Optional declaration
+/// *   Defined in main sketch or in rtosGlobals
+/// @warning    No delay() in rtosSetup()!
+///
+void rtosSetup() __attribute__((weak));
+
+///
+/// @brief	Proxy function for Task_create()
+/// @note   Task_create() requires non-weak functions
+///
+void rtos_Setup() { rtosSetup(); };
+
+///
+/// @brief	Proxy function for Task_create()
+/// @note   Task_create() requires non-weak functions
+///
+void rtos_Loop() { ; }
+
+/// @}
+
 /*
  *  ======== main ========
  */
@@ -109,6 +144,12 @@ int main()
 	/* All tasks have the same priority */
 	taskParams.priority = Task_numPriorities - 2;
 	taskParams.stackSize = 0x800;
+
+	// Add rtosSetup() as first task
+	taskParams.arg0 = (xdc_UArg) rtos_Setup;
+	taskParams.arg1 = (xdc_UArg) rtos_Loop;
+	taskParams.instance->name = (xdc_String) "rtosSetup";
+	Task_create(the_task, &taskParams, NULL);
 
 	uint8_t i = 0;
 	for(i = 0; i < NUM_SKETCHES; i++) {
