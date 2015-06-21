@@ -30,7 +30,16 @@ void Semaphore::begin(uint8_t count)
 {
     Error_Block eb;
     Error_init(&eb);
-    SemaphoreHandle = Semaphore_create(count, NULL, &eb);
+
+    Semaphore_Params params;
+    Semaphore_Params_init(&params);
+    
+    SemaphoreHandle = Semaphore_create(count, &params, &eb);
+
+    if (SemaphoreHandle == NULL)
+    {
+        System_abort("Semaphore create failed");
+    }
 }
 
 void Semaphore::waitFor()

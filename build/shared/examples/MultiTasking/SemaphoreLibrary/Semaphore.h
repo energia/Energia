@@ -18,6 +18,7 @@
 /// @see		ReadMe.txt for references and example
 ///
 /// @see        SYS/BIOS (TI-RTOS Kernel) v6.41 User's Guide (spruex3o)
+///             http://www.ti.com/lit/pdf/spruex3
 ///
 
 #ifndef Semaphore_h
@@ -48,18 +49,19 @@ public:
     
     ///
     /// @brief      Create the semaphore
-    /// @param      count usually number of ressources to synchronise
+    /// @param      count usually number of ressources to synchronise, default = 1
+    /// @note       For serial port, take 1.
     ///
-    void begin(uint8_t count);
-    
+    void begin(uint8_t count = 1);
+
     ///
     /// @brief      Post a semaphore
     ///
     void post();
     
     ///
-    /// @brief	Available count
-    /// @return	number of available count
+    /// @brief		Available count
+    /// @return		number of available count
     ///
     uint16_t available();
     

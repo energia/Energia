@@ -11,7 +11,7 @@
 // Include application, user and local libraries
 
 #include "rtosGlobals.h"
-
+#include "Event.h"
 
 void serialSetup()
 {

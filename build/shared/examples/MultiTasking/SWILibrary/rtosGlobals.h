@@ -8,7 +8,7 @@
 /// @author		Rei Vilo
 /// @author		http://embeddedcomputing.weebly.com
 /// @date		20/06/2015 17:06
-/// @version	<#version#>
+/// @version    101
 ///
 /// @copyright	(c) Rei Vilo, 2015
 /// @copyright	CC = BY SA NC
@@ -21,22 +21,24 @@
 // PUSH1
 // Solution 1: polling
 // Solution 2: Energia interrupt
-// Solution 3: HWI
+// Solution 3: HWI, actually = 2
 #define SOLUTION 2
+
+
+#ifndef rtosGlobals_h
+#define rtosGlobals_h
 
 
 // Core library
 #include "Energia.h"
+
+
+// Include application, user and local libraries
 #include "Semaphore.h"
 #include "SWI.h"
 #if (SOLUTION == 3)
 #   include "HWI.h"
 #endif
-
-#ifndef rtosGlobals_h
-#define rtosGlobals_h
-
-// Include application, user and local libraries
 
 
 // Prototypes
@@ -49,7 +51,6 @@ SWI mySWI;
 HWI myHWI;
 #endif
 uint32_t chrono;
-
 
 // SWI function
 void functionSWI()

@@ -41,7 +41,6 @@ class Timer
 {
 private:
     Timer_Handle TimerHandle;
-    Timer_Params timerParams;
     
 public:
     ///

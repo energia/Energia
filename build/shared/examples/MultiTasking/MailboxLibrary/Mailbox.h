@@ -26,7 +26,7 @@
 #define Mailbox_h
 
 ///
-/// @warning    Header and code for tempalte class need to be on the same unique file.
+/// @warning    Header and code for template class need to be on the same unique file.
 ///             I guess it isn't a bug, but a feature :/
 /// @see        http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2003/n1426.pdf
 ///
@@ -35,6 +35,7 @@
 /// @brief      RTOS mailbox as an object
 /// @details    The RTOS mailbox is encapsulated as a C++ object for easier use
 /// @warning    Messages must be of type typename used in declaration
+/// @note       Only a single task can pend on an Mailbox object at a time.
 ///
 template <typename mailboxType> class Mailbox
 {
@@ -48,7 +49,7 @@ private:
 public:
     ///
     /// @brief      Define the mailbox
-    /// @warning    Specify typename between brackets in declaration
+    /// @warning    Specify typename between brackets in declaration.
     /// @code       Mailbox<typename> myMailbox;
     /// @endcode
     ///
@@ -65,16 +66,16 @@ public:
     /// @param      message message to be posted on the mailbox
     /// @param      timeout default = BIOS_WAIT_FOREVER, BIOS_NO_WAIT
     /// @return     true if message posted, false otherwise
-    /// @note       When using BIOS_NO_WAIT, message isn't posted if mailbox full.
+    /// @note       When using BIOS_NO_WAIT, message isn't posted if mailbox is full.
     ///             Check returned bool for result.
-    /// @warning    Message must be of type typename
+    /// @warning    Message must be of type typename.
     ///
     bool post(mailboxType &message, uint16_t timeout = BIOS_WAIT_FOREVER);
 
     ///
     /// @brief      Wait for a message from the mailbox
     /// @param      message message read from mailbox when available
-    /// @warning    Message must be of type typename
+    /// @warning    Message must be of type typename.
     ///
     void waitFor(mailboxType &message);
     

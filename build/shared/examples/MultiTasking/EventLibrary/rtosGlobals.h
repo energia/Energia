@@ -31,6 +31,6 @@
 ///
 /// @brief	myEvent
 ///
-Event myEvent(Event_Id_03);
+Event myEvent;
 
 #endif

@@ -52,7 +52,7 @@ public:
     /// @param      count usually number of ressources to synchronise, default = 1
     /// @note       For serial port, take 1.
     ///
-    void begin(uint8_t count =1);
+    void begin(uint8_t count = 1);
 
     ///
     /// @brief      Post a semaphore

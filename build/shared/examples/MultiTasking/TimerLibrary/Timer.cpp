@@ -31,20 +31,22 @@ void Timer::begin(void (*timerFunction)(void), uint32_t timerPeriod_ms)
     Error_Block eb;
     Error_init(&eb);
 
+
     // xdc_UInt TimerId = 3; // OK=3, NOK=2,1,0 MSP432=4 timers, only timer 3 available
     // Timer_ANY to take any available timer
     xdc_UInt TimerId = Timer_ANY;
     
-    Timer_Params_init(&timerParams);
-    timerParams.periodType = Timer_PeriodType_MICROSECS;
-    timerParams.period = timerPeriod_ms * 1000; // 1 ms = 1000 us
-    timerParams.startMode = Timer_StartMode_USER; // Timer_start
+    Timer_Params params;
+    Timer_Params_init(&params);
+    params.periodType = Timer_PeriodType_MICROSECS;
+    params.period = timerPeriod_ms * 1000; // 1 ms = 1000 us
+    params.startMode = Timer_StartMode_USER; // Timer_start
 
-    TimerHandle = Timer_create(TimerId, (Timer_FuncPtr)timerFunction, &timerParams, &eb);
+    TimerHandle = Timer_create(TimerId, (Timer_FuncPtr)timerFunction, &params, &eb);
 
     if (TimerHandle == NULL)
     {
-        Serial.println("*** Timer create failed");
+        // Serial.println("*** Timer create failed");
         System_abort("Timer create failed");
     }
 }

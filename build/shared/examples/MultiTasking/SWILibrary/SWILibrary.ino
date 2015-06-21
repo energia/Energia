@@ -61,7 +61,9 @@ void setup()
     rtosSetup();
   
     delay(30);
+#if (SOLUTION == 1)
     pinMode(PUSH1, INPUT_PULLUP);
+#endif
     /*
      pinMode(PUSH2, INPUT_PULLUP);
      pinMode(RED_LED, OUTPUT);
