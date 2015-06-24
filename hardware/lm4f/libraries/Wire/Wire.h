@@ -75,6 +75,11 @@ class TwoWire : public Stream
 		void I2CIntHandler(void);
 		void setModule(unsigned long);
 
+        //    *  Clock stretching by pulling the SCL line low
+        //    *		Copyright (c) 2014 Rei Vilo. All right reserved.
+        //    *     http://embeddedcomputing.weebly.com
+        void pause();
+        void resume();
 };
 
 extern TwoWire Wire;
