@@ -59,7 +59,7 @@ DELAY_TABLE;
 //formula is roughly rxintra=rxstop=tx = F_CPU / baud / 3 - 5/3
 //    so, delay = 16000000 / 3 / baud - 5/3
 //      and, rxcenter = 1/2 rxintra
-_DELAY_TABLE table[] = 
+const _DELAY_TABLE table[] = 
 {
   //  baud    rxcenter   rxintra    rxstop    tx
   {115200,   15,        32,        32,       32,      },
