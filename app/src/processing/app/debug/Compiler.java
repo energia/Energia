@@ -70,6 +70,7 @@ public class Compiler implements MessageConsumer {
     this.verbose = verbose;
     this.sketchIsCompiled = false;
 
+
     // the pms object isn't used for anything but storage
     MessageStream pms = new MessageStream(this);
 
@@ -77,7 +78,12 @@ public class Compiler implements MessageConsumer {
     Map<String, String> boardPreferences = Base.getBoardPreferences();
     String core = boardPreferences.get("build.core");
     String arch = Base.getArch();
-    if (core == null) {
+
+      System.out.println("sk="+sketch+", buildpath="+buildPath+", primaryClassName="+primaryClassName+
+              ", verbose="+verbose+", basePath="+basePath+", arch="+arch);
+
+
+      if (core == null) {
     	RunnerException re = new RunnerException(_("No board selected; please choose a board from the Tools > Board menu."));
       re.hideStackTrace();
       throw re;
@@ -163,14 +169,18 @@ public class Compiler implements MessageConsumer {
     String rtsLibPath = null;
     
     if (arch == "c2000") {
-    	Target t = Base.getTarget();
+        Target t = Base.getTarget();
+        System.out.println("\ntarget="+t.toString());
+        //Target t = Base.getC2000BasePath();
      	File rtsIncFolder;
      	File rtsLibFolder;
 
-     	rtsIncFolder = new File(new File(new File(t.getFolder(), "..//tools"), "c2000"), "include");
-     	rtsLibFolder = new File(new File(new File(t.getFolder(), "..//tools"), "c2000"), "lib");
+     	rtsIncFolder = new File(t.getFolder(), "//include");
+     	rtsLibFolder = new File(t.getFolder(), "//lib");
     	rtsIncPath = rtsIncFolder.getAbsolutePath();
     	rtsLibPath = rtsLibFolder.getAbsolutePath();
+
+        System.out.println("inc=" + rtsIncPath + ", lib=" + rtsLibPath + ", corepath=" + corePath);
     }
 
     List<File> objectFiles = new ArrayList<File>();
@@ -320,6 +330,7 @@ public class Compiler implements MessageConsumer {
   	  for(File file : coreObjectFiles) {
  	     List commandAR = new ArrayList(baseCommandAR);
  	     commandAR.add(file.getAbsolutePath());
+          System.out.println("linker="+commandAR);
  	     execAsynchronouslyShell(commandAR);
  	   }
     }
@@ -475,6 +486,7 @@ public class Compiler implements MessageConsumer {
     }
     if(arch == "c2000")
     {
+        System.out.println("linker=" + baseCommandLinker);
     	execAsynchronouslyShell(baseCommandLinker);
     }
     else
@@ -566,9 +578,11 @@ public class Compiler implements MessageConsumer {
     List<File> objectPaths = new ArrayList<File>();
 	if(Base.getArch() == "c2000")
 	{
-	
-    
-    for (File file : sSources) {
+       System.out.println("basePath="+basePath+", buildPath="+buildPath);
+
+
+        for (File file : sSources) {
+        System.out.println("sSources");
       String objectPath = buildPath + File.separator + file.getName() + ".o";
       objectPaths.add(new File(objectPath));
 	      execAsynchronouslyShell(getCommandCompilerS(basePath, includePaths,
@@ -578,6 +592,8 @@ public class Compiler implements MessageConsumer {
 	    }
 	 		
 	    for (File file : cSources) {
+            System.out.println("cSources");
+
 	        String objectPath = buildPath + File.separator + file.getName() + ".o";
 	        String dependPath = buildPath + File.separator + file.getName() + ".d";
 	        File objectFile = new File(objectPath);
@@ -591,6 +607,8 @@ public class Compiler implements MessageConsumer {
 	    }
 	
 	    for (File file : cppSources) {
+            System.out.println("cppSources");
+
 	        String objectPath = buildPath + File.separator + file.getName() + ".o";
 	        String dependPath = buildPath + File.separator + file.getName() + ".d";
 	        File objectFile = new File(objectPath);
@@ -873,7 +891,7 @@ public class Compiler implements MessageConsumer {
         	    	command_line += str+" ";
     
         	    }
-    	    	process = Runtime.getRuntime().exec(new String[]{"bash","-c",command_line});
+    	    	process = Runtime.getRuntime().exec(new String[]{"bash","-c",command_line},new String[]{"PATH=/ws/devel/Energia/hardware/c2000/bin"});
     	    	System.out.println(command_line);
         	}
         	else

@@ -1100,6 +1100,10 @@ public class Base {
               //System.out.println("Switching to " + target + ":" + board);
               String n = (String)getValue("target");
               String o = Preferences.get("target");
+
+							System.out.println("o="+o);
+							System.out.println("n="+n);
+
               if(!n.equals(o)) {
             	  String targetLibDir = new String("");
             	  if(n.equals("msp430")) 
@@ -1711,9 +1715,14 @@ public class Base {
 
   //TODO: check tools path
   static public String getC2000BasePath() {
-	    String path = getHardwarePath() + File.separator + "tools" +
-	                  File.separator + "c2000" + File.separator + "bin" + File.separator;
-	    
+	    //String path = getHardwarePath() + File.separator + "tools" +
+	    //              File.separator + "c2000" + File.separator + "bin" + File.separator;
+
+String path = getHardwarePath() + File.separator  +
+	                "c2000" + File.separator + "bin" + File.separator;
+
+    System.out.println("getC2000BasePath:"+path);
+
 	    if(!(new File(path)).exists()){
 	      return "";  // use msp430-gcc and mspdebug in PATH instead of platform version
 	    }
