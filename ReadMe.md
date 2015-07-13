@@ -1,3 +1,4 @@
+[![Stories in Ready](https://badge.waffle.io/energia/energia.png?label=ready&title=Ready)](https://waffle.io/energia/energia)
 ![IMG](http://energia.nu/img/Energia.png)
 
 [![Stories in In Progress](https://badge.waffle.io/energia/energia.png?label=In%20Progress&title=In%20Progress)](https://waffle.io/energia/energia)<br>
