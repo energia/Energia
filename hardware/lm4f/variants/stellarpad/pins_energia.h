@@ -36,6 +36,8 @@
 #define __LM4F120H5QR__
 #define __TM4C123GH6PM__
 
+#define HAS_40_PIN_BOOSTERPACK
+
 #ifndef BV 
 #define BV(x) (1 << (x)) 
 #endif 

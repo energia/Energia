@@ -32,6 +32,8 @@
 #ifndef Pins_Arduino_h
 #define Pins_Arduino_h
 
+#define HAS_40_PIN_BOOSTERPACK
+
 #ifdef __cplusplus
 extern "C" {
 #endif

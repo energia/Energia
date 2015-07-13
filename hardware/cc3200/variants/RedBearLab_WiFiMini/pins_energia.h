@@ -33,6 +33,8 @@
 
 #define TARGET_IS_CC3101 1
 
+// No BoosterPack pins
+
 #ifndef BV
 #define BV(x) (1 << (x)) 
 #endif 

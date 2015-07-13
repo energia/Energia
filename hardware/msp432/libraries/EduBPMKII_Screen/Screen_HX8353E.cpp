@@ -65,7 +65,8 @@
 #define HX8353E_GETHID   0xd0
 #define HX8353E_SETGAMMA 0xE0
 Screen_HX8353E::Screen_HX8353E() {
-#if defined(__LM4F120H5QR__) || defined(__MSP430F5529__) || defined(__TM4C123GH6PM__) || defined(__TM4C1294NCPDT__) || defined(__TM4C1294XNCZAD__)
+    //#if defined(__LM4F120H5QR__) || defined(__MSP430F5529__) || defined(__TM4C123GH6PM__) || defined(__TM4C1294NCPDT__) || defined(__TM4C1294XNCZAD__)
+#if defined(#define HAS_40_PIN_BOOSTERPACK)
     _pinReset          = 17;
     _pinDataCommand    = 31;
     _pinChipSelect     = 13;

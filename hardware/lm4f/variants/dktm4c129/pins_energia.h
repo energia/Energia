@@ -33,6 +33,8 @@
 #ifndef Pins_Arduino_h
 #define Pins_Arduino_h
 
+#define HAS_40_PIN_BOOSTERPACK
+
 #include <part.h>
 
 #ifndef BV 

@@ -31,6 +31,9 @@
 
 #ifndef Pins_Arduino_h
 #define Pins_Arduino_h
+
+#define HAS_40_PIN_BOOSTERPACK
+
 #ifndef BV
 #define BV(x) ((uint32_t) 1 << (x))
 #endif

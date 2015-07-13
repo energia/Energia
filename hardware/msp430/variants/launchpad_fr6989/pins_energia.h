@@ -32,6 +32,9 @@
 
 #ifndef Pins_Energia_h
 #define Pins_Energia_h
+
+#define HAS_40_PIN_BOOSTERPACK
+
 #ifndef BV
 #define BV(x) (1 << (x))
 #endif

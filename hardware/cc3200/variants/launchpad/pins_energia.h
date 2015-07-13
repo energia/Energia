@@ -31,6 +31,8 @@
 #ifndef Pins_Energia_h
 #define Pins_Energia_h
 
+#define HAS_40_PIN_BOOSTERPACK
+
 #define TARGET_IS_CC3101 1
 
 #ifndef BV
