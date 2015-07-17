@@ -35,6 +35,9 @@ void initClocks(void);
 extern void DSP28x_usDelay(Uint32 Count);
 extern void analogInit(void);
 
+
+volatile uint32_t wdtCounter = 0;
+
 interrupt void rsvd_ISR(void)      // For test
 {
   asm ("      ESTOP0");
@@ -65,11 +68,27 @@ void enableWatchDog()
 	EDIS;
 }
 
-/* WDT_TICKS_PER_MILISECOND = (F_CPU / WDT_DIVIDER) / 1000
- * WDT_TICKS_PER_MILISECONDS = 1.953125 = 2 */
-#define SMCLK_FREQUENCY F_CPU
-#define WDT_TICKS_PER_MILISECOND (2*SMCLK_FREQUENCY/1000000)
-#define WDT_DIV_BITS WDT_MDLY_0_5
+interrupt void wdInt()
+{
+
+  //Increment our WD counter  
+  wdtCounter++;
+
+  //Not needed...watchdog rolls over after overflow...
+  //Also...please excuse the poor pun in the line above
+  //Service the watchdog
+  //serviceWatchDog();
+
+  PieCtrlRegs.PIEACK.all = PIEACK_GROUP1;
+}
+
+
+
+#define WDCLK_FREQUENCY 10000000UL
+#define WD_PRESCALER 1
+#define WDT_TICKS_PER_MILISECOND (1/((1/(WDCLK_FREQUENCY/512UL/WD_PRESCALER))*256UL))*(1/1000UL)
+//Hardcoded because the compiler isn't playing nicely...grrrr
+#define WDT_MILISECONDS_PER_TICK 13 //((1/(WDCLK_FREQUENCY/512/WD_PRESCALER))*256)*1000UL
 
 
 #pragma CODE_SECTION(initFlash, "ramfuncs");
@@ -84,8 +103,17 @@ void initFlash(void)
    //Minimum waitstates required for the flash operating
    //at a given CPU rate must be characterized by TI.
    //Refer to the datasheet for the latest information.
+#if F_CPU >= 90000000L
+  //Set the Paged Waitstate for the Flash
+  FlashRegs.FBANKWAIT.bit.PAGEWAIT = 3;
 
-#if F_CPU >= 60000000L
+  //Set the Random Waitstate for the Flash
+  FlashRegs.FBANKWAIT.bit.RANDWAIT = 3;
+
+  //Set the Waitstate for the OTP
+  FlashRegs.FOTPWAIT.bit.OTPWAIT = 5;
+
+#elif F_CPU >= 60000000L
 	//Set the Paged Waitstate for the Flash
 	FlashRegs.FBANKWAIT.bit.PAGEWAIT = 2;
 
@@ -235,8 +263,10 @@ void initClocks(void)
 	EALLOW;
 	// Before setting PLLCR turn off missing clock detect logic
 	SysCtrlRegs.PLLSTS.bit.MCLKOFF = 1;
-#if F_CPU >= 60000000L
-	SysCtrlRegs.PLLCR.bit.DIV = 0x0C;
+#if F_CPU >= 90000000L
+  SysCtrlRegs.PLLCR.bit.DIV = 0x12;
+#elif F_CPU >= 60000000L
+  SysCtrlRegs.PLLCR.bit.DIV = 0x0C;
 #elif F_CPU >= 50000000L
 	SysCtrlRegs.PLLCR.bit.DIV = 0x0A;
 #elif F_CPU >= 40000000L
@@ -274,18 +304,43 @@ void initClocks(void)
 
 
 
+
 }
 
-volatile uint32_t wdtCounter = 0;
+void initWatchDog()
+{
+
+    EALLOW;
+    PieVectTable.WAKEINT = &wdInt;
+    EDIS;
+
+    EALLOW;
+    // Configure the watchdog to interrupt the CPU...not reset
+    SysCtrlRegs.SCSR = 0x0002;
+    EDIS;
+
+    PieCtrlRegs.PIEIER1.bit.INTx8 = 1;   // Enable PIE Gropu 1 INT8
+    IER |= M_INT1;                       // Enable CPU INT1
+
+    
+    serviceWatchDog();
+
+    // Enable the watchdog
+   EALLOW;
+   SysCtrlRegs.WDCR = 0x0028;
+   EDIS;
+
+}
+
 
 unsigned long micros()
 {
-    return (1000 * wdtCounter) / WDT_TICKS_PER_MILISECOND;
+    return (1000 * wdtCounter) * WDT_MILISECONDS_PER_TICK;
 }
 
 unsigned long millis()
 {
-        return wdtCounter / WDT_TICKS_PER_MILISECOND;
+        return wdtCounter * WDT_MILISECONDS_PER_TICK;
 }
 
 /* Delay for the given number of microseconds.  Assumes a 1, 8 or 16 MHz clock. */
@@ -294,10 +349,20 @@ void delayMicroseconds(uint32_t us)
 	DSP28x_usDelay(((((long double) us * 1000.0L) / ((long double)(1000000000/F_CPU))) - 9.0L) / 5.0L);
 }
 
+
+
 /* (ab)use the WDT */
 void delay(uint32_t milliseconds)
 {
 	delayMicroseconds(milliseconds * 1000);
+}
+
+void disablePullups(void)
+{
+    EALLOW;
+    GpioCtrlRegs.GPAPUD.all = 0xFFFFFFFF;
+    GpioCtrlRegs.GPBPUD.all = 0xFFFFFFFF;
+    EDIS;
 }
 
 
@@ -314,6 +379,10 @@ void init()
 	initFlash();
 
 	initPie();
+
+    initWatchDog();
+
+    disablePullups();
 
 	analogInit();
 

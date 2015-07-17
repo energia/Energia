@@ -20,6 +20,16 @@
   <condition property="platform" 
 	     value="linux64"><os family="unix" arch="amd64" /></condition>
 
+  <condition property="build-dir" value="macosx">
+             <os family="mac" /></condition>
+  <condition property="build-dir" value="linux">
+             <os family="unix" /></condition>
+  <condition property="build-dir" value="windows">
+             <os family="windows" /></condition>
+
+  <condition property="dep.common.default.ok" value="true"><os family="mac"/></condition>
+  <condition property="dep.common.default.ok" value="true"><os family="windows"/></condition>
+  <condition property="dep.common.default.ok" value="true"><os family="unix"/></condition>
   <!-- Libraries required for running energia -->
   <fileset dir=".." id="runtime.jars">
     <include name="core/core.jar" />
@@ -30,6 +40,41 @@
     <include name="app/lib/ant.jar" />
     <include name="app/lib/ant-launcher.jar" />
   </fileset>
+
+  <target name="check-closure">
+    <condition property="closure.exists">
+      <available file="${build-dir}/closure.zip"/>
+    </condition>
+  </target>
+
+  <condition property="closure-dest" value="macosx/work/Energia.app/Contents/Resources/Java/hardware/secret/gnu">
+             <os family="mac" /></condition>
+  <condition property="closure-dest" value="linux/work/hardware/secret/gnu">
+             <os family="unix" /></condition>
+  <condition property="closure-dest" value="windows/work/hardware/secret/gnu">
+             <os family="windows" /></condition>
+
+  <target name="download-closure" depends="check-closure" unless="closure.exists">
+    <echo message="Downloading closure"/>
+    <get src="http://energia.nu/files/closure.zip" dest="${build-dir}/closure.zip"/>
+  </target>
+
+  <target name="unzip-closure" depends="download-closure">
+    <unzip dest="${closure-dest}" src="${build-dir}/closure.zip" overwrite="false"/>
+  </target>
+
+  <condition property="common-tools-dest" value="macosx/work/Energia.app/Contents/Resources/Java">
+             <os family="mac" /></condition>
+  <condition property="common-tools-dest" value="windows/work">
+             <os family="windows" /></condition>
+  <condition property="common-tools-dest" value="linux/work">
+             <os family="unix" /></condition>
+
+    <target name="check-common-tools">
+      <condition property="common-tools.exists">
+	      <available file="${build-dir}/tools-common.tar.bz2"/>
+      </condition>
+    </target>
 
   <target name="build" description="Build Energia.">
     <antcall target="${platform}-build" />
@@ -98,6 +143,9 @@
       </fileset>
     </copy>
     
+    <!-- download and unzip TI-RTOS closure -->
+    <!--<antcall target="unzip-closure"/>-->
+
     <!-- copy shared examples folder -->
     <copy todir="${target.path}/examples">
       <fileset dir="shared/examples">
@@ -180,7 +228,7 @@
 
 
   <property name="arm.tools.mac.local" value="arm_tools_mac.zip"/>
-  <property name="msp430.tools.mac.local" value="msp430_tools_mac.zip"/>
+  <property name="msp430.tools.mac.local" value="msp430_tools_mac_05_2015.zip"/>
 
   <condition property="exists.tools.mac">
   <and>
@@ -190,17 +238,29 @@
   </condition>
   <property name="dep.arm.default.ok" value="true"/>
 
+    <target name="download-common-tools-mac" depends="check-common-tools" unless="common-tools.exists">
+      <echo message="Downloading common tools"/>
+      <get src="http://energia.nu/files/tools-common-${platform}.tar.bz2" dest="${build-dir}/tools-common.tar.bz2"/>
+    </target>
+
+    <target name="unzip-common-tools-mac" if="dep.common.default.ok" depends="download-common-tools-mac">
+	    <untar src="${build-dir}/tools-common.tar.bz2" dest="${common-tools-dest}" compression="bzip2" overwrite="false"/>
+            <chmod file="macosx/work/Energia.app/Contents/Resources/Java/tools/common/bin/make" perm="755" />
+            <chmod file="macosx/work/Energia.app/Contents/Resources/Java/tools/common/DSLite/DebugServer/bin/DSLite" perm="755" />
+    </target>
+
+
   <target name="check.deps.mac"
     if="dep.arm.default.ok"
     unless="exists.tools.mac">
     <property name="arm.tools.mac.remote" value="http://energia.nu/files/arm_tools_mac.zip"/>
-	<property name="msp430.tools.mac.remote" value="http://energia.nu/files/msp430_tools_mac.zip"/>
+	<property name="msp430.tools.mac.remote" value="http://energia.nu/files/msp430_tools_mac_05_2015.zip"/>
     <!-- Get tools tools -->
 	<get src="${arm.tools.mac.remote}" dest="macosx/${arm.tools.mac.local}"/>
 	<get src="${msp430.tools.mac.remote}" dest="macosx/${msp430.tools.mac.local}"/>
   </target>
 
-  <target name="macosx-build" if="macosx" depends="revision-check, macosx-checkos, check.deps.mac, subprojects-build" description="Build Mac OS X version">
+  <target name="macosx-build" if="macosx" depends="revision-check, macosx-checkos, check.deps.mac, unzip-common-tools-mac, subprojects-build" description="Build Mac OS X version">
     <mkdir dir="macosx/work" />
     
     <!-- assemble the pde -->
@@ -224,13 +284,14 @@
       <fileset file="shared/revisions.txt" />
     </copy>
 
+   <mkdir dir="macosx/work/Energia.app/Contents/Resources/Java/hardware/tools"/>
    <!-- Unzip msp430 tools -->
     <exec executable="unzip">
       <arg value="-q" />
       <arg value="-n" />
       <arg value="-d" />
       <arg value="macosx/work/Energia.app/Contents/Resources/Java/hardware/tools" />
-      <arg value="macosx/msp430_tools_mac.zip" />
+      <arg value="macosx/msp430_tools_mac_05_2015.zip" />
     </exec>
 
     <!-- Unzip arm tools -->
@@ -339,7 +400,7 @@
     <fail message="wrong platform (${os.name})" />
   </target>
   
-  <target name="linux-build" depends="revision-check, linux-checkos, subprojects-build" description="Build linux version">
+  <target name="linux-build" depends="revision-check, linux-checkos, subprojects-build, unzip-common-tools-linux" description="Build linux version">
     <mkdir dir="linux/work" />
     
     <copy todir="linux/work">
@@ -371,7 +432,7 @@
 
   <!-- Linux 32 build -->
   <property name="arm.tools.linux.local" value="arm_tools_linux32.tar.bz2"/>
-  <property name="msp430.tools.linux.local" value="msp430_tools_linux32.tar.bz2"/>
+  <property name="msp430.tools.linux.local" value="msp430_tools_linux32_05_2015.tar.bz2"/>
 
   <condition property="exists.tools.linux">
   <and>
@@ -380,12 +441,21 @@
   </and>
   </condition>
   <property name="dep.arm.default.ok" value="true"/>
+    <target name="download-common-tools-linux" depends="check-common-tools" unless="common-tools.exists">
+      <echo message="Downloading common tools"/>
+      <get src="http://energia.nu/files/tools-common-${platform}.tar.bz2" dest="${build-dir}/tools-common.tar.bz2"/>
+    </target>
+
+    <target name="unzip-common-tools-linux" if="dep.common.default.ok" depends="download-common-tools-linux">
+	    <untar src="${build-dir}/tools-common.tar.bz2" dest="${common-tools-dest}" compression="bzip2" overwrite="false"/>
+            <chmod file="linux/work/tools/common/DSLite/DebugServer/bin/DSLite" perm="755" />
+    </target>
 
   <target name="check.deps.linux"
     if="dep.arm.default.ok"
     unless="exists.tools.linux">
     <property name="arm.tools.linux.remote" value="http://energia.nu/files/arm_tools_linux32.tar.bz2"/>
-	<property name="msp430.tools.linux.remote" value="http://energia.nu/files/msp430_tools_linux32.tar.bz2"/>
+	<property name="msp430.tools.linux.remote" value="http://energia.nu/files/msp430_tools_linux32_05_2015.tar.bz2"/>
     <!-- Get tools -->
 	<get src="${arm.tools.linux.remote}" dest="linux/${arm.tools.linux.local}"/>
 	<get src="${msp430.tools.linux.remote}" dest="linux/${msp430.tools.linux.local}"/>
@@ -396,7 +466,7 @@
     <!-- Unzip msp430 tools -->
     <exec executable="tar" dir="linux/work/hardware/tools">
       <arg value="-xjf"/>
-      <arg value="${user.dir}/linux/msp430_tools_linux32.tar.bz2"/>
+      <arg value="${user.dir}/linux/msp430_tools_linux32_05_2015.tar.bz2"/>
     </exec>
     <!-- Unzip lm4f tools -->
     <exec executable="tar" dir="linux/work/hardware/tools">
@@ -407,7 +477,7 @@
 
   <!-- Linux 64 build -->
   <property name="arm.tools.linux64.local" value="arm_tools_linux64.tar.bz2"/>
-  <property name="msp430.tools.linux64.local" value="msp430_tools_linux64.tar.bz2"/>
+  <property name="msp430.tools.linux64.local" value="msp430_tools_linux64_05_2015.tar.bz2"/>
 
   <condition property="exists.tools.linux64">
   <and>
@@ -421,7 +491,7 @@
     if="dep.arm.default.ok"
     unless="exists.tools.linux64">
     <property name="arm.tools.linux64.remote" value="http://energia.nu/files/arm_tools_linux64.tar.bz2"/>
-	<property name="msp430.tools.linux64.remote" value="http://energia.nu/files/msp430_tools_linux64.tar.bz2"/>
+	<property name="msp430.tools.linux64.remote" value="http://energia.nu/files/msp430_tools_linux64_05_2015.tar.bz2"/>
     <!-- Get tools -->
 	<get src="${arm.tools.linux64.remote}" dest="linux/${arm.tools.linux64.local}"/>
 	<get src="${msp430.tools.linux64.remote}" dest="linux/${msp430.tools.linux64.local}"/>
@@ -432,7 +502,7 @@
     <copy tofile="linux/work/lib/librxtxSerial.so" file="linux/dist/lib/librxtxSerial64.so" overwrite="true" />
     <exec executable="tar" dir="linux/work/hardware/tools">
       <arg value="-xjf"/>
-      <arg value="${user.dir}/linux/msp430_tools_linux64.tar.bz2"/>
+      <arg value="${user.dir}/linux/msp430_tools_linux64_05_2015.tar.bz2"/>
     </exec>
 
     <!-- Unzip lm4f tools -->
@@ -528,7 +598,7 @@
   </target>
   
   <property name="arm.tools.windows.local" value="arm_tools_windows.zip"/>
-  <property name="msp430.tools.windows.local" value="msp430_tools_windows.zip"/>
+  <property name="msp430.tools.windows.local" value="msp430_tools_windows_05_2015.zip"/>
 
   <condition property="exists.tools.windows">
   <and>
@@ -538,18 +608,28 @@
   </condition>
   <property name="dep.arm.default.ok" value="true"/>
 
+    <target name="download-common-tools-win" depends="check-common-tools" unless="common-tools.exists">
+      <echo message="Downloading common tools"/>
+      <get src="http://energia.nu/files/tools-common-${platform}.tar.bz2" dest="${build-dir}/tools-common.tar.bz2"/>
+    </target>
+
+    <target name="unzip-common-tools-win" if="dep.common.default.ok" depends="download-common-tools-win">
+	    <untar src="${build-dir}/tools-common.tar.bz2" dest="${common-tools-dest}" compression="bzip2" overwrite="false"/>
+    </target>
+
+
   <target name="check.deps.windows"
     if="dep.arm.default.ok"
     unless="exists.tools.windows">
     <property name="arm.tools.windows.remote" value="http://energia.nu/files/arm_tools_windows.zip"/>
-	<property name="msp430.tools.windows.remote" value="http://energia.nu/files/msp430_tools_windows.zip"/>
+	<property name="msp430.tools.windows.remote" value="http://energia.nu/files/msp430_tools_windows_05_2015.zip"/>
     <!-- Get tools tools -->
 	<get src="${arm.tools.windows.remote}" dest="windows/${arm.tools.windows.local}"/>
 	<get src="${msp430.tools.windows.remote}" dest="windows/${msp430.tools.windows.local}"/>
   </target>
   
   <target name="windows-build" 
-	  depends="revision-check, windows-checkos, check.deps.windows, subprojects-build" 
+	  depends="revision-check, windows-checkos, check.deps.windows, unzip-common-tools-win, subprojects-build" 
 	  description="Build windows version">
     <mkdir dir="windows/work" />
     
@@ -571,11 +651,13 @@
     <copy todir="windows/work">
       <fileset dir="windows/dist" includes="drivers/**" />
     </copy>
-    
+
+
+
     <!-- Unzip tools -->
-    <unzip dest="windows/work/hardware/tools" src="windows/msp430_tools_windows.zip" overwrite="false"/>
+    <unzip dest="windows/work/hardware/tools" src="windows/msp430_tools_windows_05_2015.zip" overwrite="false"/>
     <unzip dest="windows/work/hardware/tools" src="windows/arm_tools_windows.zip" overwrite="false"/>
- 
+
     <antcall target="assemble">
       <param name="target.path" value="windows/work" />
     </antcall>

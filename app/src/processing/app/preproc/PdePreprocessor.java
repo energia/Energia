@@ -126,6 +126,9 @@ public class PdePreprocessor {
 //      }
 //    }
 
+    if(Base.getArch() == "cc3200emt" || Base.getArch() == "msp432")
+    	writemain(program);
+    
     prototypes = prototypes(program);
     
     // store # of prototypes so that line number reporting can be adjusted
@@ -346,4 +349,142 @@ public class PdePreprocessor {
     
     return functionMatches;
   }
+  
+  public void writemain(String in) {
+	    String _in = in;
+	    in = collapseBraces(strip(in));
+	    
+	    String content = "";
+		try {
+			content = new Scanner(new File(Base.getHardwarePath() + File.separator + Base.getArch() + 
+				File.separator + "cores" + File.separator + Base.getArch() + File.separator + "main.template")).useDelimiter("\\Z").next();
+		    //System.out.println(content);
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		StringBuilder mainFile = new StringBuilder(content);
+		
+		int insertionPoint = content.indexOf("769d20fcd7a0eedaf64270f591438b01");
+		insertionPoint = content.indexOf("\n", insertionPoint) + 1;
+
+	    //Pattern functionPattern  = Pattern.compile("(?=([\\w\\[\\]\\*]+\\s+[&\\[\\]\\*\\w\\s])*)\\w*[Ll]oop(?=\\s*\\()");
+	    Pattern functionPattern  = Pattern.compile("\\s*void\\s+([a-zA-Z_]*[lL]oop\\w*)\\s*\\(\\s*(void)?\\s*\\)");
+
+	    // Find all functions and generate prototypes for them
+	    ArrayList<String> loopMatches = new ArrayList<String>();
+	    ArrayList<String> setupMatches = new ArrayList<String>();
+	    	    
+	    Matcher functionMatcher = functionPattern.matcher(in);
+
+	    // Leave setup alone since it is special
+	    // It will be processed using the next regex
+	    // See Sketch.java for the generation of the #define setupxxx
+	    while (functionMatcher.find()) {
+	    	String func = functionMatcher.group(1);
+	    	if(func.equals("loop")) continue;
+	    	loopMatches.add(functionMatcher.group(1));
+	    }
+
+	    
+	    //functionPattern  = Pattern.compile("(?=([\\w\\[\\]\\*]+\\s+[&\\[\\]\\*\\w\\s])*)\\w*[Ss]etup(?=\\s*\\()");
+	    functionPattern  = Pattern.compile("\\s*void\\s+([a-zA-Z_]*[sS]etup\\w*)\\s*\\(\\s*(void)?\\s*\\)");
+
+	    // Find all functions and generate prototypes for them
+	    functionMatcher = functionPattern.matcher(in);
+	    
+	    // Leave setup alone since it is special
+	    // It will be processed using the next regex
+	    // See Sketch.java for the generation of the #define setupxxx
+	    while (functionMatcher.find()) {
+	    	String func = functionMatcher.group(1);
+	    	if(func.equals("setup")) continue;
+	    	setupMatches.add(functionMatcher.group(1));
+	    }
+
+	    functionPattern  = Pattern.compile("(#define setup\\s)([a-zA-Z_*]\\w*)");
+
+	    // Find all functions and generate prototypes for them
+	    functionMatcher = functionPattern.matcher(_in);
+	    
+	    while (functionMatcher.find()) {
+	    	String func = functionMatcher.group(2);
+	    	setupMatches.add(func);
+	    }
+
+	    functionPattern  = Pattern.compile("(#define loop\\s)([a-zA-Z_*]\\w*)");
+
+	    // Find all functions and generate prototypes for them
+	    functionMatcher = functionPattern.matcher(_in);
+	    
+	    while (functionMatcher.find()) {
+	    	String func = functionMatcher.group(2);
+	    	loopMatches.add(func);
+	    }
+
+	    
+	    if(setupMatches.size() != loopMatches.size()) {
+	    	System.out.print("The number of loop functions does not match the number of setup functions\n" +
+	    			"Missing a loop or a setup in your Sketches?");
+	    	return;
+	    }
+
+	    String protos = "";
+	    String funcArray = "";
+	    String taskNameArray = "";
+	    
+	    for (int functionIndex = 0; functionIndex < loopMatches.size(); functionIndex++) {
+	    	protos += "extern void " + setupMatches.get(functionIndex) + "();\n";
+	    	protos += "extern void " + loopMatches.get(functionIndex) + "();\n";
+	    	funcArray += "\t{" + setupMatches.get(functionIndex) + ", " + loopMatches.get(functionIndex) + "}";
+	    	taskNameArray += "\t\"" + loopMatches.get(functionIndex) + "\"";
+	    	if(functionIndex < loopMatches.size() -1) {
+	    		funcArray += ",\n";
+	    		taskNameArray += ",\n";
+	    	}
+	    }
+
+	    String numSketches = "\n#define NUM_SKETCHES " + loopMatches.size() + "\n";
+	    String prolog = "void (*func_ptr[NUM_SKETCHES][2])(void) = {\n";
+	    String epilog = "\n};\n";
+	    mainFile.insert(insertionPoint, protos);
+	    insertionPoint += protos.length();
+	    mainFile.insert(insertionPoint, numSketches);
+	    insertionPoint += numSketches.length();
+	    mainFile.insert(insertionPoint, prolog);
+	    insertionPoint += prolog.length();	    
+	    mainFile.insert(insertionPoint, funcArray);
+	    insertionPoint += funcArray.length();
+	    mainFile.insert(insertionPoint, epilog);
+	    insertionPoint += epilog.length();
+
+	    prolog = "const char *taskNames[] = {\n";
+	    mainFile.insert(insertionPoint, prolog);
+	    insertionPoint += prolog.length();	    
+	    mainFile.insert(insertionPoint, taskNameArray);
+	    insertionPoint += taskNameArray.length();
+	    mainFile.insert(insertionPoint, epilog);
+	    
+	    try {
+			PrintWriter out = new PrintWriter(Base.getBuildFolder() + File.separator + "main.cpp");
+			out.print(mainFile.toString());
+			out.close();
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	    // Remove generated prototypes that exactly match ones found in the source file
+//	    for (int functionIndex=functionMatches.size() - 1; functionIndex >= 0; functionIndex--) {
+//	      for (int prototypeIndex=0; prototypeIndex < prototypeMatches.size(); prototypeIndex++) {
+//	        if ((functionMatches.get(functionIndex)).equals(prototypeMatches.get(prototypeIndex))) {
+//	          functionMatches.remove(functionIndex);
+//	          break;
+//	        }
+//	      }
+//	    }
+	    
+	    //return functionMatches;
+	  }
 }

@@ -5,8 +5,10 @@
 #include <stdint.h>
 #include <string.h>
 #include <math.h>
-
 #include "binary.h"
+#include <avr/dtostrf.h>
+#include <avr/pgmspace.h>
+#include <avr/interrupt.h>
 
 #ifdef __cplusplus
 extern "C"{
@@ -65,12 +67,21 @@ extern "C"{
 #define INTERNAL2V5 ((ADC12SREF_1 << 4) | REFON | REFMSTR | REFVSEL_2)
 #define EXTERNAL (ADC12SREF_2 << 4)
 #endif
+
 #if defined(__MSP430_HAS_ADC12_B__)
 #define DEFAULT ADC12VRSEL_0
 #define INTERNAL1V2 (ADC12VRSEL_1 | REFON | REFVSEL_0)
 #define INTERNAL2V0 (ADC12VRSEL_1 | REFON | REFVSEL_1)
 #define INTERNAL2V5 (ADC12VRSEL_1 | REFON | REFVSEL_2)
 #define EXTERNAL ADC12VRSEL_2
+#endif
+
+#if defined(__MSP430_HAS_ADC__)
+#define DEFAULT ADCSREF_0
+#define INTERNAL1V2 (ADCSREF_1 | REFON | REFVSEL_0)
+#define INTERNAL2V0 (ADCSREF_1 | REFON | REFVSEL_1)
+#define INTERNAL2V5 (ADCSREF_1 | REFON | REFVSEL_2)
+#define EXTERNAL ADCSREF_2
 #endif
 
 enum{
@@ -93,6 +104,18 @@ enum{
 #endif
 #ifdef __MSP430_HAS_PORT8_R__
   P8,
+#endif
+#ifdef __MSP430_HAS_PORT9_R__
+  P9,
+#endif
+#ifdef __MSP430_HAS_PORT10_R__
+  P10,
+#endif
+#ifdef __MSP430_HAS_PORT11_R__
+  P11,
+#endif
+#ifdef __MSP430_HAS_PORT12_R__
+  P12,
 #endif
 #ifdef __MSP430_HAS_PORTJ_R__
   PJ,
@@ -180,6 +203,11 @@ void analogResolution(uint16_t);
 
 
 void delay(uint32_t milliseconds);
+void sleep(uint32_t milliseconds);
+void sleepSeconds(uint32_t seconds);
+void suspend(void);
+extern volatile boolean stay_asleep;
+#define wakeup() { stay_asleep = false; }
 
 void attachInterrupt(uint8_t, void (*)(void), int mode);
 void detachInterrupt(uint8_t);
@@ -192,6 +220,7 @@ extern const uint16_t port_to_sel1[];
 extern const uint16_t port_to_sel2[];
 extern const uint16_t port_to_input[];
 extern const uint16_t port_to_output[];
+extern const uint16_t port_to_ren[];
 extern const uint16_t port_to_pmap[];
 extern const uint32_t digital_pin_to_analog_in[];
 

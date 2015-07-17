@@ -4,8 +4,14 @@
 #ifdef __cplusplus
 typedef unsigned char _Bool;
 #endif
-#include <F2802x_device.h>
+
+#ifdef TMS320F28027
+#include <F2802x_Device.h>
 #include "f2802x_common/include/F2802x_DefaultISR.h"
+#elif defined(TMS320F28069)
+#include <F2806x_Device.h>
+#include "F2806x_common/include/F2806x_DefaultISR.h"
+#endif
 #include <stdint.h>
 #include <string.h>
 #include <math.h>
@@ -42,6 +48,10 @@ extern "C"{
 #define DEG_TO_RAD 0.017453292519943295769236907684886
 #define RAD_TO_DEG 57.295779513082320876798154814105
 
+//AVR defines these...added for compatibility
+#define M_PI 3.141592653589793238462643
+#define M_SQRT2 1.4142135623730950488016887
+
 enum{
   NOT_ON_TIMER,
   PWM1A,
@@ -51,7 +61,15 @@ enum{
   PWM3A,
   PWM3B,
   PWM4A,
-  PWM4B
+  PWM4B,
+  PWM5A,
+  PWM5B,
+  PWM6A,
+  PWM6B,
+  PWM7A,
+  PWM7B,
+  PWM8A,
+  PWM8B
   };
 
 enum{
@@ -59,6 +77,7 @@ enum{
 	PORT_A_1,
 	PORT_A_2,
 	PORT_B_1,
+  PORT_B_2
 };
 
 // The following pointer to a function call calibrates the ADC and internal oscillators
@@ -66,8 +85,11 @@ enum{
 
 // DO NOT MODIFY THIS LINE.
 //#define DELAY_US(A)  DSP28x_usDelay((unsigned long)((((long double) A * 1000.0L) / (long double)(1000000000L/F_CPU)) - 9.0L) / 5.0L)
+#ifdef TMS320F28027
 #define DELAY_US(A)  DSP28x_usDelay((uint32_t)((((long double) A * 1000.0L) / (long double)16.667L) - 9.0L) / 5.0L)
-
+#elif defined(TMS320F28069)
+#define DELAY_US(A)  DSP28x_usDelay((uint32_t)((((long double) A * 1000.0L) / (long double)11.111L) - 9.0L) / 5.0L)
+#endif
 
 // These are defined by the linker (see F2808.cmd)
 extern void* RamfuncsLoadStart;
@@ -128,15 +150,13 @@ void analogResolution(uint16_t);
 
 void delay(uint32_t milliseconds);
 
-void attachInterrupt(uint8_t pin, uint8_t interruptNum, void (*userFunc)(void), int mode);
-void detachInterrupt(uint8_t interruptNum);
+void attachInterrupt(uint8_t, void (*)(void), int);
+void detachInterrupt(uint8_t);
+
 
 extern const uint32_t digital_pin_to_timer[];
 extern const uint32_t digital_pin_to_port[];
 extern const uint32_t digital_pin_to_bit_mask[];
-//extern const uint16_t port_to_sel0[];
-//extern const uint16_t port_to_sel1[];
-//extern const uint16_t port_to_sel2[];
 extern const uint32_t* port_to_input[];
 extern const uint32_t* port_to_output[];
 

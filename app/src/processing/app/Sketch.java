@@ -25,8 +25,10 @@ package processing.app;
 
 import processing.app.debug.AvrdudeUploader;
 import processing.app.debug.MSP430Uploader;
+import processing.app.debug.DSLiteUploader;
 import processing.app.debug.LM4FUploader;
 import processing.app.debug.C2000Uploader;
+import processing.app.debug.CC3200Uploader;
 import processing.app.debug.Compiler;
 import processing.app.debug.RunnerException;
 import processing.app.debug.Sizer;
@@ -34,6 +36,7 @@ import processing.app.debug.Uploader;
 import processing.app.preproc.*;
 import processing.core.*;
 import static processing.app.I18n._;
+import java.util.regex.*;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -1376,9 +1379,43 @@ public class Sketch {
     for (SketchCode sc : code) {
       if (sc.isExtension("ino") || sc.isExtension("pde")) {
         sc.setPreprocOffset(bigCount);
-        // These #line directives help the compiler report errors with
-        // correct the filename and line number (issue 281 & 907)
-        bigCode.append("#line 1 \"" + sc.getFileName() + "\"\n");
+        String in = sc.getProgram();
+        if(Base.getArch() == "cc3200emt" || Base.getArch() == "msp432") {
+
+	        Pattern functionPattern  = Pattern.compile("\\s*void\\s+(loop)\\s*\\(\\s*(void)?\\s*\\)");
+	
+	//	    Pattern functionPattern  = Pattern.compile("\\s*void\\s+([a-zA-Z_]*[lL]oop\\w*)\\s*\\(\\s*(void)?\\s*\\)");
+	
+		    // Find all functions and generate prototypes for them
+		    ArrayList<String> loopMatches = new ArrayList<String>();
+		    ArrayList<String> setupMatches = new ArrayList<String>();
+		    	    
+		    Matcher functionMatcher = functionPattern.matcher(in);
+		    while (functionMatcher.find()) {
+		      loopMatches.add(functionMatcher.group(1));
+		    }
+	
+		    
+		    functionPattern  = Pattern.compile("\\s*void\\s+(setup)\\s*\\(\\s*(void)?\\s*\\)");
+	
+		    // Find all functions and generate prototypes for them
+		    functionMatcher = functionPattern.matcher(in);
+		    
+		    while (functionMatcher.find())
+		      setupMatches.add(functionMatcher.group(1));
+	        
+	        
+	        // These #line directives help the compiler report errors with
+	        // correct the filename and line number (issue 281 & 907)
+		    bigCode.append("#line 1 \"" + sc.getFileName() + "\"\n");
+	        if(setupMatches.size() > 0 && loopMatches.size() > 0) {
+	        	String sketchName = sc.getFileName().substring(0, sc.getFileName().length()-4);
+	        	bigCode.append("#undef setup\n#undef loop\n");
+	        	bigCode.append("#define setup setup" +  sketchName + "\n");
+	        	bigCode.append("#define loop loop" +  sketchName + "\n");
+	        }
+        }
+        
         bigCode.append(sc.getProgram());
         bigCode.append('\n');
         bigCount += sc.getLineCount();
@@ -1591,7 +1628,9 @@ public class Sketch {
     // that will bubble up to whomever called build().
     Compiler compiler = new Compiler();
     if (compiler.compile(this, buildPath, primaryClassName, verbose)) {
-      size(buildPath, primaryClassName);
+      String arch = Base.getArch();
+      if(arch != "cc3200emt" && arch != "msp432")
+    	size(buildPath, primaryClassName);
       return primaryClassName;
     }
     return null;
@@ -1670,14 +1709,19 @@ public class Sketch {
 
     Uploader uploader;
 
+    String foo = Base.getArch();
     // download the program
     //
     if(Base.getArch() == "msp430"){
     	uploader = new MSP430Uploader(editor);
     }else if (Base.getArch() == "lm4f"){
         uploader = new LM4FUploader();
+    }else if (Base.getArch() == "msp432"){
+        uploader = new DSLiteUploader();
     } else if(Base.getArch() == "c2000"){
     	uploader = new C2000Uploader();
+    } else if(Base.getArch() == "cc3200" || Base.getArch() == "cc3200emt"){
+    	uploader = new CC3200Uploader();
     }else {
     	uploader = new AvrdudeUploader();
     }
@@ -2085,7 +2129,7 @@ public class Sketch {
    * systems, i.e. uploading from a Windows machine to a Linux server,
    * or reading a FAT32 partition in OS X and using a thumb drive.
    * <p/>
-   * This helper function replaces everything but A-Z, a-z, and 0-9 with
+   * This helper function replaces everything but A-Z, a-z, 0-9 and hyphen with
    * underscores. Also disallows starting the sketch name with a digit.
    */
   static public String sanitizeName(String origName) {
@@ -2099,7 +2143,8 @@ public class Sketch {
     for (int i = 0; i < c.length; i++) {
       if (((c[i] >= '0') && (c[i] <= '9')) ||
           ((c[i] >= 'a') && (c[i] <= 'z')) ||
-          ((c[i] >= 'A') && (c[i] <= 'Z'))) {
+          ((c[i] >= 'A') && (c[i] <= 'Z')) ||
+          c[i] == '-') {
         buffer.append(c[i]);
 
       } else {

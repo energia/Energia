@@ -25,6 +25,7 @@ package processing.app;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
+import java.nio.charset.Charset;
 import java.util.*;
 import java.util.regex.*;
 import javax.swing.*;
@@ -43,9 +44,9 @@ import static processing.app.I18n._;
  */
 public class Base {
   public static final int REVISION = 101;
-  public static final int EREVISION = 12;
+  public static final int EREVISION = 16;
   /** This might be replaced by main() if there's a lib/version.txt file. */
-  static String VERSION_NAME = "0101E0012";
+  static String VERSION_NAME = "0101E0016";
   /** Set true if this a proper release rather than a numbered revision. */
   static public boolean RELEASE = false;
 
@@ -69,6 +70,9 @@ public class Base {
     archMap.put("msp430", "msp430");
     archMap.put("lm4f", "lm4f");
     archMap.put("c2000", "c2000");
+    archMap.put("cc3200", "cc3200");
+    archMap.put("cc3200emt", "cc3200emt");
+    archMap.put("msp432", "msp432");
   }
   static Platform platform;
 
@@ -256,6 +260,12 @@ public class Base {
     	targetLibDir = "hardware/lm4f/";
     else if (Preferences.get("target").equals("c2000")) 
     	targetLibDir = "hardware/c2000/";
+    else if (Preferences.get("target").equals("cc3200")) 
+    	targetLibDir = "hardware/cc3200/";
+    else if (Preferences.get("target").equals("cc3200emt")) 
+    	targetLibDir = "hardware/cc3200emt/";
+    else if (Preferences.get("target").equals("msp432")) 
+    	targetLibDir = "hardware/msp432/";
     librariesFolder = getContentFile(targetLibDir + "libraries");
     toolsFolder = getContentFile("tools");
 
@@ -1096,8 +1106,14 @@ public class Base {
             		  targetLibDir = "hardware/msp430/";
             	  else if(n.equals("lm4f"))
             		  targetLibDir = "hardware/lm4f/";
-				  else if(n.equals("c2000")) 
+		  else if(n.equals("c2000")) 
             		  targetLibDir = "hardware/c2000/";
+		  else if(n.equals("cc3200")) 
+            		  targetLibDir = "hardware/cc3200/";
+		  else if(n.equals("msp432")) 
+            		  targetLibDir = "hardware/msp432/";
+		  else if(n.equals("cc3200emt")) 
+            		  targetLibDir = "hardware/cc3200emt/";
             	  librariesFolder = getContentFile(targetLibDir + "libraries");
             	  onArchChanged();
               }
@@ -1639,6 +1655,32 @@ public class Base {
     return getHardwareFolder().getAbsolutePath();
   }
   
+
+  static public String readFile(String fileName) throws IOException {
+    BufferedReader br = new BufferedReader(new FileReader(fileName));
+    try {
+        StringBuilder sb = new StringBuilder();
+        String line = br.readLine();
+
+        while (line != null) {
+            sb.append(line);
+            sb.append("\n");
+            line = br.readLine();
+        }
+ 
+        return sb.toString();
+    } finally {
+        br.close();
+    }
+  }
+  
+  static public String getArchCorePath() {
+    String arch = getArch();
+    String path = getHardwarePath() + File.separator + arch + File.separator +
+                  "cores" + File.separator + arch + File.separator;
+    return path;
+  }
+
   
   static public String getAvrBasePath() {
     String path = getHardwarePath() + File.separator + "tools" +
@@ -1672,7 +1714,7 @@ public class Base {
 	    String path = getHardwarePath() + File.separator + "tools" +
 	                  File.separator + "c2000" + File.separator + "bin" + File.separator;
 	    
-	    if (Base.isLinux() || !(new File(path)).exists()) {
+	    if(!(new File(path)).exists()){
 	      return "";  // use msp430-gcc and mspdebug in PATH instead of platform version
 	    }
 	    return path;
@@ -1731,7 +1773,7 @@ public class Base {
         String hwPath = getMSP430BasePath();
         return hwPath;
       }
-      else if (getArch() == "lm4f") {
+      else if (getArch() == "lm4f" || getArch() == "cc3200" || getArch() == "msp432") {
     	  String hwPath = getLM4FBasePath();
     	  return hwPath;
       }
@@ -1744,17 +1786,27 @@ public class Base {
           + getArch() + File.separator + "bin" + File.separator;
       }
     } else if (Base.isWindows()) {
+    	String arch = getArch();
+    	if (arch == "cc3200" || arch == "msp432" || arch == "cc3200emt")
+    		arch = "lm4f";
       String ret = getHardwarePath() + File.separator + "tools"
-          + File.separator + getArch() + File.separator + "bin"
+          + File.separator + arch + File.separator + "bin"
           + File.separator;
       return ret;
     } else {
-      return getHardwarePath() + File.separator + "tools" + File.separator
-          + getArch() + File.separator + "bin" + File.separator;
+    	String arch = getArch();
+    	if (arch == "cc3200" || arch == "cc3200emt" || arch == "msp432")
+    		arch = "lm4f";
+    	return getHardwarePath() + File.separator + "tools" + File.separator
+          + arch + File.separator + "bin" + File.separator;
     }
   }
   
-  
+   static public String getCommonBasePath() {
+       return getToolsPath() +
+           File.separator + "common" + File.separator + "bin" + File.separator;
+   }
+
   static public Target getTarget() {
     return Base.targetsTable.get(Preferences.get("target"));
   }
@@ -2264,7 +2316,20 @@ public class Base {
     return null;
   }
   */
+  static public File getAppFile() {
+	    String path = System.getProperty("user.dir");
 
+	    // Get a path to somewhere inside the .app folder
+	    if (Base.isMacOS()) {
+	      String javaroot = System.getProperty("javaroot");
+	      if (javaroot != null) {
+	        path = javaroot;
+	      }
+	    }
+	    return new File(path);
+	    //return new File(working, name);
+	  }
+  
   static public File getContentFile(String name) {
     String path = System.getProperty("user.dir");
 

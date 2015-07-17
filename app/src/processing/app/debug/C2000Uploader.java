@@ -291,45 +291,72 @@ public class C2000Uploader extends Uploader implements MessageConsumer{
 	throws RunnerException, SerialException {
 		this.verbose = verbose;
 		Map<String, String> boardPreferences = Base.getBoardPreferences();
-
+		//Find our flash kernel
+		String name = boardPreferences.get("build.mcu");
 		Target target = Base.getTarget();
 		Collection params = new ArrayList();
 
-		if (Base.isMacOS() || Base.isLinux()) {
-			System.out.println("Firmware programming not currently supported in Linux and MacOS");
-			Component frame = null;
-			JOptionPane.showMessageDialog(frame,
-				    "Firmware programming not currently supported in Linux and MacOS");
-			return false;
-	
-		} else {
-			System.out.println("Put C2000 LaunchPad switches Up-Down-Down and press the reset button");
-			Component frame = null;
-			JOptionPane.showMessageDialog(frame,
-				    "Put C2000 LaunchPad serial switch up and the boot switches Up-Down-Down and press the reset button before clicking OK.");
-		}
+	    String osName = System.getProperty("os.name" );
 
-//		boolean ret = mspdebug(params);
-		//Find our flash kernel
-	    File flashKernel = new File(new File(new File(target.getFolder(), "flash_kernel"),"Debug"), "flash_kernel.txt");
+		System.out.println("Put C2000 LaunchPad switches (S1) ON-OFF-OFF (UP-DOWN-DOWN), ensure the back channel serial connection is enabled, and press the reset button.  If the download fails try a baud rate below 38400.");
+		Component frame = null;
+
+		
+		if(name.equals("TMS320F28027"))
+		{		
+			JOptionPane.showMessageDialog(frame,
+				"Put C2000 LaunchPad serial switch (S4) up and the boot switches (S1) ON-OFF-OFF (UP-DOWN-DOWN) and press the reset button before clicking OK.  If the download fails try a baud rate below 38400.");
+		}
+		else if(name.equals("TMS320F28069"))
+		{		
+			JOptionPane.showMessageDialog(frame,
+				"Ensure a jumper is placed on JP7 and that the jumper is removed from JP6, and that the boot switches (S1) are ON-OFF-OFF (UP-DOWN-DOWN), and press the reset button before clicking OK.  If the download fails try a baud rate below 38400.");
+		}
+		else
+		{		
+			JOptionPane.showMessageDialog(frame,
+				"Put C2000 LaunchPad serial switch up and the boot switches (S1) ON-OFF-OFF (UP-DOWN-DOWN) and press the reset button before clicking OK.  If the download fails try a baud rate below 38400.");
+		}
+		
+
+
+		File flashKernel;
+		if(name.equals("TMS320F28027"))
+		{
+			flashKernel = new File(new File(new File(target.getFolder(), "F28027_flash_kernel"),"Debug"), "flash_kernel.txt");
+		}
+		else if(name.equals("TMS320F28069"))
+		{
+			flashKernel = new File(new File(new File(target.getFolder(), "F28069_flash_kernel"),"Debug"), "2806_flash_kernel.txt");
+		}
+		else
+		{
+			flashKernel = new File(new File(new File(target.getFolder(), "F28027_flash_kernel"),"Debug"), "flash_kernel.txt");
+		}
 	    String flashKernelPath = flashKernel.getAbsolutePath();
 	    File appImage = new File(buildPath + File.separator + className + ".txt");
 	    String applicationPath = appImage.getAbsolutePath();
-	    File serialLoader = new File(new File(new File(target.getFolder(), "serial_loader2000"),"Release"), "serial_loader2000.exe");
-	    String loaderPath = serialLoader.getAbsolutePath();
+	    String loaderPath = "";
+	    
+	    if( osName.equals( "Windows NT" ) || osName.equals( "Windows 7" ) || osName.equals("Windows 95"))
+        {
+	    	File serialLoader = new File(new File(new File(target.getFolder(), "serial_loader2000"),"Release"), "serial_loader2000.exe");
+	    	loaderPath = serialLoader.getAbsolutePath();
+        }else if(osName.equals("Linux"))
+        {
+        	File serialLoader = new File(new File(new File(new File(target.getFolder(), "serial_loader2000"),"linux"), "64 bit"), "serial_loader2000");
+	    	loaderPath = serialLoader.getAbsolutePath();
+        }else if(osName.equals("Mac OS X"))
+        {
+        	File serialLoader = new File(new File(new File(target.getFolder(), "serial_loader2000"),"macos"), "serial_loader2000");
+	    	loaderPath = serialLoader.getAbsolutePath();
+        	
+        }
 
 	    serialRate = String.format("%d", Preferences.getInteger("serial.debug_rate"));
 	    List commandDownloader = new ArrayList();
 
-//	    commandDownloader.add(loaderPath);
-//	    commandDownloader.add(" -f " + applicationPath + " -k " + flashKernelPath + " -b " + serialRate + " -p " + port);
-//	    commandDownloader.add("-f " + applicationPath);
-//	    commandDownloader.add("-k " + flashKernelPath);
-//	    commandDownloader.add("-b " + serialRate);
-//	    commandDownloader.add("-p " + port);
-//	    commandDownloader.add(String.format("%s -f %s -k %s -b %s -p %s",loaderPath, applicationPath, flashKernelPath, serialRate, port));
 
-	    String osName = System.getProperty("os.name" );
         String[] cmd = new String[3];
         if( osName.equals( "Windows NT" ) || osName.equals( "Windows 7" ) )
         {
@@ -343,17 +370,19 @@ public class C2000Uploader extends Uploader implements MessageConsumer{
             cmd[1] = "/C" ;
             cmd[2] = String.format("%s -f %s -k %s -b %s -p %s",loaderPath, applicationPath, flashKernelPath, serialRate, port);
         }
-	    
-
+        else if( osName.equals("Linux"))
+        {
+        	cmd[0] = "bash" ;
+            cmd[1] = "-c" ;
+            cmd[2] = String.format("%s -f %s -k %s -b %s -p %s",loaderPath, applicationPath, flashKernelPath, serialRate, port);
+        }else if( osName.equals("Linux") || osName.equals("Mac OS X"))
+        {
+        	cmd[0] = "bash" ;
+            cmd[1] = "-c" ;
+            cmd[2] = String.format("%s -f %s -k %s -b %s -p %s",loaderPath, applicationPath, flashKernelPath, serialRate, port);
+        }
 		return executeUploadCommand(cmd);
 	}
-	
-//	  public void message(final String s) {
-//		    SwingUtilities.invokeLater(new Runnable() {
-//		      public void run() {
-//		    	  System.out.println(s);
-//		      }});
-//		  }
 
 	public boolean burnBootloader() throws RunnerException {
 		//nothing do do for MSP430

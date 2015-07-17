@@ -1,5 +1,9 @@
 ![IMG](http://energia.nu/img/Energia.png)
 
+[![Stories in In Progress](https://badge.waffle.io/energia/energia.png?label=In%20Progress&title=In%20Progress)](https://waffle.io/energia/energia)<br>
+[![Stories in Ready to Commit](https://badge.waffle.io/energia/energia.png?label=Ready%20to%20Commit&title=Ready%20to%20Commit)](https://waffle.io/energia/energia)
+
+
 ## What Is Energia?
 
 Energia is a fork/port of Arduino for the Launchpads, or boards with MCUs from Texas Instruments.

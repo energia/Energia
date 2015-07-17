@@ -83,7 +83,11 @@ HardwareSerial::HardwareSerial(ring_buffer *rx_buffer, ring_buffer *tx_buffer)
 }
 
 // Public Methods //////////////////////////////////////////////////////////////
+#ifdef TMS320F28069
+#define CPU_FREQ     90E6        // Set to 90 MHz for F28069
+#else
 #define CPU_FREQ     60E6        // Default = 60 MHz. Change to 50E6 for 50 MHz devices
+#endif
 #define LSPCLK_FREQ CPU_FREQ/4
 
 void HardwareSerial::begin(unsigned long baud)
@@ -150,7 +154,7 @@ void HardwareSerial::begin(unsigned long baud)
 	  	PieCtrlRegs.PIECTRL.bit.ENPIE = 1;   // Enable the PIE block
 	  	PieCtrlRegs.PIEIER9.bit.INTx1=1;     // PIE Group 9, INT1
 	  	PieCtrlRegs.PIEIER9.bit.INTx2=1;     // PIE Group 9, INT2
-	  	IER = 0x100;	// Enable CPU INT
+	  	IER |= 0x100;	// Enable CPU INT
 	  	EINT;
 
 }
@@ -171,6 +175,11 @@ void HardwareSerial::end()
 int HardwareSerial::available(void)
 {
 	return (unsigned int)(SERIAL_BUFFER_SIZE + _rx_buffer->head - _rx_buffer->tail) % SERIAL_BUFFER_SIZE;
+}
+
+HardwareSerial::operator bool()
+{
+	return true;
 }
 
 int HardwareSerial::peek(void)
