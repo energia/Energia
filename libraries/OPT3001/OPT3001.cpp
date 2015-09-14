@@ -140,6 +140,7 @@ uint32_t opt3001::readResult()
 	uint32_t result = 0;
 	uint16_t raw;
 	raw = readRegister(RESULT_REG);
+	uint16_t divisor = 0x47AF;
 	
 	/*Convert to LUX*/
 	//extract result & exponent data from raw readings
