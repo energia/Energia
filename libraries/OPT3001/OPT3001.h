@@ -17,7 +17,7 @@ class opt3001
 {
   public:
 	void begin();
-	uint32_t readResult();
+	uint16_t readResult();
 	uint16_t readManufacturerId();
 	uint16_t readDeviceId();
 	uint16_t readConfigReg();
