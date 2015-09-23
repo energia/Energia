@@ -14,6 +14,8 @@
 
 #define BOOST_PACK_WIRE 3
 
+enum{I2C_SPEED_STANDARD=0,I2C_SPEED_FASTMODE,I2C_SPEED_FASTMODE_PLUS};
+
 class TwoWire : public Stream
 {
 
@@ -29,6 +31,7 @@ class TwoWire : public Stream
 
 		static uint8_t i2cModule;
 		static uint8_t slaveAddress;
+		uint8_t speedMode;
 
 		static uint8_t transmitting;
 		static uint8_t currentState;
@@ -36,7 +39,7 @@ class TwoWire : public Stream
 		static void (*user_onReceive)(int);
 		static void onRequestService(void);
 		static void onReceiveService(uint8_t*, int);
-		
+
 		uint8_t getRxData(unsigned long cmd);
 		uint8_t sendTxData(unsigned long cmd, uint8_t data);
 		void forceStop(void);
@@ -74,6 +77,7 @@ class TwoWire : public Stream
 		//Stellarpad-specific functions
 		void I2CIntHandler(void);
 		void setModule(unsigned long);
+		void setModule(unsigned long,uint8_t);
 
 };
 
