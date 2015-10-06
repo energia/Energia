@@ -62,6 +62,7 @@ void spi_initialize(void)
 
 void spi_disable(void) {
     USICTL0 |= USISWRST;        // put USI in reset mode
+    USICTL0 &= ~(USIPE5 | USIPE6 | USIPE7);
 }
 
 /**
