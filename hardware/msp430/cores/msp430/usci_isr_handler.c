@@ -1,6 +1,6 @@
 #include "Energia.h"
 #if defined(__MSP430_HAS_USCI__) || defined(__MSP430_HAS_USCI_A0__) || defined(__MSP430_HAS_USCI_A1__) \
- || defined(__MSP430_HAS_EUSCI_A0__)|| defined(__MSP430_HAS_USCI_B0__) || defined(__MSP430_HAS_USCI_B1__) 
+ || defined(__MSP430_HAS_EUSCI_A0__) || defined(__MSP430_HAS_USCI_B0__) || defined(__MSP430_HAS_USCI_B1__)
 #include "usci_isr_handler.h"
 /* This dummy function ensures that, when called from any module that 
  * is interested in having the USCIAB0TX_VECTOR and USCIAB0TX_VECTOR
@@ -69,7 +69,7 @@ void USCIB0_ISR(void)
 
 	/* USCI_B0 I2C state change interrupt. */
 	if ((UCB0CTL0 & UCMODE_3) == UCMODE_3 && (UCB0IFG & (UCALIFG | UCNACKIFG | UCSTTIFG | UCSTPIFG)) != 0)
-		i2c_state_isr(); 
+		i2c_state_isr();
 	/* USCI_B0 I2C TX RX interrupt. */
 	if ((UCB0CTL0 & UCMODE_3) == UCMODE_3 && (UCB0IFG & (UCTXIFG | UCRXIFG)) != 0)
 		i2c_txrx_isr();
@@ -85,7 +85,7 @@ void USCIB1_ISR(void)
 
 	/* USCI_B1 I2C state change interrupt. */
 	if ((UCB1CTL0 & UCMODE_3) == UCMODE_3 && (UCB1IFG & (UCALIFG | UCNACKIFG | UCSTTIFG | UCSTPIFG)) != 0)
-		i2c_state_isr(); 
+		i2c_state_isr();
 	/* USCI_B1 I2C TX RX interrupt. */
 	if ((UCB1CTL0 & UCMODE_3) == UCMODE_3 && (UCB1IFG & (UCTXIFG | UCRXIFG)) != 0)
 		i2c_txrx_isr();
@@ -137,7 +137,7 @@ void USCIAB0RX_ISR(void)
 
 	/* USCI_B0 I2C state change interrupt. */
 	if ((UCB0STAT & (UCALIFG | UCNACKIFG | UCSTTIFG | UCSTPIFG)) != 0)
-		i2c_state_isr(); 
+		i2c_state_isr();
 
 	if (still_asleep != stay_asleep)
 		__bic_SR_register_on_exit(LPM4_bits);
