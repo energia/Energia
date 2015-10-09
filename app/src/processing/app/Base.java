@@ -1090,48 +1090,62 @@ public class Base {
   
   public void rebuildBoardsMenu(JMenu menu) {
     //System.out.println("rebuilding boards menu");
-    menu.removeAll();      
+    menu.removeAll();
+
+    /*
+    Here is my work!
+     */
+
+    JMenu boardsWidget = new JMenu("BoardsWidget");
+    boardsWidget.add(new JMenuItem("Empty 1"));
+    boardsWidget.add(new JMenuItem("Empty 2"));
+    menu.add(boardsWidget);
+
+    /*
+    end!
+    */
     ButtonGroup group = new ButtonGroup();
+
     for (Target target : targetsTable.values()) {
       for (String board : target.getBoards().keySet()) {
-        AbstractAction action = 
-          new AbstractAction(target.getBoards().get(board).get("name")) {
-            public void actionPerformed(ActionEvent actionevent) {
-              //System.out.println("Switching to " + target + ":" + board);
-              String n = (String)getValue("target");
-              String o = Preferences.get("target");
+        AbstractAction action =
+                new AbstractAction(target.getBoards().get(board).get("name")) {
+                  public void actionPerformed(ActionEvent actionevent) {
+                    //System.out.println("Switching to " + target + ":" + board);
+                    String n = (String) getValue("target");
+                    String o = Preferences.get("target");
 
-							System.out.println("o="+o);
-							System.out.println("n="+n);
+                    System.out.println("o=" + o);
+                    System.out.println("n=" + n);
 
-              if(!n.equals(o)) {
-            	  String targetLibDir = new String("");
-            	  if(n.equals("msp430")) 
-            		  targetLibDir = "hardware/msp430/";
-            	  else if(n.equals("lm4f"))
-            		  targetLibDir = "hardware/lm4f/";
-		  else if(n.equals("c2000")) 
-            		  targetLibDir = "hardware/c2000/";
-		  else if(n.equals("cc3200")) 
-            		  targetLibDir = "hardware/cc3200/";
-		  else if(n.equals("msp432")) 
-            		  targetLibDir = "hardware/msp432/";
-		  else if(n.equals("cc3200emt")) 
-            		  targetLibDir = "hardware/cc3200emt/";
-            	  librariesFolder = getContentFile(targetLibDir + "libraries");
-            	  onArchChanged();
-              }
-              Preferences.set("target", (String) getValue("target"));
-              Preferences.set("board", (String) getValue("board"));
-              onBoardOrPortChange();
-              Sketch.buildSettingChanged();
-            }
-          };
+                    if (!n.equals(o)) {
+                      String targetLibDir = new String("");
+                      if (n.equals("msp430"))
+                        targetLibDir = "hardware/msp430/";
+                      else if (n.equals("lm4f"))
+                        targetLibDir = "hardware/lm4f/";
+                      else if (n.equals("c2000"))
+                        targetLibDir = "hardware/c2000/";
+                      else if (n.equals("cc3200"))
+                        targetLibDir = "hardware/cc3200/";
+                      else if (n.equals("msp432"))
+                        targetLibDir = "hardware/msp432/";
+                      else if (n.equals("cc3200emt"))
+                        targetLibDir = "hardware/cc3200emt/";
+                      librariesFolder = getContentFile(targetLibDir + "libraries");
+                      onArchChanged();
+                    }
+                    Preferences.set("target", (String) getValue("target"));
+                    Preferences.set("board", (String) getValue("board"));
+                    onBoardOrPortChange();
+                    Sketch.buildSettingChanged();
+                  }
+                };
         action.putValue("target", target.getName());
         action.putValue("board", board);
         JMenuItem item = new JRadioButtonMenuItem(action);
         if (target.getName().equals(Preferences.get("target")) &&
-            board.equals(Preferences.get("board"))) {
+                board.equals(Preferences.get("board"))) {
           item.setSelected(true);
         }
         group.add(item);
