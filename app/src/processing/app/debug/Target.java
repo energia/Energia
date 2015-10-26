@@ -35,7 +35,7 @@ public class Target {
   private File folder;
   private Map boards;
   private Map programmers;
-  
+
   public Target(String name, File folder) {
     this.name = name;
     this.folder = folder;
