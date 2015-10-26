@@ -44,9 +44,9 @@ import static processing.app.I18n._;
  */
 public class Base {
   public static final int REVISION = 101;
-  public static final int EREVISION = 16;
+  public static final int EREVISION = 17;
   /** This might be replaced by main() if there's a lib/version.txt file. */
-  static String VERSION_NAME = "0101E0016";
+  static String VERSION_NAME = "0101E0017";
   /** Set true if this a proper release rather than a numbered revision. */
   static public boolean RELEASE = false;
 
@@ -73,6 +73,7 @@ public class Base {
     archMap.put("cc3200", "cc3200");
     archMap.put("cc3200emt", "cc3200emt");
     archMap.put("msp432", "msp432");
+    archMap.put("cc2600emt", "cc2600emt");
   }
   static Platform platform;
 
@@ -260,13 +261,13 @@ public class Base {
           if (boardNameString.equals(boardName)) {
               targetLibDir = "hardware/" + boardName + "/";
           }
-      }
+			}
+			
+    librariesFolder = getContentFile(targetLibDir + "libraries");
+    toolsFolder = getContentFile("tools");
 
-      librariesFolder = getContentFile(targetLibDir + "libraries");
-      toolsFolder = getContentFile("tools");
-
-      // Get the sketchbook path, and make sure it's set properly
-      String sketchbookPath = Preferences.get("sketchbook.path");
+    // Get the sketchbook path, and make sure it's set properly
+    String sketchbookPath = Preferences.get("sketchbook.path");
 
       // If a value is at least set, first check to see if the folder exists.
       // If it doesn't, warn the user that the sketchbook folder is being reset.
@@ -328,6 +329,7 @@ public class Base {
       if (Preferences.getBoolean("update.check")) {
           new UpdateCheck(this);
       }
+			
   }
 
 

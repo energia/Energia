@@ -117,7 +117,7 @@ public class Compiler implements MessageConsumer {
       }
     }
 
-    if (arch == "cc3200emt" || arch == "msp432") {
+    if (arch == "cc3200emt" || arch == "msp432" || arch == "cc2600emt") {
     	String commonBasePath = Base.getHardwarePath() + File.separator + "common";
         try {
             File makeVariables = new File(buildPath+File.separator+"Variables.mk");
@@ -130,6 +130,8 @@ public class Compiler implements MessageConsumer {
             fw.write("BOARD ?=" + boardPreferences.get("build.hardware") +"\n");
             fw.write("PLATFORM ?=" + Preferences.get("target") + "\n");
             fw.write("BUILD_DRVLIB ?= " + Preferences.getBoolean("build.drvlib") + "\n");
+            fw.write("ENERGIA_VERSION ?=" + Base.EREVISION + "\n");
+            fw.write("ARDUINO_VERSION ?=" + Base.REVISION + "\n");
 
             // Add all Sketch tabs that match the extension list to EXTRA_SOURCES
             List<String> allowedExtensions = Arrays.asList("c", "cpp", "S");
