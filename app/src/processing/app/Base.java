@@ -1117,8 +1117,8 @@ public class Base {
     menu.removeAll();
 
     JMenu boardsWidget = new JMenu("BoardsWidget");
-    boardsWidget.add(new JMenuItem("Empty 1"));
-    boardsWidget.add(new JMenuItem("Empty 2"));
+    boardsWidget.add(new JMenuItem("Mark"));
+    boardsWidget.add(new JMenuItem("Alex"));
     menu.add(boardsWidget);
 
     ButtonGroup group = new ButtonGroup();
