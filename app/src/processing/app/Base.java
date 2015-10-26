@@ -262,23 +262,6 @@ public class Base {
           }
       }
 
-      /*
-      String targetLibDir = new String("");
-
-    if(Preferences.get("target").equals("msp430"))
-    	targetLibDir = "hardware/msp430/";
-    else if (Preferences.get("target").equals("lm4f"))
-    	targetLibDir = "hardware/lm4f/";
-    else if (Preferences.get("target").equals("c2000"))
-    	targetLibDir = "hardware/c2000/";
-    else if (Preferences.get("target").equals("cc3200"))
-    	targetLibDir = "hardware/cc3200/";
-    else if (Preferences.get("target").equals("cc3200emt"))
-    	targetLibDir = "hardware/cc3200emt/";
-    else if (Preferences.get("target").equals("msp432"))
-    	targetLibDir = "hardware/msp432/";
-      */
-
       librariesFolder = getContentFile(targetLibDir + "libraries");
       toolsFolder = getContentFile("tools");
 
@@ -1117,8 +1100,8 @@ public class Base {
     menu.removeAll();
 
     JMenu boardsWidget = new JMenu("BoardsWidget");
-    boardsWidget.add(new JMenuItem("Mark"));
-    boardsWidget.add(new JMenuItem("Alex"));
+    boardsWidget.add(new JMenuItem("Empty1"));
+    boardsWidget.add(new JMenuItem("Empty2"));
     menu.add(boardsWidget);
 
     ButtonGroup group = new ButtonGroup();
@@ -1128,12 +1111,8 @@ public class Base {
          AbstractAction action =
                 new AbstractAction(target.getBoards().get(board).get("name")) {
                     public void actionPerformed(ActionEvent actionevent) {
-                        //System.out.println("Switching to " + target + ":" + board);
                         String n = (String) getValue("target");
                         String o = Preferences.get("target");
-
-                        System.out.println("o=" + o);
-                        System.out.println("n=" + n);
 
                          if (!n.equals(o)) {
                             String targetLibDir = new String("");
@@ -1142,20 +1121,6 @@ public class Base {
                                     targetLibDir = "hardware/" + boardName + "/";
                                 }
                             }
-                             /*
-                            if (n.equals("msp430"))
-                                targetLibDir = "hardware/msp430/";
-                            else if (n.equals("lm4f"))
-                                targetLibDir = "hardware/lm4f/";
-                            else if (n.equals("c2000"))
-                                targetLibDir = "hardware/c2000/";
-                            else if (n.equals("cc3200"))
-                                targetLibDir = "hardware/cc3200/";
-                            else if (n.equals("msp432"))
-                                targetLibDir = "hardware/msp432/";
-                            else if (n.equals("cc3200emt"))
-                                targetLibDir = "hardware/cc3200emt/";
-                            */
                             librariesFolder = getContentFile(targetLibDir + "libraries");
                             onArchChanged();
                         }
