@@ -73,8 +73,8 @@ uint8_t lineSpacing[NUM_OF_FONTS] = {9,16};
 LCD_SharpBoosterPack_SPI::LCD_SharpBoosterPack_SPI() {
     LCD_SharpBoosterPack_SPI(
                  P_CS,    // Chip Select
-                 P_VCC,   // Vcc display
-                 P_DISP   // DISP
+                 P_DISP,  // DISP
+                 P_VCC    // Vcc display
     );
 }
 
