@@ -262,7 +262,7 @@ public class FindReplace extends JFrame implements ActionListener {
     findField.requestFocusInWindow();
     super.show();
     //findField.selectAll();
-    //findNameField.requestFocus();
+    //findField.requestFocus();
   }
   */
 
