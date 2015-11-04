@@ -90,8 +90,8 @@ public class FindReplace extends JFrame implements ActionListener {
 
     if (findString != null) findField.setText(findString);
     if (replaceString != null) replaceField.setText(replaceString);
-    //System.out.println("setting find str to " + boardNameString);
-    //boardNameField.requestFocusInWindow();
+    //System.out.println("setting find str to " + findString);
+    //findField.requestFocusInWindow();
 
     ignoreCaseBox = new JCheckBox(_("Ignore Case"));
     ignoreCaseBox.addActionListener(new ActionListener() {
@@ -139,7 +139,7 @@ public class FindReplace extends JFrame implements ActionListener {
     }
 
     /*
-    boardNameField.addFocusListener(new FocusListener() {
+    findField.addFocusListener(new FocusListener() {
         public void focusGained(FocusEvent e) {
           System.out.println("Focus gained " + e.getOppositeComponent());
         }
@@ -259,10 +259,10 @@ public class FindReplace extends JFrame implements ActionListener {
 
   /*
   public void show() {
-    boardNameField.requestFocusInWindow();
+    findField.requestFocusInWindow();
     super.show();
-    //boardNameField.selectAll();
-    //boardNameField.requestFocus();
+    //findField.selectAll();
+    //findNameField.requestFocus();
   }
   */
 
@@ -294,7 +294,7 @@ public class FindReplace extends JFrame implements ActionListener {
   private boolean find(boolean wrap,boolean backwards ) {
 
     String search = findField.getText();
-    //System.out.println("finding for " + search + " " + boardNameString);
+    //System.out.println("finding for " + search + " " + findString);
     // this will catch "find next" being called when no search yet
     if (search.length() == 0) return false;
 
