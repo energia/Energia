@@ -60,8 +60,6 @@ public class Target {
       System.err.println("Error loading boards from " + boardsFile + ": " + e);
     }
 
-
-
     File programmersFile = new File(folder, "programmers.txt");
     try {
       if (programmersFile.exists()) {
