@@ -128,6 +128,8 @@ public class Base {
     //  ArrayList editors = Collections.synchronizedList(new ArrayList<Editor>());
     Editor activeEditor;
 
+    //Не очень хорошо, что он находится здесь, может быть ему лучше быть в Editor
+    ToolChainManager manager;
 
     static public void main(String args[]) {
         try {
@@ -1119,8 +1121,13 @@ public class Base {
         addNewTargetWidgetItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                ToolChainManager manager = new ToolChainManager();
-                manager.run();
+                if (manager == null) {
+                    manager = new ToolChainManager();
+                }
+                //Надо сделать красивее, я пока не знаю, как
+                if (!manager.isOpen()) {
+                    manager.run();
+                }
             }
         });
         menu.add(addNewTargetWidgetItem);

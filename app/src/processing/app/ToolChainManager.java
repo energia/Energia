@@ -4,15 +4,25 @@ import javax.swing.*;
 import java.awt.*;
 
 public class ToolChainManager {
+
+    private boolean windowIsOpen = false;
+
     public ToolChainManager() {
         //Может что-то сюда придется добавить, какие-нибудь поля
+    }
+
+    public boolean isOpen(){
+        return windowIsOpen;
     }
 
     public void run() {
         //Первым делом открываем новое окно, где все что нужно спрашиваем у пользователя
         ToolchainManagerWindow window = new ToolchainManagerWindow("Add new target");
         window.setVisible(true);
+        windowIsOpen = true;
         System.out.println("Now we can add new targets(boards)");
+
+        //Сделать наверное метод для закрытия...и тогда поставить windowIsOpen на false
 
         //Надо сделать так, чтобы нельзя было открыть новое окно, пока старое не закрыто!
         //В менеджере вся работа, открытие окна, и добавление папок с платами
@@ -67,6 +77,7 @@ public class ToolChainManager {
         JButton AddButton;
 
         public ToolchainManagerWindow(String title) throws HeadlessException {
+
             super(title);
             setResizable(false);
             //Добвить сюда всякие штуки
