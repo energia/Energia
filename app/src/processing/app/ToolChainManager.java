@@ -123,7 +123,6 @@ public class ToolChainManager {
             }
 
             //Задаем размеры созданных элементов
-
             Dimension labelDimension = boardNameLabel.getPreferredSize();
             Dimension buttonsDimension = buttons.getPreferredSize();
 
@@ -159,7 +158,7 @@ public class ToolChainManager {
             ypos += fieldHeight + SMALL;
 
             //А тут ставится положение кнопок
-            buttons.setBounds(EDGE - BUTTONGAP, ypos,
+            buttons.setBounds(labelWidth + fieldWidth - 100, ypos,
                     buttonsDimension.width, buttonsDimension.height);
 
             ypos += buttonsDimension.height + EDGE; //Еще высота (высота кнопок)
