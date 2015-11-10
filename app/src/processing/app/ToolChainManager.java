@@ -2,10 +2,13 @@ package processing.app;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public class ToolChainManager {
 
     private boolean windowIsOpen = false;
+    private static ToolchainManagerWindow window;
 
     public ToolChainManager() {
         //Может что-то сюда придется добавить, какие-нибудь поля
@@ -17,7 +20,7 @@ public class ToolChainManager {
 
     public void run() {
         //Первым делом открываем новое окно, где все что нужно спрашиваем у пользователя
-        ToolchainManagerWindow window = new ToolchainManagerWindow("Add new target");
+        window = new ToolchainManagerWindow("Add new target");
         window.setVisible(true);
         windowIsOpen = true;
         System.out.println("Now we can add new targets(boards)");
@@ -61,20 +64,20 @@ public class ToolChainManager {
         //System.out.println("Open new window");
     }
 
-    private static class ToolchainManagerWindow extends JFrame {
+    private class ToolchainManagerWindow extends JFrame implements ActionListener {
 
-        static final int EDGE = Base.isMacOS() ? 20 : 13;
+        final int EDGE = Base.isMacOS() ? 20 : 13;
         static final int SMALL = 6;
         static final int BUTTONGAP = 12; // 12 is correct for Mac, other numbers may be required for other platofrms
 
         JTextField boardNameField;
         JTextField smthElseField;
 
-        static String boardNameString;
-        static String smtElseString;
+        String boardNameString;
+        String smtElseString;
 
-        JButton CancelButton;
-        JButton AddButton;
+        JButton cancelButton;
+        JButton addButton;
 
         public ToolchainManagerWindow(String title) throws HeadlessException {
 
@@ -104,12 +107,12 @@ public class ToolChainManager {
 
             // ordering is different on mac versus pc
             if (Base.isMacOS()) {
-                buttons.add(CancelButton = new JButton("Cancel"));
-                buttons.add(AddButton = new JButton("Add Board"));
+                buttons.add(cancelButton = new JButton("Cancel"));
+                buttons.add(addButton = new JButton("Add Board"));
 
             } else {
-                buttons.add(AddButton = new JButton("Add Board"));
-                buttons.add(CancelButton = new JButton("Cancel"));
+                buttons.add(addButton = new JButton("Add Board"));
+                buttons.add(cancelButton = new JButton("Cancel"));
             }
             pane.add(buttons);
 
@@ -170,6 +173,28 @@ public class ToolChainManager {
             setSize(wide, high);
 
             setLocationRelativeTo(null); // center
+
+            cancelButton.addActionListener(this);
+            addButton.addActionListener(this);
         }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            Object source = e.getSource();
+            if (source == cancelButton) {
+                closeWindow();
+            } else if (source == addButton) {
+                addTarget();
+            }
+        }
+    }
+
+    private void closeWindow() {
+        window.setVisible(false);
+        windowIsOpen = false;
+    }
+
+    private void addTarget(){
+
     }
 }
