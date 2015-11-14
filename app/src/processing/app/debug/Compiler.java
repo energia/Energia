@@ -1136,7 +1136,7 @@ public class Compiler implements MessageConsumer {
         baseCommandCompiler.add("--display_error_number");
         baseCommandCompiler.add("--diag_wrap=off");
         baseCommandCompiler.add("--preproc_with_compile");
-        baseCommandCompiler.add("--preproc_dependency=" + '\"' + filePrefix[0] +".pp" + '\"');
+        //baseCommandCompiler.add("--preproc_dependency=" + '\"' + filePrefix[0] +".pp" + '\"');
     } else {
         baseCommandCompiler = new ArrayList(Arrays.asList(new String[] {
            basePath + "avr-gcc",
@@ -1247,7 +1247,7 @@ public class Compiler implements MessageConsumer {
           baseCommandCompiler.add("--display_error_number");
           baseCommandCompiler.add("--diag_wrap=off");
           baseCommandCompiler.add("--preproc_with_compile");
-          baseCommandCompiler.add("--preproc_dependency=" + '\"' + filePrefix[0]+".pp" + '\"');
+          //baseCommandCompiler.add("--preproc_dependency=" + '\"' + filePrefix[0]+".pp" + '\"');
 
       }else { // default to avr
         baseCommandCompiler = new ArrayList(Arrays.asList(new String[] {
@@ -1366,7 +1366,7 @@ public class Compiler implements MessageConsumer {
       baseCommandCompilerCPP.add("--display_error_number");
       baseCommandCompilerCPP.add("--diag_wrap=off");
       baseCommandCompilerCPP.add("--preproc_with_compile");
-      baseCommandCompilerCPP.add("--preproc_dependency=" + '\"' + filePrefix[0]+".pp" + '\"');
+      //baseCommandCompilerCPP.add("--preproc_dependency=" + '\"' + filePrefix[0]+".pp" + '\"');
     } else { // default to avr
       baseCommandCompilerCPP = new ArrayList(Arrays.asList(new String[] {
         basePath + "avr-g++",
