@@ -118,6 +118,16 @@ public class Base {
 //  ArrayList editors = Collections.synchronizedList(new ArrayList<Editor>());
   Editor activeEditor;
 
+  static private ArrayList<String> boardsStingNames = new ArrayList<String>();
+  static{
+      boardsStingNames.add("msp430");
+      boardsStingNames.add("lm4f");
+      boardsStingNames.add("c2000");
+      boardsStingNames.add("cc3200");
+      boardsStingNames.add("msp432");
+      boardsStingNames.add("cc3200emt");
+      boardsStingNames.add("msp432");
+  }
 
   static public void main(String args[]) {
     try {
@@ -1083,19 +1093,6 @@ public class Base {
 		  editor.onArchChanged();
 	  }
   }
-
-    static private ArrayList<String> boardsStingNames = new ArrayList<String>();
-    static{
-        boardsStingNames.add("msp430");
-        boardsStingNames.add("lm4f");
-        boardsStingNames.add("c2000");
-        boardsStingNames.add("cc3200");
-        boardsStingNames.add("msp432");
-        boardsStingNames.add("cc3200emt");
-        boardsStingNames.add("msp432");
-    }
-
-
   public void rebuildBoardsMenu(JMenu menu) {
     //System.out.println("rebuilding boards menu");
     menu.removeAll();
