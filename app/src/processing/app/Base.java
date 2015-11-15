@@ -25,7 +25,6 @@ package processing.app;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
-import java.nio.charset.Charset;
 import java.util.*;
 import java.util.regex.*;
 import javax.swing.*;
@@ -257,7 +256,7 @@ public class Base {
 
       String targetLibDir = new String("");
       String boardNameString = Preferences.get("target");
-      for (String boardName : boardsStirngNames) {
+      for (String boardName : boardsStingNames) {
           if (boardNameString.equals(boardName)) {
               targetLibDir = "hardware/" + boardName + "/";
           }
@@ -1085,27 +1084,21 @@ public class Base {
 	  }
   }
 
-    static private ArrayList<String> boardsStirngNames = new ArrayList<String>();
+    static private ArrayList<String> boardsStingNames = new ArrayList<String>();
     static{
-        boardsStirngNames.add("msp430");
-        boardsStirngNames.add("lm4f");
-        boardsStirngNames.add("c2000");
-        boardsStirngNames.add("cc3200");
-        boardsStirngNames.add("msp432");
-        boardsStirngNames.add("cc3200emt");
-        boardsStirngNames.add("msp432");
+        boardsStingNames.add("msp430");
+        boardsStingNames.add("lm4f");
+        boardsStingNames.add("c2000");
+        boardsStingNames.add("cc3200");
+        boardsStingNames.add("msp432");
+        boardsStingNames.add("cc3200emt");
+        boardsStingNames.add("msp432");
     }
 
 
   public void rebuildBoardsMenu(JMenu menu) {
     //System.out.println("rebuilding boards menu");
     menu.removeAll();
-
-    JMenu boardsWidget = new JMenu("BoardsWidget");
-    boardsWidget.add(new JMenuItem("Empty1"));
-    boardsWidget.add(new JMenuItem("Empty2"));
-    menu.add(boardsWidget);
-
     ButtonGroup group = new ButtonGroup();
 
     for (Target target : targetsTable.values()) {
@@ -1118,7 +1111,7 @@ public class Base {
 
                          if (!n.equals(o)) {
                             String targetLibDir = new String("");
-                            for (String boardName : boardsStirngNames){
+                            for (String boardName : boardsStingNames){
                                 if (n.equals(boardName)){
                                     targetLibDir = "hardware/" + boardName + "/";
                                 }
