@@ -29,6 +29,36 @@ lpmsp430g2452.build.variant=launchpad
 lpmsp430g2452.upload.maximum_ram_size=256
 
 ##############################################################
+lpmsp430g2553_1.name=LaunchPad w/ msp430g2553 (1MHz)
+lpmsp430g2553_1.upload.protocol=rf2500
+lpmsp430g2553_1.upload.maximum_size=16384
+lpmsp430g2553_1.build.mcu=msp430g2553
+lpmsp430g2553_1.build.f_cpu=1000000L
+lpmsp430g2553_1.build.core=msp430
+lpmsp430g2553_1.build.variant=launchpad
+lpmsp430g2553_1.upload.maximum_ram_size=512
+
+##############################################################
+lpmsp430g2553_8.name=LaunchPad w/ msp430g2553 (8MHz)
+lpmsp430g2553_8.upload.protocol=rf2500
+lpmsp430g2553_8.upload.maximum_size=16384
+lpmsp430g2553_8.build.mcu=msp430g2553
+lpmsp430g2553_8.build.f_cpu=8000000L
+lpmsp430g2553_8.build.core=msp430
+lpmsp430g2553_8.build.variant=launchpad
+lpmsp430g2553_8.upload.maximum_ram_size=512
+
+##############################################################
+lpmsp430g2553_12.name=LaunchPad w/ msp430g2553 (12MHz)
+lpmsp430g2553_12.upload.protocol=rf2500
+lpmsp430g2553_12.upload.maximum_size=16384
+lpmsp430g2553_12.build.mcu=msp430g2553
+lpmsp430g2553_12.build.f_cpu=12000000L
+lpmsp430g2553_12.build.core=msp430
+lpmsp430g2553_12.build.variant=launchpad
+lpmsp430g2553_12.upload.maximum_ram_size=512
+
+##############################################################
 lpmsp430g2553.name=LaunchPad w/ msp430g2553 (16MHz)
 lpmsp430g2553.upload.protocol=rf2500
 lpmsp430g2553.upload.maximum_size=16384
@@ -37,6 +67,36 @@ lpmsp430g2553.build.f_cpu=16000000L
 lpmsp430g2553.build.core=msp430
 lpmsp430g2553.build.variant=launchpad
 lpmsp430g2553.upload.maximum_ram_size=512
+
+##############################################################
+lpmsp430g2553_28pins_1.name=LaunchPad w/ msp430g2553 28pins (1MHz)
+lpmsp430g2553_28pins_1.upload.protocol=rf2500
+lpmsp430g2553_28pins_1.upload.maximum_size=16384
+lpmsp430g2553_28pins_1.build.mcu=msp430g2553
+lpmsp430g2553_28pins_1.build.f_cpu=1000000L
+lpmsp430g2553_28pins_1.build.core=msp430
+lpmsp430g2553_28pins_1.build.variant=launchpad_28pins
+lpmsp430g2553_28pins_1.upload.maximum_ram_size=512
+
+##############################################################
+lpmsp430g2553_28pins_8.name=LaunchPad w/ msp430g2553 28pins (8MHz)
+lpmsp430g2553_28pins_8.upload.protocol=rf2500
+lpmsp430g2553_28pins_8.upload.maximum_size=16384
+lpmsp430g2553_28pins_8.build.mcu=msp430g2553
+lpmsp430g2553_28pins_8.build.f_cpu=8000000L
+lpmsp430g2553_28pins_8.build.core=msp430
+lpmsp430g2553_28pins_8.build.variant=launchpad_28pins
+lpmsp430g2553_28pins_8.upload.maximum_ram_size=512
+
+##############################################################
+lpmsp430g2553_28pins_16.name=LaunchPad w/ msp430g2553 28pins (16MHz)
+lpmsp430g2553_28pins_16.upload.protocol=rf2500
+lpmsp430g2553_28pins_16.upload.maximum_size=16384
+lpmsp430g2553_28pins_16.build.mcu=msp430g2553
+lpmsp430g2553_28pins_16.build.f_cpu=16000000L
+lpmsp430g2553_28pins_16.build.core=msp430
+lpmsp430g2553_28pins_16.build.variant=launchpad_28pins
+lpmsp430g2553_28pins_16.upload.maximum_ram_size=512
 
 ##############################################################
 lpmsp430fr5739.name=FraunchPad w/ msp430fr5739
