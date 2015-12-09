@@ -44,7 +44,8 @@ public:
     virtual int sslConnect(const char *host, uint16_t port);
     // SSL root CA verification is a work in progress
     //virtual int sslRootCA(const uint8_t *rootCAfilecontents, const size_t);
-    //virtual int useRootCA(void);
+    virtual byte useRootCA(void);
+    virtual byte useClientCert(void);
     //virtual void sslStrict(boolean);
     //virtual int32_t sslGetReasonID(void);
     //virtual const char *sslGetReason(void);
@@ -70,6 +71,7 @@ protected:
     int rx_currentIndex;
     boolean sslVerifyStrict;
     boolean hasRootCA;
+    boolean hasClientCert;
     int32_t sslLastError;
 };
 

@@ -52,6 +52,7 @@ WiFiClient::WiFiClient()
     rx_fillLevel = 0;
     _socketIndex = NO_SOCKET_AVAIL;
     hasRootCA = false;
+    hasClientCert = false;
     sslVerifyStrict = false;
     sslLastError = 0;
 }
@@ -173,7 +174,11 @@ int WiFiClient::sslConnect(const char* host, uint16_t port)
     return sslConnect(hostIP, port);
 }
 
-#define ROOTCA_PEM_FILE "/cert/rootCA.pem"
+// Note for CC3200:
+//   These are default filenames, that uniflash use and all files need to be in DER format
+#define ROOTCA_PEM_FILE "/cert/ca.pem"
+#define CLIENT_KEY_FILE "/cert/private.key"
+#define CLIENT_PEM_FILE "/cert/client.pem"
 
 int WiFiClient::sslConnect(IPAddress ip, uint16_t port)
 {
@@ -183,8 +188,7 @@ int WiFiClient::sslConnect(IPAddress ip, uint16_t port)
     if (_socketIndex != NO_SOCKET_AVAIL) {
         return false;
     }
-    
-    
+
     //
     //get a socket index and attempt to create a socket
     //note that the socket is intentionally left as BLOCKING. This allows an
@@ -196,16 +200,22 @@ int WiFiClient::sslConnect(IPAddress ip, uint16_t port)
         return false;
     }
 
-
     int socketHandle = sl_Socket(SL_AF_INET, SL_SOCK_STREAM, SL_SEC_SOCKET);
     if (socketHandle < 0) {
         return false;
     }
-
+    
     // Utilize rootCA file for verifying server certificate if it's been supplied with .sslRootCA() previously
     if (hasRootCA) {
         sl_SetSockOpt(socketHandle, SL_SOL_SOCKET, SL_SO_SECURE_FILES_CA_FILE_NAME, ROOTCA_PEM_FILE, strlen(ROOTCA_PEM_FILE));
+    } 
+
+    // Utilize client certificate & key, if available
+    if (hasClientCert) {
+        sl_SetSockOpt(socketHandle, SL_SOL_SOCKET, SL_SO_SECURE_FILES_PRIVATE_KEY_FILE_NAME, CLIENT_KEY_FILE, strlen(CLIENT_KEY_FILE));
+        sl_SetSockOpt(socketHandle, SL_SOL_SOCKET, SL_SO_SECURE_FILES_CERTIFICATE_FILE_NAME, CLIENT_PEM_FILE, strlen( CLIENT_PEM_FILE ));
     }
+
     sslIsVerified = true;
 
     //
@@ -307,9 +317,10 @@ int WiFiClient::sslRootCA(const uint8_t *rootCAfilecontents, const size_t filele
     hasRootCA = true;
     return true;
 }
+ */
 
-// Checks if an existing copy of /cert/rootCA.pem is on the Serial Flash; if so, use it!
-int WiFiClient::useRootCA(void)
+// Checks if an existing copy of /cert/ca.pem is on the Serial Flash; if so, use it!
+byte WiFiClient::useRootCA(void)
 {
     int32_t i;
     SlFsFileInfo_t fi;
@@ -321,7 +332,24 @@ int WiFiClient::useRootCA(void)
     hasRootCA = true;
     return true;
 }
- */
+
+// Checks if an existing copy of /cert/client.pem and /cert/private.key is on the Serial Flash; if so, use them.
+byte WiFiClient::useClientCert(void)
+{
+    int32_t i;
+    SlFsFileInfo_t fi;
+
+    i = sl_FsGetInfo((uint8_t*)CLIENT_KEY_FILE, 0, &fi);
+    if (i != SL_FS_OK)
+        return false;
+
+    i = sl_FsGetInfo((uint8_t*)CLIENT_PEM_FILE, 0, &fi);
+    if (i != SL_FS_OK)
+        return false;
+
+    hasClientCert = true;
+    return true;
+}
 
 //--tested, working--//
 //--client and server side--//
