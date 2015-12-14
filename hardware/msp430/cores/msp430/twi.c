@@ -922,6 +922,11 @@ uint16_t i2c_state_isr(void)  // I2C Service
 		/* UCTR is automagically set by the USCI module upon a START condition. */
 		if (UCBxCTL1 &  UCTR) {
 			/* Slave TX mode. */
+			if (twi_state ==  TWI_SRX) {
+				/* if we were in SRX mode and now enter STX mode then there was a repeated start */
+				/* Callback to user defined callback */
+				twi_onSlaveReceive(twi_rxBuffer, twi_rxBufferIndex);
+			}
 			twi_state =  TWI_STX;
 			/* Ready the tx buffer index for iteration. */
 			twi_txBufferIndex = 0;
@@ -1006,27 +1011,30 @@ uint16_t eusci_isr_handler(void)
       break;
     case USCI_I2C_UCSTTIFG:    // USCI I2C Mode: UCSTTIFG
 		UCBxIFG &= ~UCSTTIFG;
-		if (twi_state ==  TWI_IDLE){
-			if (UCBxCTLW0 &  UCTR){
-				twi_state =  TWI_STX;      // Slave Transmit mode
-				// ready the tx buffer index for iteration
-				twi_txBufferIndex = 0;
-				// set tx buffer length to be zero, to verify if user changes it
-				twi_txBufferLength = 0;
-				// request for txBuffer to be filled and length to be set
-				// note: user must call twi_transmit(bytes, length) to do this
-				twi_onSlaveTransmit();
-				// if they didn't change buffer & length, initialize it
-				if(0 == twi_txBufferLength){
-					twi_txBufferLength = 1;
-					twi_txBuffer[0] = 0x00;
-				}
-			} else {
-				twi_state =  TWI_SRX;      // Slave receive mode
-				// indicate that rx buffer can be overwritten and ack
-				twi_rxBufferIndex = 0;
+        if (UCB0CTLW0 &  UCTR){
+			if (twi_state ==  TWI_SRX) {
+				/* if we were in SRX mode and now enter STX mode then there was a repeated start */
+				/* Callback to user defined callback */
+				twi_onSlaveReceive(twi_rxBuffer, twi_rxBufferIndex);
 			}
-		}
+            twi_state =  TWI_STX;      // Slave Transmit mode
+            // ready the tx buffer index for iteration
+            twi_txBufferIndex = 0;
+            // set tx buffer length to be zero, to verify if user changes it
+            twi_txBufferLength = 0;
+            // request for txBuffer to be filled and length to be set
+            // note: user must call twi_transmit(bytes, length) to do this
+            twi_onSlaveTransmit();
+            // if they didn't change buffer & length, initialize it
+            if(0 == twi_txBufferLength){
+                twi_txBufferLength = 1;
+                twi_txBuffer[0] = 0x00;
+            }
+        } else {
+            twi_state =  TWI_SRX;      // Slave receive mode
+            // indicate that rx buffer can be overwritten and ack
+            twi_rxBufferIndex = 0;
+        }
       break;
     case USCI_I2C_UCSTPIFG:    // USCI I2C Mode: UCSTPIFG
         //UCBxIFG &= ~UCSTPIFG;
