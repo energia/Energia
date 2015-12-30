@@ -78,5 +78,14 @@ enum wl_enc_type {  /* Values map to 802.11 encryption suites... */
         ENC_TYPE_AUTO = 8
 };
 
+/* Power Management policies */
+enum wl_power_policy {
+        WL_POWER_NORMAL = 1,
+        WL_POWER_ALWAYSON,
+        WL_POWER_LONGSLEEP,
+        WL_POWER_LOWLATENCY,
+        WL_POWER_LOWPOWER
+};
+
 
 #endif /* WL_DEFINITIONS_H_ */

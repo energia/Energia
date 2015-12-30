@@ -1182,6 +1182,30 @@ MACAddress WiFiClass::deviceMacByIpAddress(IPAddress ip)
     return MACADDR_NONE;
 }
 
+/* Set Station-mode Power Management Policy */
+void WiFiClass::setPowerMgmt(enum wl_power_policy policy, int param)
+{
+    unsigned short pbuf[4] = {0,0,0,0};
+
+    switch (policy) {
+        case WL_POWER_NORMAL:
+            sl_WlanPolicySet(SL_POLICY_PM, SL_NORMAL_POLICY, NULL, 0);
+            break;
+        case WL_POWER_ALWAYSON:
+            sl_WlanPolicySet(SL_POLICY_PM, SL_ALWAYS_ON_POLICY, NULL, 0);
+            break;
+        case WL_POWER_LONGSLEEP:
+            pbuf[2] = param;  // Param = Maximum Sleep Time in milliseconds
+            sl_WlanPolicySet(SL_POLICY_PM, SL_LONG_SLEEP_INTERVAL_POLICY, (unsigned char *)&pbuf[0], sizeof(pbuf));
+            break;
+        case WL_POWER_LOWLATENCY:
+            sl_WlanPolicySet(SL_POLICY_PM, SL_LOW_LATENCY_POLICY, NULL, 0);
+            break;
+        case WL_POWER_LOWPOWER:
+            sl_WlanPolicySet(SL_POLICY_PM, SL_LOW_POWER_POLICY, NULL, 0);
+            break;
+    }
+}
 
 
 WiFiClass WiFi;

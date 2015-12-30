@@ -345,6 +345,11 @@ public:
      */
     void setIpDefaults();
 
+    /*
+     * Configure WiFi Power Management policy
+     */
+    void setPowerMgmt(enum wl_power_policy, int param = 0);
+
     friend class WiFiClient;
     friend class WiFiServer;
 };
