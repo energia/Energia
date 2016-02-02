@@ -143,7 +143,14 @@ public abstract boolean uploadUsingPreferences(String buildPath, String classNam
 
       } else {
         ProcessBuilder builder = new ProcessBuilder(commandArray);
+        if(Base.getArch() == "c2000")
+        {
+        	builder.directory(new File(Base.getC2000BasePath()));
+        }
+        else
+        {
         builder.directory(new File(Base.getLM4FBasePath()));
+        }
         process = builder.start();
       }
 
@@ -293,7 +300,7 @@ public abstract boolean uploadUsingPreferences(String buildPath, String classNam
     if (s.indexOf("Error") != -1) {
       //exception = new RunnerException(s+" Check the serial port selected or your Board is connected");
       //System.out.println(s);
-      notFoundError = true;
+      //notFoundError = true;
       return;
     }
     if(notFoundError) {

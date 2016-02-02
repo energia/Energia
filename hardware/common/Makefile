@@ -71,10 +71,7 @@ $(if $(_LIBDIRS), \
 	# Store the current dependencies for use later on
 	$(eval LIBDIRS += $(_LIBDIRS)) \
 	# Compute the source files
-	$(eval _SRCS = $(wildcard $(patsubst %,%*.c,$(_LIBDIRS)))) \
-	$(eval _SRCS += $(wildcard $(patsubst %,%*.cpp,$(_LIBDIRS)))) \
-	# Recursively call this function to compute dependencies for the source files
-	$(call compute_dependencies, $(_SRCS)),)
+	$(eval _SRCS += $(wildcard $(patsubst %,%*.cpp,$(_LIBDIRS)))),)
 endef
 
 define size
@@ -100,8 +97,18 @@ WIRING_DIR := $(APPLICATION_PATH)/hardware/emt/ti/runtime/wiring/
 ARCH_LIB_PATH := $(APPLICATION_PATH)/hardware/$(PLATFORM)/libraries
 ARCH_CORE_PATH := $(APPLICATION_PATH)/hardware/$(PLATFORM)/cores/$(PLATFORM)
 DRV_LIB_PATH := $(APPLICATION_PATH)/hardware/$(PLATFORM)/cores/$(PLATFORM)/driverlib
+ifeq ($(OS),Windows_NT)
+COMMON_CORE_DIR := $(APPLICATION_PATH)\hardware\emt
+else
 COMMON_CORE_DIR := $(APPLICATION_PATH)/hardware/emt
+endif
+
+ifeq ($(OS),Windows_NT)
+ARCH_EMT_DIR := $(COMMON_CORE_DIR)\ti\runtime\wiring\$(PLAT)
+else
 ARCH_EMT_DIR := $(COMMON_CORE_DIR)/ti/runtime/wiring/$(PLAT)
+endif
+
 DIRS := $(ARCH_LIB_PATH) $(COMMON_LIB_PATH) $(USER_LIB_PATH) $(BOARD_DIR) $(CORES) $(ARCH_CORE_PATH)
 INCLUDE_DIRS = $(foreach dir, $(DIRS), ${sort ${dir ${wildcard ${dir}/*/ ${dir}/*/utility/}}})
 # Exclude driverlib path from include paths
@@ -110,7 +117,7 @@ INCLUDE_DIRS += $(COMMON_CORE_DIR) $(ARCH_EMT_DIR) $(WIRING_DIR)
 CFLAGS += $(foreach includedir,$(INCLUDE_DIRS),-I$(includedir))
 
 
-CFLAGS += -ffunction-sections -fdata-sections -DARDUINO=$(ENERGIA_VERSION) -DBOARD_$(BOARD) -DENERGIA=$(ENERGIA_VERSION) $(MCU_FLAG) $(VFP)
+CFLAGS += -ffunction-sections -fdata-sections -DARDUINO=101 -DBOARD_$(BOARD) -DENERGIA=$(ENERGIA_VERSION) $(MCU_FLAG) $(VFP)
 CPPFLAGS += -fno-exceptions -fno-rtti
 
 # define TI-RTOS and Energia wiring headers based on CLOSURE above
@@ -171,7 +178,7 @@ endif
 
 driverlib:
 ifeq ($(BUILD_DRVLIB),true)
-	$(MAKE) -C $(ARCH_CORE_PATH)/driverlib clean
+	#$(MAKE) -C $(ARCH_CORE_PATH)/driverlib clean
 	$(MAKE) -C $(ARCH_CORE_PATH)/driverlib
 endif
 

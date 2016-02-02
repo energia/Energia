@@ -23,11 +23,21 @@ public class DSLiteUploader extends Uploader{
 		Target target = Base.getTarget();
 		Collection params = new ArrayList();
 
+		params.add("load");
 		params.add("-c");
 		if(Base.getArch() == "msp432") {
 			params.add(Base.getToolsPath() + File.separator + "common" + File.separator + "DSLite" + File.separator + "MSP432P401R.ccxml");
 		} else if (Base.getArch() == "cc2600emt") {
 			params.add(Base.getToolsPath() + File.separator + "common" + File.separator + "DSLite" + File.separator + "CC2650F128_TIXDS110_Connection.ccxml");
+		}
+		else if(Base.getArch() == "c2000") {
+			String name = boardPreferences.get("build.mcu");
+			if(name.equals("TMS320F28027"))
+				params.add(Base.getToolsPath() + File.separator + "common" + File.separator + "DSLite" + File.separator + "LAUNCHXL-F28027.ccxml");
+			else if(name.equals("TMS320F28069"))
+				params.add(Base.getToolsPath() + File.separator + "common" + File.separator + "DSLite" + File.separator + "LAUNCHXL-F28069M.ccxml");
+			else //TMS320F28377S
+				params.add(Base.getToolsPath() + File.separator + "common" + File.separator + "DSLite" + File.separator + "LAUNCHXL-F28377S.ccxml");
 		}
 
 		params.add("-f");
@@ -40,7 +50,9 @@ public class DSLiteUploader extends Uploader{
 			}
 			return dslite(params);
 		} else {
+
 			params.add(buildPath + File.separator + className + ".elf");
+			
 			return dslite(params);
 		}
 	}
