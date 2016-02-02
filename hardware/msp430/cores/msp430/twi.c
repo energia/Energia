@@ -135,7 +135,7 @@ static uint8_t twi_my_addr;
 #define UCBxI2CSA     (*((volatile uint8_t *)((uint16_t)(I2C_baseAddress + UCB0I2CSA_  - UCB0_BASE)))) 
 
 #define UCxIE         UC0IE
-#define UCBxI2CIE     UC0IE
+#define UCBxI2CIE     (*((volatile uint8_t *)((uint16_t)(I2C_baseAddress + UCB0I2CIE_  - UCB0_BASE)))) 
 #define UCxIFG        UC0IFG
 #if defined(UCB1RXIE)
 #define UCBxRXIE      UCB0RXIE  ? (I2C_baseAddress == UCB0_BASE) : UCB1RXIE
@@ -444,6 +444,7 @@ uint8_t twi_readFrom(uint8_t address, uint8_t* data, uint8_t length, uint8_t sen
     UCBxCTLW0 |= (UCMST);                     // I2C Master, synchronous mode
     UCBxCTLW0 &= ~(UCTR);                     // Configure in receive mode
     UCBxI2CSA = address;                      // Set Slave Address
+    UCBxTBCNT = length;                       // set number of bytes to transmit
     UCBxCTLW0 &= ~UCSWRST;                    // Clear SW reset, resume operation
     UCBxIE |= (UCRXIE0|UCALIE|UCNACKIE|UCSTTIE|UCSTPIE); // Enable I2C interrupts
 #endif
