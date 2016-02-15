@@ -1,8 +1,10 @@
 
+
+
 #include "pitches.h"
 #include <Wire.h>
 #include <Adafruit_TMP006.h>
-//#include "OPT3001.h"
+#include "OPT3001.h"
 #define USE_USCI_B1 
 #define USING_MSP430F5529_LAUNCHPAD
 //#define USING_TIVA_C_LAUNCHPAD
@@ -280,7 +282,7 @@ float tempReading = 0;
 #define NOTE_C4_1 260
 
 // OPT3001
-//opt3001 opt3001;
+opt3001 opt3001;
 Adafruit_TMP006 tmp006;
 unsigned long readings = 0;
 
@@ -301,6 +303,7 @@ int noteDurations[] = {
 void setup()
 {
   // put your setup code here, to run once:
+  analogReadResolution(12); //added to ensure a 12 bit analog read resolution
   Serial.begin(115200);
   delay(300);
   pinMode(SEL, INPUT);
@@ -310,7 +313,7 @@ void setup()
   Serial.println("Welcome to the Educational BoosterPack MKII Production Test:");
 
   tmp006.begin(TMP006_CFG_8SAMPLE);  // Takes 8 averaged samples for measurement
-//  opt3001.begin(); 
+  opt3001.begin(); 
 }
 
 
@@ -322,13 +325,13 @@ void loop()
   
   //Test out the joystick
   Serial.print("Push joystick all the way to the right.");
-  while(analogRead(JOY_X)<4094);
+  while(analogRead(JOY_X)<4085);
   Serial.println(" > Passed!");
   Serial.print("Push joystick all the way to the left.");
   while(analogRead(JOY_X)>0);
   Serial.println(" > Passed!");
   Serial.print("Push joystick all the way to the top.");
-  while(analogRead(JOY_Y)<4094);
+  while(analogRead(JOY_Y)<4085);
   Serial.println(" > Passed!");
   Serial.print("Push joystick all the way to the bottom.");
   while(analogRead(JOY_Y)>0);
@@ -426,12 +429,12 @@ void loop()
   
   //TEST OPT3001 LIGHT SENSOR
   //To be enabled once OPT3001 is added to future Edu BP MK II Rev.
-  // Serial.println("Cover the light sensor to test the OPT3001.");
-  // while(opt3001.readResult() > 30);
-  // Serial.println("Shine flashlight onto the light sensor ");
-  // while(opt3001.readResult() < 1000);
+  Serial.println("Cover the light sensor to test the OPT3001.");
+  while(opt3001.readResult() > 30);
+  Serial.println("Uncover the light sensor ");
+  while(opt3001.readResult() < 50);
   
-  // Serial.println("OPT3001 testing successful!");
+  Serial.println("OPT3001 testing successful!");
   
   //TEST RGB LED
   Serial.println("Press SW1 to test the RGB LED.");

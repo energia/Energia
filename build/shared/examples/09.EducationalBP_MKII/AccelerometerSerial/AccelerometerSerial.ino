@@ -41,10 +41,7 @@ const int zpin = 25;                  // z-axis (only on 3-axis models)
 
 void setup()
 {
-  // By default MSP432 has analogRead() set to 10 bits. 
-  // This Sketch assumes 12 bits. Uncomment to line below to set analogRead()
-  // to 12 bit resolution for MSP432.
-  //analogReadResolution(12);
+  analogReadResolution(12); //added to ensure a 12 bit analog read resolution
 
   // initialize the serial communications:
   Serial.begin(9600);

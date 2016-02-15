@@ -1,9 +1,11 @@
 
+
+
 #include "pitches.h"
 #include <itoa.h>
 #include <Wire.h>
 #include <Adafruit_TMP006.h>
-//#include "OPT3001.h"
+#include "OPT3001.h"
 #define USE_USCI_B1 
 #define USING_MSP430F5529_LAUNCHPAD
 //#define USING_TIVA_C_LAUNCHPAD
@@ -281,7 +283,7 @@ float tempReading = 0;
 #define NOTE_C4_1 260
 
 // OPT3001
-//opt3001 opt3001;
+opt3001 opt3001;
 Adafruit_TMP006 tmp006;
 unsigned long readings = 0;
 
@@ -302,6 +304,7 @@ int noteDurations[] = {
 void setup()
 {
   // put your setup code here, to run once:
+  analogReadResolution(12); //added for the MSP432 to change resolution from the default 
   Serial.begin(115200);
   delay(300);
   pinMode(SEL, INPUT);
@@ -311,7 +314,7 @@ void setup()
   Serial.println("Welcome to the Educational BoosterPack MKII Production Test:");
 
   tmp006.begin(TMP006_CFG_8SAMPLE);  // Takes 8 averaged samples for measurement
-//  opt3001.begin(); 
+  opt3001.begin(); 
 }
 
 char *ftoa(char *a, float f, int precision)
@@ -369,7 +372,7 @@ void loop()
     colour = redColour;
             
 	myScreen.setOrientation(i);
-	myScreen.setFontSize(2);
+	myScreen.setFontSize(1);
 	
 	
             
@@ -377,7 +380,7 @@ void loop()
   //Test out the joystick
   myScreen.gText(0, 0, "  JoyStick Test", blueColour);
   myScreen.gText(0, 15, "Right", colour);
-  while(analogRead(JOY_X)<4094);
+  while(analogRead(JOY_X)<4085);
   
   myScreen.gText(50,15, " > Passed!", colour);
   myScreen.gText(0, 30, "Left", colour);
@@ -385,7 +388,7 @@ void loop()
   myScreen.gText(50,30, " > Passed!", colour);
   
   myScreen.gText(0, 45, "Up", colour);
-  while(analogRead(JOY_Y)<4094);
+  while(analogRead(JOY_Y)<4085);
   myScreen.gText(50,45, " > Passed!", colour);
   
   myScreen.gText(0, 60, "Down", colour);
@@ -482,19 +485,23 @@ void loop()
   myScreen.gText(0,0, "   TMP006 Test", blueColour);
   myScreen.gText(0,20, (char*)tempText , colour);
   myScreen.gText(60,20, "*C", colour);
-  
-  myScreen.gText(0,40, "   RGB LED Test", blueColour);
+  myScreen.gText(0,70, "S1 to Finish", colour);
+  while(digitalRead(SW1) == 1);
+  myScreen.clear(grayColour);
+
   //TEST OPT3001 LIGHT SENSOR
   //To be enabled once OPT3001 is added to future Edu BP MK II Rev.
-  // Serial.println("Cover the light sensor to test the OPT3001.");
-  // while(opt3001.readResult() > 30);
-  // Serial.println("Shine flashlight onto the light sensor ");
-  // while(opt3001.readResult() < 1000);
-  
-  // Serial.println("OPT3001 testing successful!");
-  
+  myScreen.gText(0,0, "   OPT3001 Test", blueColour);
+  myScreen.gText(0,20, "Cover the OPT3001", blueColour);
+  while(opt3001.readResult() > 30);
+  myScreen.gText(0,40, "Passed!", redColour);
+  myScreen.gText(0,60, "Uncover the OPT3001", blueColour);
+  while(opt3001.readResult() < 50);
+  myScreen.gText(0,80, "Passed!", redColour);
+  delay(400);
+  myScreen.clear(grayColour);
   //TEST RGB LED
-
+  myScreen.gText(0,20, "RGB LED Test", blueColour);
   i = 0;
   int brightness = 0;
   int fadeAmount = 5;
@@ -529,9 +536,9 @@ void loop()
     // wait for 30 milliseconds to see the dimming effect    
     delay(10); 
   }
-  myScreen.gText(0,70, "S1 to Finish", colour);
+  myScreen.gText(0,60, "S1 to Finish", colour);
   while(digitalRead(SW1) == 1);
-  myScreen.gText(0,90, "ALL TESTS PASSED", greenColour);
+  myScreen.gText(0,100, "ALL TESTS PASSED", greenColour);
   
   while(1);
 }
