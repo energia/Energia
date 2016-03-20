@@ -3,7 +3,7 @@
 http://boosterpackdepot.info/wiki/index.php?title=Educational_BoosterPack_MK_II
  
  Turn anything into an input using the Gator Holes. Connect the 
- the two Gator Holes with anything conductive (e.g. your hand, a fruit,
+ the two Gator Holes with anything conductive (e.g. a wire, a fruit,
  orange juice, coffee, etc.) to sound the Buzzer.
  
  Dec 2013 - Modified for Educational BoosterPack MK II
@@ -22,7 +22,6 @@ http://boosterpackdepot.info/wiki/index.php?title=Educational_BoosterPack_MK_II
  
  
  */
-
 const int gatorHole = 34;     // the number of the gator hole pin
 const int buzzerPin = 40;
 
@@ -33,15 +32,13 @@ void setup() {
 
   // initialize the gator hole pin as an input:
   pinMode(gatorHole, INPUT_PULLUP);     
-  
 }
 
 void loop(){
-  // read the state of the pushbutton value:
+  // read the state of the gator hole
   gatorHoleState = digitalRead(gatorHole);
-
-  // check if the pushbutton is pressed.
-  // if it is, the buttonState is HIGH:
+  // check if the gatorholes are connected.
+  // if it is, the gatorHoleState is LOW:
   if (gatorHoleState == LOW) {     
     // turn on Buzzer 
     tone(buzzerPin, 500, 500);
@@ -50,5 +47,5 @@ void loop(){
     // turn off Buzzer
     noTone(buzzerPin);
   }
-  
+  delay(5);
 }

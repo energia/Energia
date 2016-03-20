@@ -116,6 +116,8 @@ void analogWrite(uint8_t, int);
 void analogReference(uint16_t);
 void analogFrequency(uint32_t);
 void analogResolution(uint16_t);
+uint16_t getReadResolution(void);
+uint16_t getAnalogMaxValue(void);
 
 void delay(uint32_t milliseconds);
 void sleep(uint32_t milliseconds);

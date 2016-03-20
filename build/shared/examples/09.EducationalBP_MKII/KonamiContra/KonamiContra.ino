@@ -34,6 +34,7 @@ int pressedStart(void);
 void setup()
 {
   // put your setup code here, to run once:
+  analogReadResolution(12); //added to ensure a 12 bit analog read resolution
   statemachine =0;
   pinMode(BUTTON_B, INPUT);
   pinMode(BUTTON_A, INPUT);
@@ -135,8 +136,7 @@ void loop()
       break; 
 
     //---BUTTON_B---             
-    case 8: // Waiting for Right       
-      delay(300);
+    case 8: // Waiting for buttonB       
       if (pressedB())       //Button B
           statemachine++;  
       else
@@ -144,7 +144,7 @@ void loop()
       break; 
 
     //---BUTTON_A---             
-    case 9: // Waiting for Right       
+    case 9: // Waiting for buttonA       
       if (pressedA())       //Button A
           statemachine++;  
       else
@@ -180,7 +180,7 @@ int pressedLeft(void)
          (digitalRead(JOY_SEL) == 0) )         
       pass = 0;
       
-    if ( (analogRead(JOY_Y)<10) || (analogRead(JOY_Y) >  4050) )
+    if ( (analogRead(JOY_Y)<10) || (analogRead(JOY_Y) >  4050) || (analogRead(JOY_X) > 4085)  )
       pass = 0;    
     
   }  
@@ -189,7 +189,7 @@ int pressedLeft(void)
 int pressedRight(void)
 {
   uint8_t pass  = 1;
-  while ( (analogRead(JOY_X)<4094) && (pass==1))
+  while ( (analogRead(JOY_X)<4085) && (pass==1))
   {
     // Ensure no other buttons/joystick directions are pressed
     if ( (digitalRead(BUTTON_A) == 0) || 
@@ -197,7 +197,7 @@ int pressedRight(void)
          (digitalRead(JOY_SEL) == 0) )         
       pass = 0;
       
-    if ( (analogRead(JOY_Y)<10) || (analogRead(JOY_Y) >  4050) )
+    if ( (analogRead(JOY_Y)<10) || (analogRead(JOY_Y) >  4050) || (analogRead(JOY_X) < 10)  )
       pass = 0;    
     
   }  
@@ -216,7 +216,7 @@ int pressedDown(void)
          (digitalRead(JOY_SEL) == 0) )         
       pass = 0;
       
-    if ( (analogRead(JOY_X)<10) || (analogRead(JOY_X) >  4050) )
+    if ( (analogRead(JOY_X)<10) || (analogRead(JOY_X) >  4050) || (analogRead(JOY_Y) > 4085)  )
       pass = 0;    
     
   }  
@@ -225,7 +225,7 @@ int pressedDown(void)
 int pressedUp(void)
 {
   uint8_t pass  = 1;
-  while ( (analogRead(JOY_Y)<4094) && (pass==1))
+  while ( (analogRead(JOY_Y)<4085) && (pass==1))
   {
     // Ensure no other buttons/joystick directions are pressed
     if ( (digitalRead(BUTTON_A) == 0) || 
@@ -233,7 +233,7 @@ int pressedUp(void)
          (digitalRead(JOY_SEL) == 0) )         
       pass = 0;
       
-    if ( (analogRead(JOY_X)<10) || (analogRead(JOY_X) >  4050) )
+    if ( (analogRead(JOY_X)<10) || (analogRead(JOY_X) >  4050) || (analogRead(JOY_Y) < 10)  )
       pass = 0;    
     
   }  

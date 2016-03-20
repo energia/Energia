@@ -35,10 +35,8 @@ int sensorValue = 0;        // value read from the pot
 int outputValue = 0;        // value output to the PWM (analog out)
 
 void setup() {
-  // By default MSP432 has analogRead() set to 10 bits. 
-  // This Sketch assumes 12 bits. Uncomment to line below to set analogRead()
-  // to 12 bit resolution for MSP432.
-  //analogReadResolution(12);
+
+  analogReadResolution(12); //added to ensure a 12 bit analog read resolution
 
   // initialize serial communications at 9600 bps:
   Serial.begin(9600); 

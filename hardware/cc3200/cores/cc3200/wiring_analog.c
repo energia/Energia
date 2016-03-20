@@ -135,6 +135,16 @@ void analogReadResolution(int res) {
     _readResolution = res;
 }
 
+uint16_t getReadResolution(){
+	return _readResolution;
+}
+
+uint16_t getAnalogMaxValue(){
+	uint16_t maxVal = 1 << _readResolution;
+	maxVal -=1;
+	return(maxVal);
+}
+
 static inline uint32_t mapResolution(uint32_t value, uint32_t from, uint32_t to) {
     if (from == to)
         return value;
