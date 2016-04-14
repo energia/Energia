@@ -1092,7 +1092,6 @@ public class Compiler implements MessageConsumer {
           "-c",
 //          "-g",
 //          "-gdwarf-2",
-          "-assembler-with-cpp",
           Preferences.getBoolean("build.verbose") ? "-Wall" : "-w", // show warnings if verbose
           "-mthumb", "-mcpu=cortex-m4"
         }));
