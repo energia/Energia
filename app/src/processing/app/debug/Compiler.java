@@ -111,7 +111,7 @@ public class Compiler implements MessageConsumer {
       }
     }
 
-    if (arch == "cc3200emt" || arch == "msp432") {
+    if (arch == "cc3200emt" || arch == "msp432" || arch == "cc2600emt") {
     	String commonBasePath = Base.getHardwarePath() + File.separator + "common";
         try {
             File makeVariables = new File(buildPath+File.separator+"Variables.mk");
@@ -124,6 +124,8 @@ public class Compiler implements MessageConsumer {
             fw.write("BOARD ?=" + boardPreferences.get("build.hardware") +"\n");
             fw.write("PLATFORM ?=" + Preferences.get("target") + "\n");
             fw.write("BUILD_DRVLIB ?= " + Preferences.getBoolean("build.drvlib") + "\n");
+            fw.write("ENERGIA_VERSION ?=" + Base.EREVISION + "\n");
+            fw.write("ARDUINO_VERSION ?=" + Base.REVISION + "\n");
 
             // Add all Sketch tabs that match the extension list to EXTRA_SOURCES
             List<String> allowedExtensions = Arrays.asList("c", "cpp", "S");
@@ -251,8 +253,12 @@ public class Compiler implements MessageConsumer {
 
 			  core_commonPath += "/F2806x_common";
 			  core_headersPath += "/F2806x_headers";
-      
-
+      }
+      else if(boardPreferences.get("build.mcu").equals("TMS320F28377S"))
+      {
+    	  core_commonPath += "/F2837xS_common";
+    	  core_headersPath += "/F2837xS_headers";
+    	  includePaths.add(corePath + "/F2837xS_common/include");
       }
 	  ArrayList<File> corePathfiles_S = findFilesInPath(corePath, "S", false);
 	  corePathfiles_S.addAll(findFilesInPath(core_commonPath, "S", true));
@@ -409,7 +415,7 @@ public class Compiler implements MessageConsumer {
         baseCommandLinker.add("--diag_wrap=off");//compile for unified memory model
         baseCommandLinker.add("--entry_point=code_start");//compile for unified memory model
         baseCommandLinker.add("--rom_model");//compile for unified memory model
-        baseCommandLinker.add("-o" + buildPath + File.separator + primaryClassName + ".out");
+        baseCommandLinker.add("-o" + buildPath + File.separator + primaryClassName + ".elf");
 //        "-o",
 //        buildPath + File.separator + primaryClassName + ".elf"
         
@@ -460,7 +466,11 @@ public class Compiler implements MessageConsumer {
         	
 	       	baseCommandLinker.add(corePath + "//F2806x_common//cmd//F28069.cmd");
 	        baseCommandLinker.add(corePath + "//F2806x_headers//cmd//F2806x_Headers_nonBIOS.cmd");
-        	
+        }
+        else if(boardPreferences.get("build.mcu").equals("TMS320F28377S"))
+        {
+        	baseCommandLinker.add(corePath + "//F2837xS_common//cmd//2837xS_Generic_Flash_lnk.cmd");
+        	baseCommandLinker.add(corePath + "//F2837xS_headers//cmd//F2837xS_Headers_nonBIOS.cmd");
         }
         else
         {
@@ -493,13 +503,15 @@ public class Compiler implements MessageConsumer {
         basePath + "arm-none-eabi-objcopy",
         "-O",
       }));
-    }else if (arch == "c2000") { 
-	//TODO: Figure out object copy
-    baseCommandObjcopy = new ArrayList(Arrays.asList(new String[] {basePath + "hex2000"}));
-    baseCommandObjcopy.add("-boot");
-    baseCommandObjcopy.add("-sci8");
-    baseCommandObjcopy.add("-a");
-    } else {
+    }
+//    else if (arch == "c2000") { 
+//	//TODO: Figure out object copy
+//    baseCommandObjcopy = new ArrayList(Arrays.asList(new String[] {basePath + "hex2000"}));
+//    baseCommandObjcopy.add("-boot");
+//    baseCommandObjcopy.add("-sci8");
+//    baseCommandObjcopy.add("-a");
+//    } 
+    else {
       baseCommandObjcopy = new ArrayList(Arrays.asList(new String[] {
         basePath + "avr-objcopy",
         "-O",
@@ -532,11 +544,13 @@ public class Compiler implements MessageConsumer {
 	  	commandObjcopy.add(2, "binary");
     	commandObjcopy.add(buildPath + File.separator + primaryClassName + ".elf");
     	commandObjcopy.add(buildPath + File.separator + primaryClassName + ".bin");
-    }else if (arch == "c2000"){
-    	commandObjcopy.add(buildPath + File.separator + primaryClassName + ".out");
-    	commandObjcopy.add("-o");
-    	commandObjcopy.add(buildPath + File.separator + primaryClassName + ".txt");
-    }else {
+    }
+//    else if (arch == "c2000"){
+//    	commandObjcopy.add(buildPath + File.separator + primaryClassName + ".out");
+//    	commandObjcopy.add("-o");
+//    	commandObjcopy.add(buildPath + File.separator + primaryClassName + ".txt");
+//    }
+    else {
 	    commandObjcopy.add(2, "ihex");
 	    commandObjcopy.add(".eeprom"); // remove eeprom data
 	  	commandObjcopy.add(buildPath + File.separator + primaryClassName + ".elf");
@@ -544,7 +558,7 @@ public class Compiler implements MessageConsumer {
     }
     if(arch == "c2000")
     {
-    	execAsynchronouslyShell(commandObjcopy);
+//    	execAsynchronouslyShell(commandObjcopy);
     }
     else
     {
@@ -1060,7 +1074,6 @@ public class Compiler implements MessageConsumer {
           "-c",
 //          "-g",
 //          "-gdwarf-2",
-          "-assembler-with-cpp",
           Preferences.getBoolean("build.verbose") ? "-Wall" : "-w", // show warnings if verbose
           "-mthumb", "-mcpu=cortex-m4"
         }));
@@ -1104,7 +1117,7 @@ public class Compiler implements MessageConsumer {
         baseCommandCompiler.add("--display_error_number");
         baseCommandCompiler.add("--diag_wrap=off");
         baseCommandCompiler.add("--preproc_with_compile");
-        baseCommandCompiler.add("--preproc_dependency=" + '\"' + filePrefix[0] +".pp" + '\"');
+        //baseCommandCompiler.add("--preproc_dependency=" + '\"' + filePrefix[0] +".pp" + '\"');
     } else {
         baseCommandCompiler = new ArrayList(Arrays.asList(new String[] {
            basePath + "avr-gcc",
@@ -1215,7 +1228,7 @@ public class Compiler implements MessageConsumer {
           baseCommandCompiler.add("--display_error_number");
           baseCommandCompiler.add("--diag_wrap=off");
           baseCommandCompiler.add("--preproc_with_compile");
-          baseCommandCompiler.add("--preproc_dependency=" + '\"' + filePrefix[0]+".pp" + '\"');
+          //baseCommandCompiler.add("--preproc_dependency=" + '\"' + filePrefix[0]+".pp" + '\"');
 
       }else { // default to avr
         baseCommandCompiler = new ArrayList(Arrays.asList(new String[] {
@@ -1334,7 +1347,7 @@ public class Compiler implements MessageConsumer {
       baseCommandCompilerCPP.add("--display_error_number");
       baseCommandCompilerCPP.add("--diag_wrap=off");
       baseCommandCompilerCPP.add("--preproc_with_compile");
-      baseCommandCompilerCPP.add("--preproc_dependency=" + '\"' + filePrefix[0]+".pp" + '\"');
+      //baseCommandCompilerCPP.add("--preproc_dependency=" + '\"' + filePrefix[0]+".pp" + '\"');
     } else { // default to avr
       baseCommandCompilerCPP = new ArrayList(Arrays.asList(new String[] {
         basePath + "avr-g++",

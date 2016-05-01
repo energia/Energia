@@ -16,8 +16,12 @@
 //  Copyright (c) 2012 http://embeddedcomputing.weebly.com
 //  Licence CC = BY SA NC
 //
+//  Edited 2015-07-11 by ReiVilo
+//  Added setOrientation(), setReverse() and flushReverse()
+//  Unchanged #include <OneMsTaskTimer.h>
+//
 
-#include <energia.h>
+#include <Energia.h>
 #include "LCD_SharpBoosterPack_SPI.h"
 #include "SPI.h"
 
@@ -27,6 +31,7 @@ uint8_t _pinDISP;
 uint8_t _pinVCC;
 uint8_t _pinChipSelect;
 uint8_t _pinSerialClock;
+bool    _autoVCOM;
 
 // Booster Pack Pins
     //  7 - P2.2 for SPI_CLK mode
@@ -69,23 +74,77 @@ uint8_t lineSpacing[NUM_OF_FONTS] = {9,16};
 LCD_SharpBoosterPack_SPI::LCD_SharpBoosterPack_SPI() {
     LCD_SharpBoosterPack_SPI(
                  P_CS,    // Chip Select
+                 P_DISP,   // DISP
                  P_VCC,   // Vcc display
-                 P_DISP   // DISP
+                 true     // Auto VCOM
     );
 }
 
-
-LCD_SharpBoosterPack_SPI::LCD_SharpBoosterPack_SPI(uint8_t pinChipSelect, uint8_t pinDISP, uint8_t pinVCC) {
+LCD_SharpBoosterPack_SPI::LCD_SharpBoosterPack_SPI(uint8_t pinChipSelect, uint8_t pinDISP, uint8_t pinVCC, bool autoVCOM) {
     _pinChipSelect  = pinChipSelect;
     _pinDISP = pinDISP;
     _pinVCC  = pinVCC;
+    _autoVCOM = autoVCOM;
 }
 
-void LCD_SharpBoosterPack_SPI::setXY(uint8_t x, uint8_t y, uint8_t  ulValue) {
-    if( ulValue != 0)
-        DisplayBuffer[y][x>>3] &= ~(0x80 >> (x & 0x7));
-    else
-        DisplayBuffer[y][x>>3] |= (0x80 >> (x & 0x7));
+LCD_SharpBoosterPack_SPI::LCD_SharpBoosterPack_SPI(uint8_t pinChipSelect, uint8_t pinDISP, uint8_t pinVCC) {
+    LCD_SharpBoosterPack_SPI(pinChipSelect, pinDISP, pinVCC, true);
+}
+
+void LCD_SharpBoosterPack_SPI::setOrientation(uint8_t orientation)
+{
+    _orientation = orientation % 4;
+}
+
+void LCD_SharpBoosterPack_SPI::setReverse(bool reverse)
+{
+    _reverse = reverse;
+}
+
+void LCD_SharpBoosterPack_SPI::reverseFlush()
+{
+    for (uint8_t i=0; i< LCD_VERTICAL_MAX; i++)
+    {
+        for (uint8_t j=0; j< (LCD_HORIZONTAL_MAX>>3); j++)
+        {
+            DisplayBuffer[i][j] = 0xff ^ DisplayBuffer[i][j];
+        }
+    }
+    flush();
+}
+
+void LCD_SharpBoosterPack_SPI::setXY(uint8_t x, uint8_t y, uint8_t  ulValue)
+{
+    uint8_t x0;
+    uint8_t y0;
+
+    switch (_orientation)
+    {
+        case 1:
+            x0 = LCD_HORIZONTAL_MAX - y;
+            y0 = x;
+            break;
+
+        case 2:
+            x0 = LCD_HORIZONTAL_MAX - x;
+            y0 = LCD_VERTICAL_MAX   - y;
+            break;
+            
+        case 3:
+            x0 = y;
+            y0 = LCD_VERTICAL_MAX   - x;
+            break;
+            
+        default:
+            x0 = x;
+            y0 = y;
+            break;
+    }
+
+    if (_reverse) ulValue = (ulValue == 0);
+    
+    if (ulValue != 0)   DisplayBuffer[y0][x0>>3] &= ~(0x80 >> (x0 & 0x7));
+    else                DisplayBuffer[y0][x0>>3] |=  (0x80 >> (x0 & 0x7));
 }
 
 void LCD_SharpBoosterPack_SPI::begin() {
@@ -101,11 +160,15 @@ void LCD_SharpBoosterPack_SPI::begin() {
     digitalWrite(_pinChipSelect, LOW);
     digitalWrite(_pinVCC, HIGH);
     digitalWrite(_pinDISP, HIGH);
-    
-    TA0_enableVCOMToggle();
-    
+
+    if (_autoVCOM) {
+        TA0_enableVCOMToggle();
+    }
+
     clear();
     _font = 0;
+    _orientation = 0;
+    _reverse = false;
 }
 
 String LCD_SharpBoosterPack_SPI::WhoAmI() {
@@ -142,10 +205,9 @@ void LCD_SharpBoosterPack_SPI::clear() {
 }
 
 void LCD_SharpBoosterPack_SPI::clearBuffer() {
-    unsigned int i=0,j=0;
-    for(i =0; i< LCD_VERTICAL_MAX; i++)
-    for(j =0; j< (LCD_HORIZONTAL_MAX>>3); j++)
-       DisplayBuffer[i][j] = 0xff;
+    for (uint8_t i = 0; i< LCD_VERTICAL_MAX; i++)
+        for (uint8_t j = 0; j< (LCD_HORIZONTAL_MAX>>3); j++)
+            DisplayBuffer[i][j] = _reverse ? 0x00 : 0xff;
 }
 
 void LCD_SharpBoosterPack_SPI::setFont(tNumOfFontsType font) {
@@ -245,6 +307,35 @@ void LCD_SharpBoosterPack_SPI::setCharXY(uint8_t x, uint8_t y) {
 	texty =y;
 	textstartx =x; 
 	textstarty =y;
+}
+
+//*****************************************************************************
+// drawImage
+// Draw an Image on the display
+// Image can be generated with ImageDog (check for ImageDog on GitHub)
+// Header : width in pixel
+//          hight in pixel/8
+//
+//*****************************************************************************
+void LCD_SharpBoosterPack_SPI::drawImage(const uint8_t * image, uint8_t x,uint8_t y)
+{
+    // height in rows (row = 8 pixels), width in columns
+    uint8_t height, width;
+
+    width = *image++;
+    height = (*image++)*8;
+
+    for (uint8_t a = 0; a < height; a+=8)
+    {
+      uint8_t data;
+      for (uint8_t i=0; i<width; i++) {
+        data  = *image++;
+        for (uint8_t j=0; j<8; j++) {
+          data & 0x80 ? setXY(x+i,y+a+j,1) : setXY(x+i,y+a+j,0); 
+          data <<= 1;
+        }  
+      }
+    }
 }
 
 const uint8_t referse_data[] = {0x0, 0x8, 0x4, 0xC, 0x2, 0xA, 0x6, 0xE, 0x1, 0x9, 0x5, 0xD, 0x3, 0xB, 0x7, 0xF};

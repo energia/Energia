@@ -9,7 +9,7 @@
 #include <ti/sysbios/BIOS.h>
 #include <ti/sysbios/knl/Task.h>
 #include <ti/sysbios/utils/Load.h>
-
+#include <ti/sysbios/hal/Hwi.h>
 /*
  * This is the sketch for the UART debug console. Nothing else should be using the same
  * serial connection.
@@ -30,7 +30,11 @@
 #define ARW_CMDS 1   /* analog read/write cmds */
 #define SPI_CMD 1    /* SPI transfer cmd */
 #define PRI_CMD 1    /* Set Task priority cmd */
+#ifdef BOARD_CC2650STK_BLE
+#define STATS_CMD 0  /* CPU and task utilzation stats cmd */
+#else
 #define STATS_CMD 1  /* CPU and task utilzation stats cmd */
+#endif
 
 #define MAX_COMMAND_LEN 48
 #define MAX_COMMAND_NAME_LEN 8

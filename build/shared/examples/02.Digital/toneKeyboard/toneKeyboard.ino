@@ -4,7 +4,7 @@
  Plays a pitch that changes based on a changing analog input
  
  circuit:
- * 3 force-sensing resistors from +5V to analog in 0 through 5
+ * 3 force-sensing resistors from +3.3V to analog in 0 through 5
  * 3 10K resistors from analog in 0 through 5 to ground
  * 8-ohm speaker on digital pin 8
  
@@ -27,7 +27,6 @@ int notes[] = {
   NOTE_A4, NOTE_B4,NOTE_C3 };
 
 void setup() {
-
 }
 
 void loop() {
@@ -41,5 +40,4 @@ void loop() {
       tone(8, notes[thisSensor], 20);
     } 
   }
-  Serial.println();
 }

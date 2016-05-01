@@ -32,36 +32,45 @@
 #include "wiring_private.h"
 #include "pins_energia.h"
 
+#define DEFAULT_READ_RESOLUTION 10
+
 #if defined(__MSP430_HAS_ADC10__) && !defined(ADC10ENC)
 #define ADC10ENC ENC 
 #endif
 #if defined(__MSP430_HAS_ADC10__)
+#define REFV_MAP(x) (x)
+//#define REF_MAP(x)  (x & 0x31)
 #define ADCxMEM0 ADC10MEM
 #endif
 #if defined(__MSP430_HAS_ADC10_A__)
+#define REFV_MAP(x) (x)
+//#define REF_MAP(x)  (x & 0x31)
 #define ADCxMEM0 ADC10MEM 
 #endif
 #if defined(__MSP430_HAS_ADC10_B__)
-#define REFV_MASK 0x70
-#define REF_MASK 0x31
+#define REFV_MAP(x) ((x>>8) & 0x70)
+#define REF_MAP(x)  (x & 0x31)
 #define ADCxMEM0 ADC10MEM0 
 #endif
 #if defined(__MSP430_HAS_ADC12_PLUS__)
-#define REFV_MASK 0x0070
-#define REF_MASK 0xB1
+#define REFV_MAP(x) ((x>>8) & 0x70)
+#define REF_MAP(x)  (x & 0xB1)
 #define ADCxMEM0 ADC12MEM0 
+#define DEFAULT_READ_RESOLUTION 12
 #endif
 #if defined(__MSP430_HAS_ADC12_B__)
-#define REFV_MASK 0x0F00
-#define REF_MASK 0x31
+#define REFV_MAP(x) (x & 0xF00)
+#define REF_MAP(x)  (x & 0x31)
 #define ADCxMEM0 ADC12MEM0 
+#define DEFAULT_READ_RESOLUTION 12
 #endif
 #if defined(__MSP430_HAS_ADC__)
-#define REFV_MASK 0x70
-#define REF_MASK 0x31
+#define REFV_MAP(x) ((x>>8) & 0x70)
+//#define REF_MAP(x)  (x & 0x31)
 #define ADCxMEM0 ADCMEM0
 #endif
 
+static int _readResolution = DEFAULT_READ_RESOLUTION;
 
 #if defined(__MSP430_HAS_ADC10__) || defined(__MSP430_HAS_ADC10_B__) || defined(__MSP430_HAS_ADC__)
 uint16_t analog_reference = DEFAULT, analog_period = F_CPU/490, analog_div = ID_0, analog_res=0xFF; // devide clock with 0, 2, 4, 8
@@ -122,7 +131,7 @@ void analogResolution(uint16_t res)
 #define PWM_DUTY(x) ( (unsigned long)x*PWM_PERIOD / (unsigned long)analog_res )
 void analogWrite(uint8_t pin, int val)
 {
-        pinMode(pin, OUTPUT); // pin as output
+    pinMode(pin, OUTPUT); // pin as output
 
  	if (val == 0)
 	{
@@ -137,16 +146,25 @@ void analogWrite(uint8_t pin, int val)
 	else
 	{
 
-	        uint8_t bit = digitalPinToBitMask(pin); // get pin bit
 	        uint8_t port = digitalPinToPort(pin);   // get pin port
-	        volatile uint8_t *sel;
-                
-                if (port == NOT_A_PORT) return; // pin on timer?
-               
-	        sel = portSelRegister(port); // get the port function select register address
-		*sel |= bit;                 // set bit in pin function select register  
+	        uint8_t pin2timer = digitalPinToTimer(pin);   // get pin 2 timer
+	        if (port == NOT_A_PORT) return; // pin on timer?
 
-                switch(digitalPinToTimer(pin)) {                // which timer and CCR?
+			if(pin2timer < T0A0_SEL1)
+			{
+				pinMode_int(pin, OUTPUT | PORT_SELECTION0);
+			}
+			else if(pin2timer < T0A0_SEL01)
+			{
+				pinMode_int(pin, OUTPUT | PORT_SELECTION1);
+				pin2timer -= (T0A0_SEL1 - T0A0);    // correct offset
+			}
+			else
+			{
+				pinMode_int(pin, OUTPUT | PORT_SELECTION0 | PORT_SELECTION1);
+				pin2timer -= (T0A0_SEL01 - T0A0);    // correct offset
+			}
+			switch(pin2timer) {                     // which timer and CCR?
  			//case: T0A0                            // CCR0 used as period register
 			case T0A1:                              // TimerA0 / CCR1
                                 TA0CCR0 = PWM_PERIOD;           // PWM Period
@@ -289,6 +307,19 @@ void analogWrite(uint8_t pin, int val)
         }
 }
 
+void analogReadResolution(int res) {
+	_readResolution = res;
+}
+
+static inline uint32_t mapResolution(uint32_t value, uint32_t from, uint32_t to) {
+	if (from == to)
+		return value;
+	if (from > to)
+		return value >> (from-to);
+	else
+		return value << (to-from);
+}
+
 uint16_t analogRead(uint8_t pin)
 {
 // make sure we have an ADC
@@ -324,7 +355,7 @@ uint16_t analogRead(uint8_t pin)
 #if defined(__MSP430_HAS_ADC10__)
     ADC10CTL0 &= ~ADC10ENC;                 // disable ADC
     ADC10CTL1 = ADC10SSEL_0 | ADC10DIV_4;   // ADC10OSC as ADC10CLK (~5MHz) / 5
-    ADC10CTL0 = analog_reference |          // set analog reference
+    ADC10CTL0 = REFV_MAP(analog_reference) | // set analog reference
             ADC10ON | ADC10SHT_3 | ADC10IE; // turn ADC ON; sample + hold @ 64 × ADC10CLKs; Enable interrupts
     ADC10CTL1 |= (channel << 12);               // select channel
     ADC10AE0 = (1 << channel);                  // Disable input/output buffer on pin
@@ -334,14 +365,15 @@ uint16_t analogRead(uint8_t pin)
         __bis_SR_register(CPUOFF + GIE);    // LPM0 with interrupts enabled
     }
     /* POWER: Turn ADC and reference voltage off to conserve power */
+    ADC10CTL0 &= ~(ADC10ENC);
     ADC10CTL0 &= ~(ADC10ON | REFON);
 #endif
 #if defined(__MSP430_HAS_ADC10_B__)
     ADC10CTL0 &= ~ADC10ENC;                 // disable ADC
     ADC10CTL1 = ADC10SSEL_0 | ADC10DIV_4;   // ADC10OSC as ADC10CLK (~5MHz) / 5
     while(REFCTL0 & REFGENBUSY);            // If ref generator busy, WAIT
-    REFCTL0 |= analog_reference & REF_MASK; // Set reference using masking off the SREF bits. See Energia.h.
-    ADC10MCTL0 = channel | (analog_reference & REFV_MASK); // set channel and reference 
+    REFCTL0 = REF_MAP(analog_reference); // Set reference using masking off the SREF bits. See Energia.h.
+    ADC10MCTL0 = channel | REFV_MAP(analog_reference); // set channel and reference 
     ADC10CTL0 = ADC10ON | ADC10SHT_4;       // turn ADC ON; sample + hold @ 64 × ADC10CLKs
     ADC10CTL1 |= ADC10SHP;                  // ADCCLK = MODOSC; sampling timer
     ADC10CTL2 |= ADC10RES;                  // 10-bit resolution
@@ -353,17 +385,18 @@ uint16_t analogRead(uint8_t pin)
         __bis_SR_register(CPUOFF + GIE);    // LPM0 with interrupts enabled
     }
     /* POWER: Turn ADC and reference voltage off to conserve power */
+    ADC10CTL0 &= ~(ADC10ENC);
     ADC10CTL0 &= ~(ADC10ON);
     REFCTL0 &= ~REFON;
 #endif
 #if defined(__MSP430_HAS_ADC__)
     ADCCTL0 &= ~ADCENC;                 // disable ADC
     ADCCTL1 = ADCSSEL_0 | ADCDIV_4;   // ADC10OSC as ADC10CLK (~5MHz) / 5
-    //REFCTL0 |= analog_reference & REF_MASK; // Set reference using masking off the SREF bits. See Energia.h.
+    //REFCTL0 = REF_MAP(analog_reference); // Set reference using masking off the SREF bits. See Energia.h.
     PMMCTL0_H = PMMPW_H;                // open PMM
     PMMCTL2 |= INTREFEN;                // enable Ref
-    if (pin == TEMPSENSOR) PMMCTL2 |= TSENSOREN;    // enable TC
-    ADCMCTL0 = channel | (analog_reference & REFV_MASK); // set channel and reference
+    if (pin == TEMPSENSOR) PMMCTL2 |= TSENSOREN;     // enable TC
+    ADCMCTL0 = channel | REFV_MAP(analog_reference); // set channel and reference
     ADCCTL0 = ADCON | ADCSHT_4;         // turn ADC ON; sample + hold @ 64 × ADC10CLKs
     ADCCTL1 |= ADCSHP;                  // ADCCLK = MODOSC; sampling timer
     ADCCTL2 |= ADCRES;                  // 10-bit resolution
@@ -375,6 +408,7 @@ uint16_t analogRead(uint8_t pin)
         __bis_SR_register(CPUOFF + GIE);    // LPM0 with interrupts enabled
     }
     /* POWER: Turn ADC and reference voltage off to conserve power */
+    ADCCTL0 &= ~(ADCENC);
     ADCCTL0 &= ~(ADCON);
     //REFCTL0 &= ~REFON;
     PMMCTL2 &= ~(INTREFEN | TSENSOREN);
@@ -385,11 +419,11 @@ uint16_t analogRead(uint8_t pin)
     ADC12CTL1 = ADC12SSEL_0 | ADC12DIV_4;   // ADC12OSC as ADC12CLK (~5MHz) / 5
     while(REFCTL0 & REFGENBUSY);            // If ref generator busy, WAIT
     if (pin == TEMPSENSOR) {// if Temp Sensor 
-        REFCTL0 = (INTERNAL1V5 & REF_MASK);                  // Set reference to internal 1.5V
-        ADC12MCTL0 = channel | ((INTERNAL1V5 >> 4) & REFV_MASK); // set channel and reference 
+        REFCTL0 = REF_MAP(INTERNAL1V5);               // Set reference to internal 1.5V
+        ADC12MCTL0 = channel | REFV_MAP(INTERNAL1V5); // set channel and reference 
     } else {
-        REFCTL0 = (analog_reference & REF_MASK);                  // Set reference using masking off the SREF bits. See Energia.h.
-        ADC12MCTL0 = channel | ((analog_reference >> 4) & REFV_MASK); // set channel and reference 
+        REFCTL0 = REF_MAP(analog_reference);          // Set reference using masking off the SREF bits. See Energia.h.
+        ADC12MCTL0 = channel | REFV_MAP(analog_reference); // set channel and reference 
     }
     ADC12CTL0 = ADC12ON | ADC12SHT0_4;      // turn ADC ON; sample + hold @ 64 × ADC10CLKs
     ADC12CTL1 |= ADC12SHP;                  // ADCCLK = MODOSC; sampling timer
@@ -402,6 +436,7 @@ uint16_t analogRead(uint8_t pin)
         __bis_SR_register(CPUOFF + GIE);    // LPM0 with interrupts enabled
     }
     /* POWER: Turn ADC and reference voltage off to conserve power */
+    ADC12CTL0 &= ~(ADC12ENC);
     ADC12CTL0 &= ~(ADC12ON);
     REFCTL0 &= ~REFON;
 #endif
@@ -416,23 +451,24 @@ uint16_t analogRead(uint8_t pin)
     ADC12IER0 |= ADC12IE0;                  // Enable interrupts
     while(REFCTL0 & REFGENBUSY);            // If ref generator busy, WAIT
     if (pin == TEMPSENSOR) {// if Temp Sensor
-      REFCTL0 = (INTERNAL1V2 & REF_MASK);   // Set reference to internal 1.2V
-      ADC12MCTL0 = channel | (INTERNAL1V2 & REFV_MASK); // set channel and reference 
+      REFCTL0 = REF_MAP(INTERNAL1V2);       // Set reference to internal 1.2V
+      ADC12MCTL0 = channel | REFV_MAP(INTERNAL1V2); // set channel and reference 
     } else {
-      REFCTL0 = (analog_reference & REF_MASK); // Set reference using masking off the SREF bits. See Energia.h.
-      ADC12MCTL0 = channel | (analog_reference & REFV_MASK); // set channel and reference 
+      REFCTL0 = REF_MAP(analog_reference);  // Set reference using masking off the SREF bits. See Energia.h.
+      ADC12MCTL0 = channel | REFV_MAP(analog_reference); // set channel and reference 
     }
     if (REFCTL0 & REFON)
-        while(!(REFCTL0 & REFGENRDY));        // wait till ref generator ready
+        while(!(REFCTL0 & REFGENRDY));      // wait till ref generator ready
     ADC12CTL0 |= ADC12ENC | ADC12SC;        // enable ADC and start conversion
     while (ADC12CTL1 & ADC12BUSY) {         // sleep and wait for completion
         __bis_SR_register(CPUOFF + GIE);    // LPM0 with interrupts enabled
     }
     /* POWER: Turn ADC and reference voltage off to conserve power */
+    ADC12CTL0 &= ~(ADC12ENC);
     ADC12CTL0 &= ~(ADC12ON);
     REFCTL0 &= ~(REFON);
 #endif
-    return ADCxMEM0;  // return sampled value after returning to active mode in ADC10_ISR
+    return mapResolution(ADCxMEM0, DEFAULT_READ_RESOLUTION, _readResolution);
 #else
     // no ADC
     return 0;

@@ -41,13 +41,19 @@ static const uint8_t SS      = 20;  /* P1.3 */
 static const uint8_t SCK     = 6;   /* P2.2 */
 static const uint8_t MOSI    = 11;  /* P1.6 aka SIMO */
 static const uint8_t MISO    = 12;  /* P1.7 aka SOMI */
-static const uint8_t TWISDA  = 11;  /* P1.6 */
-static const uint8_t TWISCL  = 12;  /* P1.7 */
-#define TWISDA_SET_MODE  (PORT_SELECTION1 | INPUT_PULLUP)
-#define TWISCL_SET_MODE  (PORT_SELECTION1 | INPUT_PULLUP)
+static const uint8_t TWISDA0  = 11;  /* P1.6 */
+static const uint8_t TWISCL0  = 12;  /* P1.7 */
+#define TWISDA0_SET_MODE  (PORT_SELECTION1 | INPUT_PULLUP)
+#define TWISCL0_SET_MODE  (PORT_SELECTION1 | INPUT_PULLUP)
 #define SPISCK_SET_MODE  (PORT_SELECTION1)
 #define SPIMOSI_SET_MODE (PORT_SELECTION1)
 #define SPIMISO_SET_MODE (PORT_SELECTION1)
+/* Define the default I2C settings */
+#define DEFAULT_I2C 0
+#define TWISDA TWISDA0
+#define TWISCL TWISCL0
+#define TWISDA_SET_MODE  TWISDA0_SET_MODE
+#define TWISCL_SET_MODE  TWISCL0_SET_MODE
 #endif
 
 #if defined(__MSP430_HAS_EUSCI_A0__)
@@ -250,9 +256,9 @@ const uint16_t port_to_sel1[] = {
 const uint8_t digital_pin_to_timer[] = {
 	NOT_ON_TIMER,  /*  0 - pin count starts at 1 */
 	NOT_ON_TIMER,  /*  1 - VCC */
-	T2B0,          /*  2 - P2.0 */
-	T0B0,          /*  3 - P2.5 */
-	T1B0,          /*  4 - P2.6 */
+	NOT_ON_TIMER,  /*  2 - P2.0  - note: CCR0 output cannot be used with analogWrite */
+	NOT_ON_TIMER,  /*  3 - P2.5  - note: CCR0 output cannot be used with analogWrite */
+	NOT_ON_TIMER,  /*  4 - P2.6  - note: CCR0 output cannot be used with analogWrite */
 	T2B1,          /*  5 - P2.1 */
 	T2B2,          /*  6 - P2.2 */
 	T1B1,          /*  7 - P3.4 */
@@ -271,7 +277,7 @@ const uint8_t digital_pin_to_timer[] = {
 	T1A2,          /* 20 - P1.3 */
 	T0B1,          /* 21 - P1.4 */
 	T0B2,          /* 22 - P1.5 */
-	T2B0,          /* 23 - P4.0 */
+	NOT_ON_TIMER,  /* 23 - P4.0  - note: CCR0 output cannot be used with analogWrite */
 	NOT_ON_TIMER,  /* 24 - GND  */
 	/* LED's */
 	NOT_ON_TIMER,  /* 25 PJ.0 - LED1 */

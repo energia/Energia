@@ -42,13 +42,23 @@ static const uint8_t SS      = 8;   /* P3.4 */
 static const uint8_t SCK     = 7;   /* P2.2 */
 static const uint8_t MOSI    = 15;  /* P1.6 aka SIMO */
 static const uint8_t MISO    = 14;  /* P1.7 aka SOMI */
-static const uint8_t TWISDA  = 15;  /* P1.6 */
-static const uint8_t TWISCL  = 14;  /* P1.7 */
-#define TWISDA_SET_MODE  (PORT_SELECTION1 | INPUT_PULLUP)
-#define TWISCL_SET_MODE  (PORT_SELECTION1 | INPUT_PULLUP)
+static const uint8_t TWISCL1  = 9;   /* P3.5 SW I2C */
+static const uint8_t TWISDA1  = 10;  /* P3.6 SW I2C */
+static const uint8_t TWISDA0  = 15;  /* P1.6 UCB0 */
+static const uint8_t TWISCL0  = 14;  /* P1.7 UCB0 */
+#define TWISDA0_SET_MODE  (PORT_SELECTION1 | INPUT_PULLUP)
+#define TWISCL0_SET_MODE  (PORT_SELECTION1 | INPUT_PULLUP)
+#define TWISDA1_SET_MODE  (INPUT_PULLUP)
+#define TWISCL1_SET_MODE  (INPUT_PULLUP)
 #define SPISCK_SET_MODE  (PORT_SELECTION1)
 #define SPIMOSI_SET_MODE (PORT_SELECTION1)
 #define SPIMISO_SET_MODE (PORT_SELECTION1)
+/* Define the default I2C settings */
+#define DEFAULT_I2C -1 /* indicates SW I2C on pseudo module 1 */
+#define TWISDA TWISDA1
+#define TWISCL TWISCL1
+#define TWISDA_SET_MODE  TWISDA1_SET_MODE
+#define TWISCL_SET_MODE  TWISCL1_SET_MODE
 #endif
 
 #if defined(__MSP430_HAS_EUSCI_A0__) || defined(__MSP430_HAS_EUSCI_A1__)
@@ -283,9 +293,9 @@ const uint8_t digital_pin_to_timer[] = {
 	NOT_ON_TIMER,  /*  1 - Vcc */
 	NOT_ON_TIMER,  /*  2 - P4.2 */
 	T0B1,          /*  3 - P2.6 */
-	T0B0,          /*  4 - P2.5 */
+	NOT_ON_TIMER,  /*  4 - P2.5  - note: CCR0 output cannot be used with analogWrite */
 	NOT_ON_TIMER,  /*  5 - P4.3 */
-	T1A0,          /*  6 - P2.4 */
+	NOT_ON_TIMER,  /*  6 - P2.4  - note: CCR0 output cannot be used with analogWrite */
 	T0A2,          /*  7 - P2.2 */
 	T0B3,          /*  8 - P3.4 */
 	T0B4,          /*  9 - P3.5 */
@@ -299,7 +309,7 @@ const uint8_t digital_pin_to_timer[] = {
 	NOT_ON_TIMER,  /* 17 - TEST */
 	NOT_ON_TIMER,  /* 18 - P3.0 */
 	T1A1,          /* 19 - P1.2 */
-	T0B0,          /* 20 - GND */
+	NOT_ON_TIMER,  /* 20 - GND */
 	
 	T0B6,          /* 21 - P2.0 */
 	T0B0,          /* 22 - P2.1 */
