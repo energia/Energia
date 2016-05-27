@@ -1,35 +1,35 @@
 /*
  * wlan.h - CC31xx/CC32xx Host Driver Implementation
  *
- * Copyright (C) 2014 Texas Instruments Incorporated - http://www.ti.com/ 
- * 
- * 
- *  Redistribution and use in source and binary forms, with or without 
- *  modification, are permitted provided that the following conditions 
+ * Copyright (C) 2015 Texas Instruments Incorporated - http://www.ti.com/
+ *
+ *
+ *  Redistribution and use in source and binary forms, with or without
+ *  modification, are permitted provided that the following conditions
  *  are met:
  *
- *    Redistributions of source code must retain the above copyright 
+ *    Redistributions of source code must retain the above copyright
  *    notice, this list of conditions and the following disclaimer.
  *
  *    Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in the 
- *    documentation and/or other materials provided with the   
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the
  *    distribution.
  *
  *    Neither the name of Texas Instruments Incorporated nor the names of
  *    its contributors may be used to endorse or promote products derived
  *    from this software without specific prior written permission.
  *
- *  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS 
- *  "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT 
+ *  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ *  "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
  *  LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
- *  A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT 
- *  OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, 
- *  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT 
+ *  A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+ *  OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ *  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
  *  LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
  *  DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
- *  THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT 
- *  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE 
+ *  THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ *  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  *  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
 */
@@ -38,7 +38,7 @@
 /* Include files                                                             */
 /*****************************************************************************/
 #include "simplelink.h"
-    
+
 #ifndef __WLAN_H__
 #define    __WLAN_H__
 
@@ -61,46 +61,50 @@ extern "C" {
 
 */
 
-#define SL_BSSID_LENGTH                                                                                    (6)
-#define MAXIMAL_SSID_LENGTH                                                                                (32)
+#define SL_BSSID_LENGTH           (6)
+#define MAXIMAL_SSID_LENGTH       (32)
 
-#define NUM_OF_RATE_INDEXES                                                                             (20)
-#define SIZE_OF_RSSI_HISTOGRAM                                                                          (6)
- 
+#define NUM_OF_RATE_INDEXES       (20)
+#define SIZE_OF_RSSI_HISTOGRAM    (6)
+
 /* WLAN Disconnect Reason Codes */
-#define  SL_DISCONNECT_RESERVED_0                                                                       (0)
-#define  SL_DISCONNECT_UNSPECIFIED_REASON                                                               (1)
-#define  SL_PREVIOUS_AUTHENTICATION_NO_LONGER_VALID                                                     (2)
-#define  SL_DEAUTHENTICATED_BECAUSE_SENDING_STATION_IS_LEAVING                                          (3)
-#define  SL_DISASSOCIATED_DUE_TO_INACTIVITY                                                             (4)
-#define  SL_DISASSOCIATED_BECAUSE_AP_IS_UNABLE_TO_HANDLE_ALL_CURRENTLY_ASSOCIATED_STATIONS              (5)
-#define  SL_CLASS_2_FRAME_RECEIVED_FROM_NONAUTHENTICATED_STATION                                        (6)
-#define  SL_CLASS_3_FRAME_RECEIVED_FROM_NONASSOCIATED_STATION                                           (7)
-#define  SL_DISASSOCIATED_BECAUSE_SENDING_STATION_IS_LEAVING_BSS                                        (8)
-#define  SL_STATION_REQUESTING_ASSOCIATION_IS_NOT_AUTHENTICATED_WITH_RESPONDING_STATION                 (9)
-#define  SL_DISASSOCIATED_BECAUSE_THE_INFORMATION_IN_THE_POWER_CAPABILITY_ELEMENT_IS_UNACCEPTABLE       (10)
-#define  SL_DISASSOCIATED_BECAUSE_THE_INFORMATION_IN_THE_SUPPORTED_CHANNELS_ELEMENT_IS_UNACCEPTABLE     (11)
-#define  SL_DISCONNECT_RESERVED_1                                                                       (12)
-#define  SL_INVALID_INFORMATION_ELEMENT                                                                 (13)
-#define  SL_MESSAGE_INTEGRITY_CODE_MIC_FAILURE                                                          (14)
-#define  SL_FOUR_WAY_HANDSHAKE_TIMEOUT                                                                  (15)
-#define  SL_GROUP_KEY_HANDSHAKE_TIMEOUT                                                                 (16)
-#define  SL_RE_ASSOCIATION_REQUEST_PROBE_RESPONSE_BEACON_FRAME                                          (17)
-#define  SL_INVALID_GROUP_CIPHER                                                                        (18)
-#define  SL_INVALID_PAIRWISE_CIPHER                                                                     (19)
-#define  SL_INVALID_AKMP                                                                                (20)
-#define  SL_UNSUPPORTED_RSN_INFORMATION_ELEMENT_VERSION                                                 (21)
-#define  SL_INVALID_RSN_INFORMATION_ELEMENT_CAPABILITIES                                                (22)
-#define  SL_IEEE_802_1X_AUTHENTICATION_FAILED                                                           (23)
-#define  SL_CIPHER_SUITE_REJECTED_BECAUSE_OF_THE_SECURITY_POLICY                                        (24)
-#define  SL_DISCONNECT_RESERVED_2                                                                       (25)
-#define  SL_DISCONNECT_RESERVED_3                                                                       (26)
-#define  SL_DISCONNECT_RESERVED_4                                                                       (27)
-#define  SL_DISCONNECT_RESERVED_5                                                                       (28)
-#define  SL_DISCONNECT_RESERVED_6                                                                       (29)
-#define  SL_DISCONNECT_RESERVED_7                                                                       (30)
-#define  SL_DISCONNECT_RESERVED_8                                                                       (31)
-#define  SL_USER_INITIATED_DISCONNECTION                                                                (200)
+#define  SL_WLAN_DISCONNECT_UNSPECIFIED_REASON                             (1)
+#define  SL_WLAN_DISCONNECT_PREV_AUTH_NOT_VALID                            (2)
+#define  SL_WLAN_DISCONNECT_DEAUTH_LEAVING                                 (3)
+#define  SL_WLAN_DISCONNECT_DISASSOC_DUE_TO_INACTIVITY                     (4)
+#define  SL_WLAN_DISCONNECT_DISASSOC_AP_BUSY                               (5)
+#define  SL_WLAN_DISCONNECT_CLASS2_FRAME_FROM_NONAUTH_STA                  (6)
+#define  SL_WLAN_DISCONNECT_CLASS3_FRAME_FROM_NONASSOC_STA                 (7)
+#define  SL_WLAN_DISCONNECT_DISASSOC_STA_HAS_LEFT                          (8)
+#define  SL_WLAN_DISCONNECT_STA_REQ_ASSOC_WITHOUT_AUTH                     (9)
+#define  SL_WLAN_DISCONNECT_PWR_CAPABILITY_NOT_VALID                       (10)
+#define  SL_WLAN_DISCONNECT_SUPPORTED_CHANNEL_NOT_VALID                    (11)
+#define  SL_WLAN_DISCONNECT_INVALID_IE                                     (13)
+#define  SL_WLAN_DISCONNECT_MIC_FAILURE                                    (14)
+#define  SL_WLAN_DISCONNECT_4WAY_HANDSHAKE_TIMEOUT                         (15)
+#define  SL_WLAN_DISCONNECT_GROUP_KEY_UPDATE_TIMEOUT                       (16)
+#define  SL_WLAN_DISCONNECT_IE_IN_4WAY_DIFFERS                             (17)
+#define  SL_WLAN_DISCONNECT_GROUP_CIPHER_NOT_VALID                         (18)
+#define  SL_WLAN_DISCONNECT_PAIRWISE_CIPHER_NOT_VALID                      (19)
+#define  SL_WLAN_DISCONNECT_AKMP_NOT_VALID                                 (20)
+#define  SL_WLAN_DISCONNECT_UNSUPPORTED_RSN_IE_VERSION                     (21)
+#define  SL_WLAN_DISCONNECT_INVALID_RSN_IE_CAPAB                           (22)
+#define  SL_WLAN_DISCONNECT_IEEE_802_1X_AUTH_FAILED                        (23)
+#define  SL_WLAN_DISCONNECT_CIPHER_SUITE_REJECTED                          (24)
+#define  SL_WLAN_DISCONNECT_DISASSOC_LOW_ACK                               (34)
+#define  SL_WLAN_DISCONNECT_ROAMING_TRIGGER_NONE                           (100)
+#define  SL_WLAN_DISCONNECT_ROAMING_TRIGGER_LOW_TX_RATE                    (104)
+#define  SL_WLAN_DISCONNECT_ROAMING_TRIGGER_LOW_SNR                        (105)
+#define  SL_WLAN_DISCONNECT_ROAMING_TRIGGER_LOW_QUALITY                    (106)
+#define  SL_WLAN_DISCONNECT_ROAMING_TRIGGER_TSPEC_REJECTED                 (107)
+#define  SL_WLAN_DISCONNECT_ROAMING_TRIGGER_MAX_TX_RETRIES                 (108)
+#define  SL_WLAN_DISCONNECT_ROAMING_TRIGGER_BSS_LOSS                       (109)
+#define  SL_WLAN_DISCONNECT_ROAMING_TRIGGER_BSS_LOSS_DUE_TO_MAX_TX_RETRY   (110)
+#define  SL_WLAN_DISCONNECT_ROAMING_TRIGGER_SWITCH_CHANNEL                 (111)
+#define  SL_WLAN_DISCONNECT_ROAMING_TRIGGER_AP_DISCONNECT                  (112)
+#define  SL_WLAN_DISCONNECT_ROAMING_TRIGGER_SECURITY_ATTACK                (113)
+#define  SL_WLAN_DISCONNECT_USER_INITIATED_DISCONNECTION                   (200)
+
 
 /* Wlan error codes */
 #define  SL_ERROR_KEY_ERROR                                                                             (-3)
@@ -136,17 +140,16 @@ extern "C" {
 #define SL_SEC_TYPE_P2P_PIN_AUTO                                                                        (9) /* NOT Supported yet */
 
 
-  
+
 #define SL_SCAN_SEC_TYPE_OPEN                                                                           (0)
 #define SL_SCAN_SEC_TYPE_WEP                                                                            (1)
-#define SL_SCAN_SEC_TYPE_WPA                                                                            (2) 
+#define SL_SCAN_SEC_TYPE_WPA                                                                            (2)
 #define SL_SCAN_SEC_TYPE_WPA2                                                                           (3)
 
-  
-  
+
 #define TLS                                (0x1)
 #define MSCHAP                             (0x0)
-#define PSK                                (0x2) 
+#define PSK                                (0x2)
 #define TTLS                               (0x10)
 #define PEAP0                              (0x20)
 #define PEAP1                              (0x40)
@@ -160,7 +163,7 @@ extern "C" {
 #define EAPMETHOD_PAIRWISE_CIPHER_SHIFT    (19)
 #define EAPMETHOD_GROUP_CIPHER_SHIFT       (27)
 
-#define WPA_CIPHER_CCMP                    (0x1) 
+#define WPA_CIPHER_CCMP                    (0x1)
 #define WPA_CIPHER_TKIP                    (0x2)
 #define CC31XX_DEFAULT_CIPHER              (WPA_CIPHER_CCMP | WPA_CIPHER_TKIP)
 
@@ -176,15 +179,15 @@ extern "C" {
 #define SL_ENT_EAP_METHOD_TTLS_MSCHAPv2             EAPMETHOD(TTLS  , MSCHAP                   , CC31XX_DEFAULT_CIPHER , CC31XX_DEFAULT_CIPHER)
 #define SL_ENT_EAP_METHOD_TTLS_PSK                  EAPMETHOD(TTLS  , PSK                      , CC31XX_DEFAULT_CIPHER , CC31XX_DEFAULT_CIPHER)
 #define SL_ENT_EAP_METHOD_PEAP0_TLS                 EAPMETHOD(PEAP0 , TLS                      , CC31XX_DEFAULT_CIPHER , CC31XX_DEFAULT_CIPHER)
-#define SL_ENT_EAP_METHOD_PEAP0_MSCHAPv2            EAPMETHOD(PEAP0 , MSCHAP                   , CC31XX_DEFAULT_CIPHER , CC31XX_DEFAULT_CIPHER) 
+#define SL_ENT_EAP_METHOD_PEAP0_MSCHAPv2            EAPMETHOD(PEAP0 , MSCHAP                   , CC31XX_DEFAULT_CIPHER , CC31XX_DEFAULT_CIPHER)
 #define SL_ENT_EAP_METHOD_PEAP0_PSK                 EAPMETHOD(PEAP0 , PSK                      , CC31XX_DEFAULT_CIPHER , CC31XX_DEFAULT_CIPHER)
 #define SL_ENT_EAP_METHOD_PEAP1_TLS                 EAPMETHOD(PEAP1 , TLS                      , CC31XX_DEFAULT_CIPHER , CC31XX_DEFAULT_CIPHER)
-#define SL_ENT_EAP_METHOD_PEAP1_MSCHAPv2            EAPMETHOD(PEAP1 , MSCHAP                   , CC31XX_DEFAULT_CIPHER , CC31XX_DEFAULT_CIPHER) 
+#define SL_ENT_EAP_METHOD_PEAP1_MSCHAPv2            EAPMETHOD(PEAP1 , MSCHAP                   , CC31XX_DEFAULT_CIPHER , CC31XX_DEFAULT_CIPHER)
 #define SL_ENT_EAP_METHOD_PEAP1_PSK                 EAPMETHOD(PEAP1 , PSK                      , CC31XX_DEFAULT_CIPHER , CC31XX_DEFAULT_CIPHER)
 #define SL_ENT_EAP_METHOD_FAST_AUTH_PROVISIONING    EAPMETHOD(FAST  , FAST_AUTH_PROVISIONING   , CC31XX_DEFAULT_CIPHER , CC31XX_DEFAULT_CIPHER)
 #define SL_ENT_EAP_METHOD_FAST_UNAUTH_PROVISIONING  EAPMETHOD(FAST  , FAST_UNAUTH_PROVISIONING , CC31XX_DEFAULT_CIPHER , CC31XX_DEFAULT_CIPHER)
 #define SL_ENT_EAP_METHOD_FAST_NO_PROVISIONING      EAPMETHOD(FAST  , FAST_NO_PROVISIONING     , CC31XX_DEFAULT_CIPHER , CC31XX_DEFAULT_CIPHER)
- 
+
 #define SL_LONG_PREAMBLE                   (0)
 #define SL_SHORT_PREAMBLE                   (1)
 
@@ -286,6 +289,53 @@ extern "C" {
 
 #define INFO_ELEMENT_DEFAULT_OUI             (0x000000)  /* 08, 00, 28 will be used */
 
+
+
+
+/**************************************************
+For backward compatability (version 1.0.0.10)
+**************************************************/
+#define SL_DISCONNECT_UNSPECIFIED_REASON                              SL_WLAN_DISCONNECT_UNSPECIFIED_REASON
+#define SL_PREVIOUS_AUTHENTICATION_NO_LONGER_VALID                          SL_WLAN_DISCONNECT_PREV_AUTH_NOT_VALID
+#define SL_DEAUTHENTICATED_BECAUSE_SENDING_STATION_IS_LEAVING                   SL_WLAN_DISCONNECT_DEAUTH_LEAVING
+#define SL_DISASSOCIATED_DUE_TO_INACTIVITY                              SL_WLAN_DISCONNECT_DISASSOC_DUE_TO_INACTIVITY
+#define SL_DISASSOCIATED_BECAUSE_AP_IS_UNABLE_TO_HANDLE_ALL_CURRENTLY_ASSOCIATED_STATIONS     SL_WLAN_DISCONNECT_DISASSOC_AP_BUSY
+#define SL_CLASS_2_FRAME_RECEIVED_FROM_NONAUTHENTICATED_STATION                   SL_WLAN_DISCONNECT_CLASS2_FRAME_FROM_NONAUTH_STA
+#define SL_CLASS_3_FRAME_RECEIVED_FROM_NONASSOCIATED_STATION                    SL_WLAN_DISCONNECT_CLASS3_FRAME_FROM_NONASSOC_STA
+#define SL_DISASSOCIATED_BECAUSE_SENDING_STATION_IS_LEAVING_BSS                   SL_WLAN_DISCONNECT_DISASSOC_STA_HAS_LEFT
+#define SL_STATION_REQUESTING_ASSOCIATION_IS_NOT_AUTHENTICATED_WITH_RESPONDING_STATION        SL_WLAN_DISCONNECT_STA_REQ_ASSOC_WITHOUT_AUTH
+#define SL_DISASSOCIATED_BECAUSE_THE_INFORMATION_IN_THE_POWER_CAPABILITY_ELEMENT_IS_UNACCEPTABLE    SL_WLAN_DISCONNECT_PWR_CAPABILITY_NOT_VALID
+#define SL_DISASSOCIATED_BECAUSE_THE_INFORMATION_IN_THE_SUPPORTED_CHANNELS_ELEMENT_IS_UNACCEPTABLE  SL_WLAN_DISCONNECT_SUPPORTED_CHANNEL_NOT_VALID
+#define SL_INVALID_INFORMATION_ELEMENT                                SL_WLAN_DISCONNECT_INVALID_IE
+#define SL_MESSAGE_INTEGRITY_CODE_MIC_FAILURE                           SL_WLAN_DISCONNECT_MIC_FAILURE
+#define SL_FOUR_WAY_HANDSHAKE_TIMEOUT                               SL_WLAN_DISCONNECT_4WAY_HANDSHAKE_TIMEOUT
+#define SL_GROUP_KEY_HANDSHAKE_TIMEOUT                                SL_WLAN_DISCONNECT_GROUP_KEY_UPDATE_TIMEOUT
+#define SL_RE_ASSOCIATION_REQUEST_PROBE_RESPONSE_BEACON_FRAME                   SL_WLAN_DISCONNECT_IE_IN_4WAY_DIFFERS
+#define SL_INVALID_GROUP_CIPHER                                   SL_WLAN_DISCONNECT_GROUP_CIPHER_NOT_VALID
+#define SL_INVALID_PAIRWISE_CIPHER                                  SL_WLAN_DISCONNECT_PAIRWISE_CIPHER_NOT_VALID
+#define SL_INVALID_AKMP                                       SL_WLAN_DISCONNECT_AKMP_NOT_VALID
+#define SL_UNSUPPORTED_RSN_INFORMATION_ELEMENT_VERSION                        SL_WLAN_DISCONNECT_UNSUPPORTED_RSN_IE_VERSION
+#define SL_INVALID_RSN_INFORMATION_ELEMENT_CAPABILITIES                       SL_WLAN_DISCONNECT_INVALID_RSN_IE_CAPAB
+#define SL_IEEE_802_1X_AUTHENTICATION_FAILED                            SL_WLAN_DISCONNECT_IEEE_802_1X_AUTH_FAILED
+#define SL_CIPHER_SUITE_REJECTED_BECAUSE_OF_THE_SECURITY_POLICY                   SL_WLAN_DISCONNECT_CIPHER_SUITE_REJECTED
+#define SL_USER_INITIATED_DISCONNECTION                               SL_WLAN_DISCONNECT_USER_INITIATED_DISCONNECTION
+
+
+#define SL_DISCONNECT_RESERVED_0    (0)
+#define SL_DISCONNECT_RESERVED_1  (12)
+#define SL_DISCONNECT_RESERVED_2  (26)
+#define SL_DISCONNECT_RESERVED_3    (27)
+#define SL_DISCONNECT_RESERVED_4  (28)
+#define SL_DISCONNECT_RESERVED_5  (29)
+#define SL_DISCONNECT_RESERVED_6  (30)
+#define SL_DISCONNECT_RESERVED_7  (31)
+#define SL_DISCONNECT_RESERVED_8  (32)
+
+/******************************
+End of backward compatability.
+*******************************/
+
+
 /*****************************************************************************/
 /* Structure/Enum declarations                                               */
 /*****************************************************************************/
@@ -372,8 +422,8 @@ typedef union
 {
   slSmartConfigStartAsyncResponse_t        smartConfigStartResponse; /*SL_WLAN_SMART_CONFIG_COMPLETE_EVENT*/
   slSmartConfigStopAsyncResponse_t         smartConfigStopResponse;  /*SL_WLAN_SMART_CONFIG_STOP_EVENT */
-  slPeerInfoAsyncResponse_t                APModeStaConnected;       /* SL_WLAN_STA_CONNECTED_EVENT - relevant only in AP mode - holds information regarding a new STA connection */   
-  slPeerInfoAsyncResponse_t                APModestaDisconnected;    /* SL_WLAN_STA_DISCONNECTED_EVENT - relevant only in AP mode - holds information regarding a STA disconnection */ 
+  slPeerInfoAsyncResponse_t                APModeStaConnected;       /* SL_WLAN_STA_CONNECTED_EVENT - relevant only in AP mode - holds information regarding a new STA connection */
+  slPeerInfoAsyncResponse_t                APModestaDisconnected;    /* SL_WLAN_STA_DISCONNECTED_EVENT - relevant only in AP mode - holds information regarding a STA disconnection */
   slWlanConnectAsyncResponse_t             STAandP2PModeWlanConnected;   /* SL_WLAN_CONNECT_EVENT - relevant only in STA and P2P mode - holds information regarding a new connection */
   slWlanConnectAsyncResponse_t             STAandP2PModeDisconnected;   /* SL_WLAN_DISCONNECT_EVENT - relevant only in STA and P2P mode - holds information regarding a disconnection */
   slPeerInfoAsyncResponse_t                P2PModeDevFound;             /* SL_WLAN_P2P_DEV_FOUND_EVENT - relevant only in P2P mode */
@@ -389,10 +439,10 @@ typedef struct
 } SlWlanEvent_t;
 
 
-typedef struct 
+typedef struct
 {
     _u32  ReceivedValidPacketsNumber;                     /* sum of the packets that been received OK (include filtered) */
-    _u32  ReceivedFcsErrorPacketsNumber;                  /* sum of the packets that been dropped due to FCS error */ 
+    _u32  ReceivedFcsErrorPacketsNumber;                  /* sum of the packets that been dropped due to FCS error */
     _u32  ReceivedAddressMismatchPacketsNumber;           /* sum of the packets that been received but filtered out by one of the HW filters */
     _i16  AvarageDataCtrlRssi;                            /* average RSSI for all valid data packets received */
     _i16  AvarageMgMntRssi;                               /* average RSSI for all valid management packets received */
@@ -413,15 +463,15 @@ typedef struct
     _i8 reserved[3];
 }Sl_WlanNetworkEntry_t;
 
- 
-typedef struct 
+
+typedef struct
 {
     _u8   Type;
     _i8*  Key;
     _u8   KeyLen;
 }SlSecParams_t;
- 
-typedef struct 
+
+typedef struct
 {
     _i8*  User;
     _u8   UserLen;
@@ -431,7 +481,7 @@ typedef struct
     _u32  EapMethod;
 }SlSecParamsExt_t;
 
-typedef struct 
+typedef struct
 {
     _i8   User[32];
     _u8   UserLen;
@@ -443,13 +493,16 @@ typedef struct
 
 typedef enum
 {
-    ROLE_STA   =   0,
-    ROLE_AP    =   2,
-    ROLE_P2P     =   3,
-    ROLE_STA_ERR =  -1,         /* Failure to load MAC/PHY in STA role */
-    ROLE_AP_ERR  =  -ROLE_AP,   /* Failure to load MAC/PHY in AP role */
-    ROLE_P2P_ERR =  -ROLE_P2P   /* Failure to load MAC/PHY in P2P role */
-}SlWlanMode_t;
+    ROLE_STA       =   0,
+    ROLE_UNKNOWN   =   1,
+    ROLE_AP        =   2,
+    ROLE_P2P     =     3,
+    ROLE_STA_ERR =    -1,    /* Failure to load MAC/PHY in STA role */
+    ROLE_AP_ERR  =    -2,    /* Failure to load MAC/PHY in AP role */
+    ROLE_P2P_ERR =    -3,    /* Failure to load MAC/PHY in P2P role */
+    INIT_CALIB_FAIL = -4     /* Failure of calibration */
+}SlWlanMode_e;
+
 
 typedef struct
 {
@@ -458,7 +511,7 @@ typedef struct
 }slWlanScanParamCommand_t;
 
 
-typedef struct 
+typedef struct
 {
     _u8   id;
     _u8   oui[3];
@@ -466,7 +519,7 @@ typedef struct
     _u8   data[252];
 } sl_protocol_InfoElement_t;
 
-typedef struct 
+typedef struct
 {
     _u8                       index;  /* 0 - MAX_PRIVATE_INFO_ELEMENTS_SUPPROTED */
     _u8                       role;   /* bit0: AP = 0, GO = 1                    */
@@ -481,7 +534,7 @@ typedef struct
 
 /*!
     \brief Connect to wlan network as a station
-     
+
     \param[in]      pName       up to 32 bytes in case of STA the name is the SSID of the Access Point
     \param[in]      NameLen     name length
     \param[in]      pMacAddr    6 bytes for MAC address
@@ -492,71 +545,71 @@ typedef struct
                                 - SL_SEC_TYPE_WPA_WPA2
                                 - SL_SEC_TYPE_WPA_ENT
                                 - SL_SEC_TYPE_WPS_PBC
-                                - SL_SEC_TYPE_WPS_PIN    
-    
+                                - SL_SEC_TYPE_WPS_PIN
+
     \param[in]      pSecExtParams  Enterprise parameters (set NULL in case Enterprise parameters is not in use)
-    
+
     \return         On success, zero is returned. On error, negative is returned
                     In case error number (-71) is returned, it indicates a connection was activated while the device it running in AP role
-    
-    \sa             sl_WlanDisconnect        
-    \note           belongs to \ref ext_api       
+
+    \sa             sl_WlanDisconnect
+    \note           belongs to \ref ext_api
     \warning        In this version only single enterprise mode could be used
                     SL_SEC_TYPE_WPA is a deprecated definition, the new definition is SL_SEC_TYPE_WPA_WPA2
-*/ 
+*/
 #if _SL_INCLUDE_FUNC(sl_WlanConnect)
 _i16 sl_WlanConnect(const _i8*  pName,const  _i16 NameLen,const _u8 *pMacAddr,const SlSecParams_t* pSecParams ,const SlSecParamsExt_t* pSecExtParams);
 #endif
 
 /*!
     \brief wlan disconnect
-    
-    Disconnect connection  
-     
+
+    Disconnect connection
+
     \return         0 disconnected done, other already disconnected
-    
-    \sa             sl_WlanConnect       
-    \note           belongs to \ref ext_api       
-    \warning     
+
+    \sa             sl_WlanConnect
+    \note           belongs to \ref ext_api
+    \warning
 */
 #if _SL_INCLUDE_FUNC(sl_WlanDisconnect)
 _i16 sl_WlanDisconnect(void);
 #endif
 
 /*!
-    \brief add profile 
-    
+    \brief add profile
+
     When auto start is enabled, the device connects to a
     station from the profiles table. Up to 7 profiles are
     supported. If several profiles configured the device chose
     the highest priority profile, within each priority group,
     device will chose profile based on security policy, signal
-    strength, etc parameters. 
+    strength, etc parameters.
 
 
-    \param[in]      pName          up to 32 bytes in case of STA the name is the 
+    \param[in]      pName          up to 32 bytes in case of STA the name is the
                                    SSID of the Access Point
                                    in case of P2P the name is the remote device name
     \param[in]      NameLen     name length
     \param[in]      pMacAddr    6 bytes for MAC address
-    \param[in]      pSecParams     Security parameters - security type 
+    \param[in]      pSecParams     Security parameters - security type
                                    (SL_SEC_TYPE_OPEN,SL_SEC_TYPE_WEP,SL_SEC_TYPE_WPA_WPA2,
                                     SL_SEC_TYPE_P2P_PBC,SL_SEC_TYPE_P2P_PIN_KEYPAD,SL_SEC_TYPE_P2P_PIN_DISPLAY, SL_SEC_TYPE_WPA_ENT), key, and key length
                                    in case of p2p security type pin the key refers to pin code
-    \param[in]      pSecExtParams  Enterprise parameters - identity, identity length, 
+    \param[in]      pSecExtParams  Enterprise parameters - identity, identity length,
                                    Anonymous, Anonymous length, CertIndex (not supported,
                                    certificates need to be placed in a specific file ID),
                                    EapMethod.Use NULL in case Enterprise parameters is not in use
 
     \param[in]      Priority    profile priority. Lowest priority: 0
     \param[in]      Options     Not supported
-     
-    \return         On success, profile stored index is returned. On error, negative value is returned 
 
-    \sa             sl_WlanProfileGet , sl_WlanProfileDel       
+    \return         On success, profile stored index is returned. On error, negative value is returned
+
+    \sa             sl_WlanProfileGet , sl_WlanProfileDel
     \note           belongs to \ref ext_api
     \warning        Only one Enterprise profile is supported.
-                    Please Note that in case of adding an existing profile (compared by pName,pMACAddr and security type) 
+                    Please Note that in case of adding an existing profile (compared by pName,pMACAddr and security type)
                     the old profile will be deleted and the same index will be returned.
                     SL_SEC_TYPE_WPA is a deprecated definition, the new definition is SL_SEC_TYPE_WPA_WPA2
 
@@ -566,32 +619,32 @@ _i16 sl_WlanProfileAdd(const _i8*  pName,const  _i16 NameLen,const _u8 *pMacAddr
 #endif
 
 /*!
-    \brief get profile 
-    
-    read profile from the device     
-     
+    \brief get profile
+
+    read profile from the device
+
     \param[in]      Index          profile stored index, if index does not exists
                                    error is return
     \param[out]     pName          up to 32 bytes, in case of sta mode the name of the Access Point
                                    in case of p2p mode the name of the Remote Device
-    \param[out]     pNameLen       name length 
+    \param[out]     pNameLen       name length
     \param[out]     pMacAddr       6 bytes for MAC address
-    \param[out]     pSecParams     security parameters - security type 
+    \param[out]     pSecParams     security parameters - security type
                                    (SL_SEC_TYPE_OPEN, SL_SEC_TYPE_WEP, SL_SEC_TYPE_WPA_WPA2 or
-                                   SL_SEC_TYPE_WPS_PBC, SL_SEC_TYPE_WPS_PIN, SL_SEC_TYPE_WPA_ENT,SL_SEC_TYPE_P2P_PBC,SL_SEC_TYPE_P2P_PIN_KEYPAD or SL_SEC_TYPE_P2P_PIN_DISPLAY), key and key length are not                  
+                                   SL_SEC_TYPE_WPS_PBC, SL_SEC_TYPE_WPS_PIN, SL_SEC_TYPE_WPA_ENT,SL_SEC_TYPE_P2P_PBC,SL_SEC_TYPE_P2P_PIN_KEYPAD or SL_SEC_TYPE_P2P_PIN_DISPLAY), key and key length are not
                                    in case of p2p security type pin the key refers to pin code
                                    return due to security reasons.
-    \param[out]     pSecExtParams  enterprise parameters - identity, identity 
+    \param[out]     pSecExtParams  enterprise parameters - identity, identity
                                    length, Anonymous, Anonymous length
                                    CertIndex (not supported), EapMethod.
     \param[out]     Priority       profile priority
 
-    \return         On success, Profile security type is returned (0 or positive number). On error, -1 is 
-                    returned      
-    
-    \sa             sl_WlanProfileAdd , sl_WlanProfileDel       
+    \return         On success, Profile security type is returned (0 or positive number). On error, -1 is
+                    returned
+
+    \sa             sl_WlanProfileAdd , sl_WlanProfileDel
     \note           belongs to \ref ext_api
-    \warning     
+    \warning
 */
 #if _SL_INCLUDE_FUNC(sl_WlanProfileGet)
 _i16 sl_WlanProfileGet(const _i16 Index,_i8*  pName, _i16 *pNameLen, _u8 *pMacAddr, SlSecParams_t* pSecParams, SlGetSecParamsExt_t* pSecExtParams, _u32 *pPriority);
@@ -599,18 +652,18 @@ _i16 sl_WlanProfileGet(const _i16 Index,_i8*  pName, _i16 *pNameLen, _u8 *pMacAd
 
 /*!
     \brief Delete WLAN profile
-    
-    Delete WLAN profile  
-     
+
+    Delete WLAN profile
+
     \param[in]   index  number of profile to delete.Possible values are 0 to 6.
-                 Index value 255 will delete all saved profiles   
-     
-    \return  On success, zero is returned. On error, -1 is 
+                 Index value 255 will delete all saved profiles
+
+    \return  On success, zero is returned. On error, -1 is
                returned
-    
-    \sa   sl_WlanProfileAdd , sl_WlanProfileGet       
+
+    \sa   sl_WlanProfileAdd , sl_WlanProfileGet
     \note           belongs to \ref ext_api
-    \warning     
+    \warning
 */
 #if _SL_INCLUDE_FUNC(sl_WlanProfileDel)
 _i16 sl_WlanProfileDel(const _i16 Index);
@@ -618,36 +671,36 @@ _i16 sl_WlanProfileDel(const _i16 Index);
 
 /*!
     \brief Set policy values
-     
-    \param[in]      Type      Type of policy to be modified. The Options are:\n 
-                              - SL_POLICY_CONNECTION 
-                              - SL_POLICY_SCAN 
+
+    \param[in]      Type      Type of policy to be modified. The Options are:\n
+                              - SL_POLICY_CONNECTION
+                              - SL_POLICY_SCAN
                               - SL_POLICY_PM
                               - SL_POLICY_P2P
     \param[in]      Policy    The option value which depends on action type
     \param[in]      pVal      An optional value pointer
     \param[in]      ValLen    An optional value length, in bytes
-    \return         On success, zero is returned. On error, -1 is 
-                    returned   
+    \return         On success, zero is returned. On error, -1 is
+                    returned
     \sa             sl_WlanPolicyGet
     \note           belongs to \ref ext_api
-    \warning        
-    \par           
+    \warning
+    \par
     SL_POLICY_CONNECTION type defines three options available to connect the CC31xx device to the AP: \n
- 
+
     -  If Auto Connect is set, the CC31xx device tries to automatically reconnect to one of its stored profiles, each time the connection fails or the device is rebooted.\n
        To set this option, use: \n
        <b> sl_WlanPolicySet(SL_POLICY_CONNECTION,SL_CONNECTION_POLICY(1,0,0,0,0),NULL,0) </b>
     -  If Fast Connect is set, the CC31xx device tries to establish a fast connection to AP. \n
        To set this option, use: \n
        <b> sl_WlanPolicySet(SL_POLICY_CONNECTION,SL_CONNECTION_POLICY(0,1,0,0,0),NULL,0) </b>
-    -  (relevant for P2P mode only) - If Any P2P is set,  CC31xx/CC32xx device tries to automatically connect to the first P2P device available, \n 
+    -  (relevant for P2P mode only) - If Any P2P is set,  CC31xx/CC32xx device tries to automatically connect to the first P2P device available, \n
        supporting push button only. To set this option, use: \n
        <b> sl_WlanPolicySet(SL_POLICY_CONNECTION,SL_CONNECTION_POLICY(0,0,0,1,0),NULL,0) </b>
     -  For auto smart config upon restart (any command from Host will end this state) use: \n
        <b> sl_WlanPolicySet(SL_POLICY_CONNECTION,SL_CONNECTION_POLICY(0,0,0,0,1),NULL,0) </b> \n
     The options above could be combined to a single action, if more than one action is required. \n
-    \par 
+    \par
     SL_POLICY_SCAN defines system scan time interval.Default interval is 10 minutes. \n
     After settings scan interval, an immediate scan is activated. The next scan will be based on the interval settings. \n
                     -  For example, setting scan interval to 1 minute interval use: \n
@@ -658,7 +711,7 @@ _i16 sl_WlanProfileDel(const _i16 Index);
                     -  For example, disable scan:    \n
                        #define SL_SCAN_DISABLE  0     \n<b>
                        sl_WlanPolicySet(SL_POLICY_SCAN,SL_SCAN_DISABLE,0,0); </b>\n
-    \par 
+    \par
     SL_POLICY_PM defines a power management policy for Station mode only:
                     -  For setting normal power management (default) policy use: <b> sl_WlanPolicySet(SL_POLICY_PM , SL_NORMAL_POLICY, NULL,0) </b>
                     -  For setting low latency power management policy use: <b> sl_WlanPolicySet(SL_POLICY_PM , SL_LOW_LATENCY_POLICY, NULL,0) </b>
@@ -667,7 +720,7 @@ _i16 sl_WlanProfileDel(const _i16 Index);
                     -  For setting Long Sleep Interval policy use: \n
                             _u16 PolicyBuff[4] = {0,0,800,0}; // PolicyBuff[2] is max sleep time in mSec \n<b>
                             sl_WlanPolicySet(SL_POLICY_PM , SL_LONG_SLEEP_INTERVAL_POLICY, (_u8*)PolicyBuff,sizeof(PolicyBuff));  </b>\n
-     
+
     SL_POLICY_P2P defines p2p negotiation policy parameters for P2P role:
                     - To set intent negotiation value, set on of the following:
                         SL_P2P_ROLE_NEGOTIATE   - intent 3
@@ -686,21 +739,21 @@ _i16 sl_WlanPolicySet(const _u8 Type , const _u8 Policy, _u8 *pVal,const _u8 Val
 #endif
 /*!
     \brief get policy values
-     
+
     \param[in]      Type     SL_POLICY_CONNECTION, SL_POLICY_SCAN, SL_POLICY_PM,SL_POLICY_P2P \n
 
     \param[in]      Policy   argument may be set to any value \n
 
     \param[out]     The returned values, depends on each policy type, will be stored in the allocated buffer pointed by pVal
                     with a maximum buffer length set by the calling function and pointed to by argument *pValLen
-     
-    \return         On success, zero is returned. On error, -1 is returned   
-     
+
+    \return         On success, zero is returned. On error, -1 is returned
+
     \sa             sl_WlanPolicySet
 
     \note           belongs to \ref ext_api
 
-    \warning        The value pointed by the argument *pValLen should be set to a value different from 0 and 
+    \warning        The value pointed by the argument *pValLen should be set to a value different from 0 and
                     greater than the buffer length returned from the SL device. Otherwise, an error will be returned.
 
 */
@@ -709,24 +762,24 @@ _i16 sl_WlanPolicyGet(const _u8 Type , _u8 Policy,_u8 *pVal,_u8 *pValLen);
 #endif
 /*!
     \brief Gets the WLAN scan operation results
-    
+
     Gets scan results , gets entry from scan result table
-     
+
     \param[in]   Index - Starting index identifier (range 0-19) for getting scan results
     \param[in]   Count - How many entries to fetch. Max is (20-"Index").
-    \param[out]  pEntries - pointer to an allocated Sl_WlanNetworkEntry_t. 
-                            the number of array items should match "Count" 
+    \param[out]  pEntries - pointer to an allocated Sl_WlanNetworkEntry_t.
+                            the number of array items should match "Count"
                             sec_type: SL_SCAN_SEC_TYPE_OPEN, SL_SCAN_SEC_TYPE_WEP, SL_SCAN_SEC_TYPE_WPA or SL_SCAN_SEC_TYPE_WPA2
- 
-     
+
+
     \return  Number of valid networks list items
-     
-    \sa                
+
+    \sa
     \note       belongs to \ref ext_api
-    \warning    This command do not initiate any active scanning action 
+    \warning    This command do not initiate any active scanning action
     \par        Example:
     \code       An example of fetching max 10 results:
-    
+
                 Sl_WlanNetworkEntry_t netEntries[10];
                 _i16 resultsCount = sl_WlanGetNetworkList(0,10,&netEntries[0]);
                 for(i=0; i< resultsCount; i++)
@@ -740,15 +793,15 @@ _i16 sl_WlanGetNetworkList(const _u8 Index,const  _u8 Count, Sl_WlanNetworkEntry
 #endif
 
 /*!
-    \brief   Start collecting wlan RX statistics, for unlimited time. 
-            
-    \return  On success, zero is returned. On error, -1 is returned   
-    
+    \brief   Start collecting wlan RX statistics, for unlimited time.
+
+    \return  On success, zero is returned. On error, -1 is returned
+
     \sa     sl_WlanRxStatStop      sl_WlanRxStatGet
-    \note   belongs to \ref ext_api        
-    \warning  
+    \note   belongs to \ref ext_api
+    \warning
     \par        Example:
-    \code       Getting wlan RX statistics:             
+    \code       Getting wlan RX statistics:
 
     void RxStatCollectTwice()
     {
@@ -761,16 +814,16 @@ _i16 sl_WlanGetNetworkList(const _u8 Index,const  _u8 Count, Sl_WlanNetworkEntry
 
         sl_WlanRxStatStart();  // set statistics mode
 
-        rawSocket = sl_Socket(SL_AF_RF, SL_SOCK_RAW, eChannel); 
+        rawSocket = sl_Socket(SL_AF_RF, SL_SOCK_RAW, eChannel);
         // set timeout - in case we have no activity for the specified channel
-        sl_SetSockOpt(rawSocket,SL_SOL_SOCKET,SL_SO_RCVTIMEO, &timeval, sizeof(timeval));    // Enable receive timeout 
+        sl_SetSockOpt(rawSocket,SL_SOL_SOCKET,SL_SO_RCVTIMEO, &timeval, sizeof(timeval));    // Enable receive timeout
         status = sl_Recv(rawSocket, DataFrame, sizeof(DataFrame), 0);
 
         Sleep(1000); // sleep for 1 sec
         sl_WlanRxStatGet(&rxStat,0); // statistics has been cleared upon read
         Sleep(1000); // sleep for 1 sec
-        sl_WlanRxStatGet(&rxStat,0); 
-        
+        sl_WlanRxStatGet(&rxStat,0);
+
     }
     \endcode
 */
@@ -781,12 +834,12 @@ _i16 sl_WlanRxStatStart(void);
 
 /*!
     \brief    Stop collecting wlan RX statistic, (if previous called sl_WlanRxStatStart)
-            
-    \return   On success, zero is returned. On error, -1 is returned   
-    
+
+    \return   On success, zero is returned. On error, -1 is returned
+
     \sa     sl_WlanRxStatStart      sl_WlanRxStatGet
-    \note           belongs to \ref ext_api        
-    \warning  
+    \note           belongs to \ref ext_api
+    \warning
 */
 #if _SL_INCLUDE_FUNC(sl_WlanRxStatStop)
 _i16 sl_WlanRxStatStop(void);
@@ -795,14 +848,14 @@ _i16 sl_WlanRxStatStop(void);
 
 /*!
     \brief Get wlan RX statistics. upon calling this command, the statistics counters will be cleared.
-            
+
     \param[in]  Flags should be 0  ( not applicable right now, will be added the future )
     \param[in]  pRxStat a pointer to SlGetRxStatResponse_t filled with Rx statistics results
-    \return     On success, zero is returned. On error, -1 is returned   
-    
-    \sa   sl_WlanRxStatStart  sl_WlanRxStatStop  
-    \note           belongs to \ref ext_api        
-    \warning     
+    \return     On success, zero is returned. On error, -1 is returned
+
+    \sa   sl_WlanRxStatStart  sl_WlanRxStatStop
+    \note           belongs to \ref ext_api
+    \warning
 */
 #if _SL_INCLUDE_FUNC(sl_WlanRxStatGet)
 _i16 sl_WlanRxStatGet(SlGetRxStatResponse_t *pRxStat,const _u32 Flags);
@@ -812,16 +865,16 @@ _i16 sl_WlanRxStatGet(SlGetRxStatResponse_t *pRxStat,const _u32 Flags);
 /*!
     \brief Stop Smart Config procedure. Once Smart Config will be stopped,
            Asynchronous event will be received - SL_OPCODE_WLAN_SMART_CONFIG_STOP_ASYNC_RESPONSE.
-            
+
     \param[in]  none
     \param[out] none
-    
+
     \return     0 - if Stop Smart Config is about to be executed without errors.
-    
-    \sa         sl_WlanSmartConfigStart         
-    \note           belongs to \ref ext_api        
-    \warning        
-    
+
+    \sa         sl_WlanSmartConfigStart
+    \note           belongs to \ref ext_api
+    \warning
+
 */
 #if _SL_INCLUDE_FUNC(sl_WlanSmartConfigStop)
 _i16 sl_WlanSmartConfigStop(void);
@@ -843,7 +896,7 @@ _i16 sl_WlanSmartConfigStop(void);
             The Event will hold the SSID and an extra field that might have been delivered as well (i.e. - device name)
 
     \param[in]  groupIdBitmask - each bit represent a group ID that should be searched.
-                                 The Default group ID id BIT_0. 2 more group can be searched 
+                                 The Default group ID id BIT_0. 2 more group can be searched
                                  in addition. The range is BIT_0 - BIT_15.
     \param[in]  chiper - 0: check in flash, 1 - AES, 0xFF - do not check in flash
     \param[in]  publicKeyLen - public key len (used for the default group ID - BIT_0)
@@ -854,15 +907,15 @@ _i16 sl_WlanSmartConfigStop(void);
     \param[in]  group2Key    - group ID2 key
 
     \param[out] none
-    
+
     \return     0 - if Smart Config started successfully.
-    
-    \sa         sl_WlanSmartConfigStop 
-    \note           belongs to \ref ext_api        
-    \warning     
-    \par     
+
+    \sa         sl_WlanSmartConfigStop
+    \note           belongs to \ref ext_api
+    \warning
+    \par
     \code       An example of starting smart Config on group ID's 0 + 1 + 2
-    
+
                 sl_WlanSmartConfigStart(7,      //group ID's (BIT_0 | BIT_1 | BIT_2)
                                         1,      //decrypt key by AES method
                                         16,     //decryption key length for group ID0
@@ -895,10 +948,10 @@ _i16 sl_WlanSmartConfigStart(const _u32    groupIdBitmask,
                     - ROLE_STA - for WLAN station mode
                     - ROLE_AP  - for WLAN AP mode
                     - ROLE_P2P  -for WLAN P2P mode
-    \return   0 - if mode was set correctly   
+    \return   0 - if mode was set correctly
     \sa        sl_Start sl_Stop
-    \note           belongs to \ref ext_api        
-    \warning   After setting the mode the system must be restarted for activating the new mode  
+    \note           belongs to \ref ext_api
+    \warning   After setting the mode the system must be restarted for activating the new mode
     \par       Example:
     \code
                 //Switch from any role to STA:
@@ -922,17 +975,17 @@ _i16 sl_WlanSetMode(const _u8    mode);
                - CONF_OLD_FILE_VERSION             (-3)
                - CONF_ERROR_NO_SUCH_COUNTRY_CODE   (-4)
 
-   
-    \param[in] ConfigId -  configuration id                                
+
+    \param[in] ConfigId -  configuration id
                           - <b>SL_WLAN_CFG_AP_ID</b>
                           - <b>SL_WLAN_CFG_GENERAL_PARAM_ID</b>
-                          - <b>SL_WLAN_CFG_P2P_PARAM_ID</b>           
- 
+                          - <b>SL_WLAN_CFG_P2P_PARAM_ID</b>
+
     \param[in] ConfigOpt - configurations option
                           - <b>SL_WLAN_CFG_AP_ID</b>
                               - <b>WLAN_AP_OPT_SSID</b> \n
                                       Set SSID for AP mode. \n
-                                      This options takes <b>_u8</b> buffer as parameter 
+                                      This options takes <b>_u8</b> buffer as parameter
                               - <b>WLAN_AP_OPT_CHANNEL</b> \n
                                       Set channel for AP mode. \n
                                       The channel is dependant on the country code which is set. i.e. for "US" the channel should be in the range of [1-11] \n
@@ -954,22 +1007,22 @@ _i16 sl_WlanSetMode(const _u8    mode);
                                       Set Password for for AP mode (for WEP or for WPA): \n
                                       Password - for WPA: 8 - 63 characters \n
                                       for WEP: 5 / 13 characters (ascii) \n
-                                      This options takes <b>_u8</b> buffer as parameter 
+                                      This options takes <b>_u8</b> buffer as parameter
                           - <b>SL_WLAN_CFG_GENERAL_PARAM_ID</b>
                               - <b> WLAN_GENERAL_PARAM_OPT_SCAN_PARAMS </b> \n
                                       Set scan parameters.
                                       This option uses slWlanScanParamCommand_t as parameter
                               - <b>WLAN_GENERAL_PARAM_OPT_COUNTRY_CODE</b> \n
                                       Set Country Code for AP mode \n
-                                      This options takes <b>_u8</b> 2 bytes buffer as parameter 
+                                      This options takes <b>_u8</b> 2 bytes buffer as parameter
                               - <b>WLAN_GENERAL_PARAM_OPT_STA_TX_POWER</b> \n
                                       Set STA mode Tx power level \n
                                       Number between 0-15, as dB offset from max power (0 will set MAX power) \n
-                                      This options takes <b>_u8</b> as parameter 
-                              - <b>WLAN_GENERAL_PARAM_OPT_AP_TX_POWER</b> 
+                                      This options takes <b>_u8</b> as parameter
+                              - <b>WLAN_GENERAL_PARAM_OPT_AP_TX_POWER</b>
                                       Set AP mode Tx power level \n
                                       Number between 0-15, as dB offset from max power (0 will set MAX power) \n
-                                      This options takes <b>_u8</b> as parameter                                    
+                                      This options takes <b>_u8</b> as parameter
                               - <b>WLAN_GENERAL_PARAM_OPT_INFO_ELEMENT</b>
                                       Set Info Element for AP mode. \n
                                       The Application can set up to MAX_PRIVATE_INFO_ELEMENTS_SUPPROTED info elements per Role (AP / P2P GO).  \n
@@ -978,12 +1031,12 @@ _i16 sl_WlanSetMode(const _u8    mode);
                                       However, for AP - no more than INFO_ELEMENT_MAX_TOTAL_LENGTH_AP bytes can be stored for all info elements. \n
                                       For P2P GO - no more than INFO_ELEMENT_MAX_TOTAL_LENGTH_P2P_GO bytes can be stored for all info elements.  \n
                                       This option takes sl_protocol_WlanSetInfoElement_t as parameter
-                          - <b>SL_WLAN_CFG_P2P_PARAM_ID</b>           
+                          - <b>SL_WLAN_CFG_P2P_PARAM_ID</b>
                               - <b>WLAN_P2P_OPT_DEV_TYPE</b> \n
                                       Set P2P Device type.Maximum length of 17 characters. Device type is published under P2P I.E, \n
                                       allows to make devices easier to recognize. \n
                                       In case no device type is set, the default type is "1-0050F204-1"  \n
-                                      This options takes <b>_u8</b> buffer as parameter 
+                                      This options takes <b>_u8</b> buffer as parameter
                               - <b>WLAN_P2P_OPT_CHANNEL_N_REGS</b> \n
                                      Set P2P Channels. \n
                                      listen channel (either 1/6/11 for 2.4GHz) \n
@@ -992,20 +1045,20 @@ _i16 sl_WlanSetMode(const _u8    mode);
                                      oper regulatory class (81 for 2.4GHz)     \n
                                      listen channel and regulatory class will determine the device listen channel during p2p find listen phase \n
                                      oper channel and regulatory class will determine the operating channel preferred by this device (in case it is group owner this will be the operating channel) \n
-                                     channels should be one of the social channels (1/6/11). In case no listen/oper channel selected, a random 1/6/11 will be selected. 
-                                     This option takes pointer to <b>_u8[4]</b> as parameter 
-                                     
+                                     channels should be one of the social channels (1/6/11). In case no listen/oper channel selected, a random 1/6/11 will be selected.
+                                     This option takes pointer to <b>_u8[4]</b> as parameter
+
     \param[in] ConfigLen - configurations len
 
     \param[in] pValues -   configurations values
 
-    \sa         
-    \note 
+    \sa
+    \note
     \warning
     \par   Examples:
     \par
           <b> WLAN_AP_OPT_SSID: </b>
-    \code          
+    \code
             _u8  str[33];
             memset(str, 0, 33);
             memcpy(str, ssid, len);  // ssid string of 32 characters
@@ -1019,34 +1072,34 @@ _i16 sl_WlanSetMode(const _u8    mode);
     \endcode
     \par
           <b>  WLAN_AP_OPT_HIDDEN_SSID: </b>
-     \code         
+     \code
             _u8  val = hidden;
             sl_WlanSet(SL_WLAN_CFG_AP_ID, WLAN_AP_OPT_HIDDEN_SSID, 1, (_u8 *)&val);
     \endcode
     \par
           <b> WLAN_AP_OPT_SECURITY_TYPE: </b>
-     \code        
-           _u8  val = SL_SEC_TYPE_WPA_WPA2; 
+     \code
+           _u8  val = SL_SEC_TYPE_WPA_WPA2;
            sl_WlanSet(SL_WLAN_CFG_AP_ID, WLAN_AP_OPT_SECURITY_TYPE, 1, (_u8 *)&val);
     \endcode
     \par
           <b>  WLAN_AP_OPT_PASSWORD: </b>
-     \code        
-           _u8  str[65]; 
-           _u16  len = strlen(password); 
+     \code
+           _u8  str[65];
+           _u16  len = strlen(password);
            memset(str, 0, 65);
            memcpy(str, password, len);
            sl_WlanSet(SL_WLAN_CFG_AP_ID, WLAN_AP_OPT_PASSWORD, len, (_u8 *)str);
     \endcode
     \par
          <b> WLAN_GENERAL_PARAM_OPT_STA_TX_POWER: </b>
-     \code        
+     \code
          _u8  stapower=(_u8)power;
          sl_WlanSet(SL_WLAN_CFG_GENERAL_PARAM_ID, WLAN_GENERAL_PARAM_OPT_STA_TX_POWER,1,(_u8 *)&stapower);
     \endcode
-    \par   
+    \par
           <b> WLAN_GENERAL_PARAM_OPT_SCAN_PARAMS: </b>
-    \code   
+    \code
           slWlanScanParamCommand_t ScanParamConfig;
           ScanParamConfig.G_Channels_mask = 0x01;  // bit mask for channels:1 means channel 1 is enabled, 3 means channels 1 + 2 are enabled
           ScanParamConfig.rssiThershold = -70;     // only for RSSI level which is higher than -70
@@ -1057,8 +1110,8 @@ _i16 sl_WlanSetMode(const _u8    mode);
           <b> WLAN_GENERAL_PARAM_OPT_COUNTRY_CODE: </b>
     \code
             _u8*  str = (_u8 *) country;  // string of 2 characters. i.e. - "US"
-            sl_WlanSet(SL_WLAN_CFG_GENERAL_PARAM_ID, WLAN_GENERAL_PARAM_OPT_COUNTRY_CODE, 2, str); 
-    \endcode    
+            sl_WlanSet(SL_WLAN_CFG_GENERAL_PARAM_ID, WLAN_GENERAL_PARAM_OPT_COUNTRY_CODE, 2, str);
+    \endcode
    \par
           <b> WLAN_GENERAL_PARAM_OPT_AP_TX_POWER: </b>
     \code
@@ -1068,9 +1121,9 @@ _i16 sl_WlanSetMode(const _u8    mode);
    \par
           <b> WLAN_P2P_OPT_DEV_TYPE: </b>
     \code
-         _u8   str[17]; 
+         _u8   str[17];
          _u16  len = strlen(device_type);
-         memset(str, 0, 17); 
+         memset(str, 0, 17);
          memcpy(str, device_type, len);
          sl_WlanSet(SL_WLAN_CFG_P2P_PARAM_ID, WLAN_P2P_OPT_DEV_TYPE, len, str);
     \endcode
@@ -1086,13 +1139,13 @@ _i16 sl_WlanSetMode(const _u8    mode);
     \endcode
    \par
           <b> WLAN_GENERAL_PARAM_OPT_INFO_ELEMENT: </b>
-     \code          
-        sl_protocol_WlanSetInfoElement_t    infoele;                
+     \code
+        sl_protocol_WlanSetInfoElement_t    infoele;
         infoele.index     = Index;                  // Index of the info element. range: 0 - MAX_PRIVATE_INFO_ELEMENTS_SUPPROTED
         infoele.role      = Role;                   // INFO_ELEMENT_AP_ROLE (0) or INFO_ELEMENT_P2P_GO_ROLE (1)
         infoele.ie.id     =  Id;                    // Info element ID. if INFO_ELEMENT_DEFAULT_ID (0) is set, ID will be set to 221.
         // Organization unique ID. If all 3 bytes are zero - it will be replaced with 08,00,28.
-        infoele.ie.oui[0] =  Oui0;                  // Organization unique ID first Byte 
+        infoele.ie.oui[0] =  Oui0;                  // Organization unique ID first Byte
         infoele.ie.oui[1] =  Oui1;                  // Organization unique ID second Byte
         infoele.ie.oui[2] =  Oui2;                  // Organization unique ID third Byte
         infoele.ie.length = Len;                    // Length of the info element. must be smaller than 253 bytes
@@ -1102,7 +1155,7 @@ _i16 sl_WlanSetMode(const _u8    mode);
             memcpy(infoele.ie.data, IE, Len);           // Info element. length of the info element is [0-252]
             sl_WlanSet(SL_WLAN_CFG_GENERAL_PARAM_ID,WLAN_GENERAL_PARAM_OPT_INFO_ELEMENT,sizeof(sl_protocol_WlanSetInfoElement_t),(_u8* ) &infoele);
         }
-        sl_WlanSet(SL_WLAN_CFG_GENERAL_PARAM_ID,WLAN_GENERAL_PARAM_OPT_INFO_ELEMENT,sizeof(sl_protocol_WlanSetInfoElement_t),(_u8* ) &infoele);                 
+        sl_WlanSet(SL_WLAN_CFG_GENERAL_PARAM_ID,WLAN_GENERAL_PARAM_OPT_INFO_ELEMENT,sizeof(sl_protocol_WlanSetInfoElement_t),(_u8* ) &infoele);
     \endcode
 
 */
@@ -1113,20 +1166,20 @@ _i16 sl_WlanSet(const _u16 ConfigId ,const _u16 ConfigOpt,const _u16 ConfigLen,c
 /*!
     \brief     Internal function for getting WLAN configurations
 
-    \return    On success, zero is returned. On error, -1 is 
+    \return    On success, zero is returned. On error, -1 is
                returned
-   
+
     \param[in] ConfigId -  configuration id
                           - <b>SL_WLAN_CFG_AP_ID</b>
                           - <b>SL_WLAN_CFG_GENERAL_PARAM_ID</b>
                           - <b>SL_WLAN_CFG_P2P_PARAM_ID</b>
-                          
-    \param[out] pConfigOpt - get configurations option 
+
+    \param[out] pConfigOpt - get configurations option
                           - <b>SL_WLAN_CFG_AP_ID</b>
                               - <b>WLAN_AP_OPT_SSID</b> \n
                                       Get SSID for AP mode. \n
                                       Get up to 32 characters of SSID \n
-                                      This options takes <b>_u8</b> as parameter 
+                                      This options takes <b>_u8</b> as parameter
                               - <b>WLAN_AP_OPT_CHANNEL</b> \n
                                       Get channel for AP mode. \n
                                       This option takes <b>_u8</b> as a parameter
@@ -1146,23 +1199,23 @@ _i16 sl_WlanSet(const _u16 ConfigId ,const _u16 ConfigOpt,const _u16 ConfigLen,c
                               - <b>WLAN_AP_OPT_PASSWORD</b> \n
                                       Get Password for for AP mode (for WEP or for WPA): \n
                                       Returns password - string, fills up to 64 characters. \n
-                                      This options takes <b>_u8</b> buffer as parameter 
+                                      This options takes <b>_u8</b> buffer as parameter
                           - <b>SL_WLAN_CFG_GENERAL_PARAM_ID</b>
                               - <b> WLAN_GENERAL_PARAM_OPT_SCAN_PARAMS </b> \n
                                       Get scan parameters.
                                       This option uses slWlanScanParamCommand_t as parameter
                               - <b>WLAN_GENERAL_PARAM_OPT_COUNTRY_CODE</b> \n
                                       Get Country Code for AP mode \n
-                                      This options takes <b>_u8</b> buffer as parameter 
+                                      This options takes <b>_u8</b> buffer as parameter
                               - <b>WLAN_GENERAL_PARAM_OPT_STA_TX_POWER</b> \n
                                       Get STA mode Tx power level \n
                                       Number between 0-15, as dB offset from max power (0 indicates MAX power) \n
-                                      This options takes <b>_u8</b> as parameter 
-                              - <b>WLAN_GENERAL_PARAM_OPT_AP_TX_POWER</b> 
+                                      This options takes <b>_u8</b> as parameter
+                              - <b>WLAN_GENERAL_PARAM_OPT_AP_TX_POWER</b>
                                       Get AP mode Tx power level \n
                                       Number between 0-15, as dB offset from max power (0 indicates MAX power) \n
-                                      This options takes <b>_u8</b> as parameter                                    
-                          - <b>SL_WLAN_CFG_P2P_PARAM_ID</b>           
+                                      This options takes <b>_u8</b> as parameter
+                          - <b>SL_WLAN_CFG_P2P_PARAM_ID</b>
                               - <b>WLAN_P2P_OPT_CHANNEL_N_REGS</b> \n
                                      Get P2P Channels. \n
                                      listen channel (either 1/6/11 for 2.4GHz) \n
@@ -1172,12 +1225,12 @@ _i16 sl_WlanSet(const _u16 ConfigId ,const _u16 ConfigOpt,const _u16 ConfigLen,c
                                      listen channel and regulatory class will determine the device listen channel during p2p find listen phase \n
                                      oper channel and regulatory class will determine the operating channel preferred by this device (in case it is group owner this will be the operating channel) \n
                                      channels should be one of the social channels (1/6/11). In case no listen/oper channel selected, a random 1/6/11 will be selected. \n
-                                     This option takes pointer to <b>_u8[4]</b> as parameter 
-                                     
+                                     This option takes pointer to <b>_u8[4]</b> as parameter
+
     \param[out] pConfigLen - The length of the allocated memory as input, when the
                                         function complete, the value of this parameter would be
-                                        the len that actually read from the device. 
-                                        If the device return length that is longer from the input 
+                                        the len that actually read from the device.
+                                        If the device return length that is longer from the input
                                         value, the function will cut the end of the returned structure
                                         and will return SL_ESMALLBUF.
 
@@ -1186,20 +1239,20 @@ _i16 sl_WlanSet(const _u16 ConfigId ,const _u16 ConfigOpt,const _u16 ConfigLen,c
 
     \sa   sl_WlanSet
 
-    \note 
+    \note
 
-    \warning     
+    \warning
 
     \par    Examples:
-    \par   
+    \par
           <b> WLAN_GENERAL_PARAM_OPT_SCAN_PARAMS: </b>
-    \code   
+    \code
           slWlanScanParamCommand_t ScanParamConfig;
           _u16 Option = WLAN_GENERAL_PARAM_OPT_SCAN_PARAMS;
           _u16 OptionLen = sizeof(slWlanScanParamCommand_t);
           sl_WlanGet(SL_WLAN_CFG_GENERAL_PARAM_ID ,&Option,&OptionLen,(_u8 *)&ScanParamConfig);
     \endcode
-    \par   
+    \par
            <b> WLAN_GENERAL_PARAM_OPT_AP_TX_POWER: </b>
     \code
            _i8 TXPower = 0;
@@ -1207,32 +1260,32 @@ _i16 sl_WlanSet(const _u16 ConfigId ,const _u16 ConfigOpt,const _u16 ConfigLen,c
            _u16 OptionLen = sizeof(_i8);
            sl_WlanGet(SL_WLAN_CFG_GENERAL_PARAM_ID ,&Option,&OptionLen,(_u8 *)&TXPower);
     \endcode
-    \par   
+    \par
            <b> WLAN_GENERAL_PARAM_OPT_STA_TX_POWER: </b>
-    \code           
+    \code
            _i8 TXPower = 0;
            _u16 Option = WLAN_GENERAL_PARAM_OPT_STA_TX_POWER;
            _u16 OptionLen = sizeof(_i8);
- 
+
            sl_WlanGet(SL_WLAN_CFG_GENERAL_PARAM_ID ,&Option,&OptionLen,(_u8 *)&TXPower);
     \endcode
-    \par   
+    \par
            <b> WLAN_P2P_OPT_DEV_TYPE: </b>
-    \code           
+    \code
            _i8 device_type[18];
            _u16 len = 18;
-           _u16 config_opt = WLAN_P2P_OPT_DEV_TYPE; 
+           _u16 config_opt = WLAN_P2P_OPT_DEV_TYPE;
            sl_WlanGet(SL_WLAN_CFG_P2P_PARAM_ID, &config_opt , &len, (_u8* )device_type);
     \endcode
-    \par   
+    \par
            <b> WLAN_AP_OPT_SSID: </b>
-    \code          
+    \code
            _i8 ssid[32];
            _u16 len = 32;
            _u16  config_opt = WLAN_AP_OPT_SSID;
            sl_WlanGet(SL_WLAN_CFG_AP_ID, &config_opt , &len, (_u8* )ssid);
     \endcode
-    \par   
+    \par
            <b> WLAN_GENERAL_PARAM_OPT_COUNTRY_CODE: </b>
     \code
            _i8 country[3];
@@ -1240,7 +1293,7 @@ _i16 sl_WlanSet(const _u16 ConfigId ,const _u16 ConfigOpt,const _u16 ConfigLen,c
            _u16  config_opt = WLAN_GENERAL_PARAM_OPT_COUNTRY_CODE;
            sl_WlanGet(SL_WLAN_CFG_GENERAL_PARAM_ID, &config_opt, &len, (_u8* )country);
     \endcode
-    \par   
+    \par
            <b> WLAN_AP_OPT_CHANNEL: </b>
     \code
            _i8 channel;
@@ -1248,23 +1301,23 @@ _i16 sl_WlanSet(const _u16 ConfigId ,const _u16 ConfigOpt,const _u16 ConfigLen,c
            _u16  config_opt = WLAN_AP_OPT_CHANNEL;
            sl_WlanGet(SL_WLAN_CFG_AP_ID, &config_opt, &len, (_u8* )&channel);
     \endcode
-    \par   
+    \par
            <b> WLAN_AP_OPT_HIDDEN_SSID: </b>
     \code
           _u8 hidden;
           _u16 len = 1;
           _u16  config_opt = WLAN_AP_OPT_HIDDEN_SSID;
-          sl_WlanGet(SL_WLAN_CFG_AP_ID, &config_opt, &len, (_u8* )&hidden); 
+          sl_WlanGet(SL_WLAN_CFG_AP_ID, &config_opt, &len, (_u8* )&hidden);
     \endcode
-    \par   
+    \par
            <b> WLAN_AP_OPT_SECURITY_TYPE: </b>
-    \code         
+    \code
          _u8 sec_type;
          _u16 len = 1;
          _u16  config_opt = WLAN_AP_OPT_SECURITY_TYPE;
          sl_WlanGet(SL_WLAN_CFG_AP_ID, &config_opt, &len, (_u8* )&sec_type);
     \endcode
-    \par   
+    \par
            <b> WLAN_AP_OPT_PASSWORD: </b>
     \code
          _u8 password[64];
@@ -1274,7 +1327,7 @@ _i16 sl_WlanSet(const _u16 ConfigId ,const _u16 ConfigOpt,const _u16 ConfigLen,c
          sl_WlanGet(SL_WLAN_CFG_AP_ID, &config_opt, &len, (_u8* )password);
 
     \endcode
-    \par   
+    \par
            <b> WLAN_P2P_OPT_CHANNEL_N_REGS: </b>
     \code
        _u16 listen_channel,listen_reg,oper_channel,oper_reg;
@@ -1282,10 +1335,10 @@ _i16 sl_WlanSet(const _u16 ConfigId ,const _u16 ConfigOpt,const _u16 ConfigLen,c
        _u16  config_opt = WLAN_P2P_OPT_CHANNEL_N_REGS;
        _u8 channel_n_regs[4];
        sl_WlanGet(SL_WLAN_CFG_P2P_PARAM_ID, &config_opt, &len, (_u8* )channel_n_regs);
-       listen_channel = channel_n_regs[0]; 
+       listen_channel = channel_n_regs[0];
        listen_reg = channel_n_regs[1];
        oper_channel = channel_n_regs[2];
-       oper_reg = channel_n_regs[3]; 
+       oper_reg = channel_n_regs[3];
     \endcode
 */
 

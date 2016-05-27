@@ -3,6 +3,9 @@
  *
  * Copyright (C) 2014 Noah Luskey | LuskeyNoah@gmail.com
  *
+ * Contributors:
+ *    Phil LaFayette (MH Electric Motor & Control Corp.) - Upgraded CC31xx/CC32xx Host Driver to v1.0.1.6, May 27, 2016
+ *
  */
 
 #include "SimpleLinkForEnergia.h"
@@ -42,7 +45,7 @@ void CC3100_disable()
     //
     digitalWrite(WiFiClass::pin_nhib, LOW);
 }
-    
+
 //
 //open the SPI interface (none of the inputs actually matter)
 //
@@ -57,14 +60,14 @@ int spi_Open(char* pIfName , unsigned long flags)
     pinMode(WiFiClass::pin_irq, INPUT);
     pinMode(WiFiClass::pin_nhib, OUTPUT);
     digitalWrite(WiFiClass::pin_nhib, LOW);
-    
+
     //
     //set the spi port up using Energia functions
     //
     SPI.begin();
     SPI.setBitOrder(MSBFIRST);
     SPI.setDataMode(SPI_MODE0);
-    
+
     //
     //return a success
     //
@@ -91,7 +94,7 @@ int spi_Close(int Fd)
 int spi_Read(int Fd , char* pBuff , int Len)\
 {
     digitalWrite(WiFiClass::pin_cs, LOW);
-    
+
     DEBUG_TRACE("SPI_READ");
     //
     //read bytes into the buffer by transmitting NULL over and over
@@ -100,7 +103,7 @@ int spi_Read(int Fd , char* pBuff , int Len)\
         pBuff[i] = SPI.transfer(0);
         DEBUG_TRACE(pBuff[i]);
     }
-    
+
     digitalWrite(WiFiClass::pin_cs, HIGH);
     return Len;
 }
@@ -111,7 +114,7 @@ int spi_Read(int Fd , char* pBuff , int Len)\
 int spi_Write(int Fd , char* pBuff , int Len)
 {
     digitalWrite(WiFiClass::pin_cs, LOW);
-    
+
     DEBUG_TRACE("SPI_WRITE");
     //
     //transfer all the bytes from the buffer
@@ -120,7 +123,7 @@ int spi_Write(int Fd , char* pBuff , int Len)
         SPI.transfer(pBuff[i]);
         DEBUG_TRACE(pBuff[i]);
     }
-    
+
     digitalWrite(WiFiClass::pin_cs, HIGH);
     return Len;
 }
@@ -130,7 +133,7 @@ int registerInterruptHandler(void* InterruptHdl , void* pValue)
 {
     delay(100);
     DEBUG_TRACE("INTERRUPT REGISTER");
-    
+
     //
     //the IRQ line may already be high
     //in this case, manually call the interrupt first
@@ -139,7 +142,7 @@ int registerInterruptHandler(void* InterruptHdl , void* pValue)
         void (*interruptFunction)(void) = (void (*)())InterruptHdl;
         interruptFunction();
     }
-    
+
     if (InterruptHdl == NULL) {
         //
         //according to documentation, a NULL pointer means remove the interrupt
@@ -151,7 +154,7 @@ int registerInterruptHandler(void* InterruptHdl , void* pValue)
         //
         attachInterrupt(WiFiClass::pin_irq, (void (*)())InterruptHdl, RISING);
     }
-    
+
     delay(100);
     return 0;
 }

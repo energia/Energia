@@ -1,39 +1,39 @@
 /*
  * trace.h - CC31xx/CC32xx Host Driver Implementation
  *
- * Copyright (C) 2014 Texas Instruments Incorporated - http://www.ti.com/ 
- * 
- * 
- *  Redistribution and use in source and binary forms, with or without 
- *  modification, are permitted provided that the following conditions 
+ * Copyright (C) 2015 Texas Instruments Incorporated - http://www.ti.com/
+ *
+ *
+ *  Redistribution and use in source and binary forms, with or without
+ *  modification, are permitted provided that the following conditions
  *  are met:
  *
- *    Redistributions of source code must retain the above copyright 
+ *    Redistributions of source code must retain the above copyright
  *    notice, this list of conditions and the following disclaimer.
  *
  *    Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in the 
- *    documentation and/or other materials provided with the   
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the
  *    distribution.
  *
  *    Neither the name of Texas Instruments Incorporated nor the names of
  *    its contributors may be used to endorse or promote products derived
  *    from this software without specific prior written permission.
  *
- *  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS 
- *  "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT 
+ *  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ *  "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
  *  LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
- *  A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT 
- *  OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, 
- *  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT 
+ *  A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+ *  OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ *  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
  *  LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
  *  DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
- *  THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT 
- *  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE 
+ *  THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ *  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  *  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
 */
- 
+
 
 
 #include "simplelink.h"
@@ -51,10 +51,16 @@ extern "C" {
 /*****************************************************************************/
 
 #define SL_SYNC_SCAN_THRESHOLD  (( _u32 )2000)
-  
-#define _SlDrvAssert(line )  { while(1); }          
 
-#define _SL_ASSERT(expr)            { if(!(expr)){_SlDrvAssert(__LINE__); } }
+#ifdef SL_TINY_EXT
+#define _SlDrvAssert(line )  { while(1); }
+#else
+#define _SlDrvAssert( )  { _SlDriverHandleError(SL_DEVICE_DRIVER_ASSERT_ERROR_EVENT, 0, 0); }
+#endif
+
+#define _SL_ASSERT(expr)            { if(!(expr)){ \
+  _SlDrvAssert(); } \
+}
 #define _SL_ERROR(expr, error)      { if(!(expr)){return (error); } }
 
 #define SL_HANDLING_ASSERT          2
@@ -63,13 +69,18 @@ extern "C" {
 
 
 #ifndef SL_TINY_EXT
-#define SL_SELF_COND_HANDLING       SL_HANDLING_ASSERT
-#define SL_PROTOCOL_HANDLING        SL_HANDLING_ASSERT
-#define SL_DRV_RET_CODE_HANDLING    SL_HANDLING_ASSERT
-#define SL_NWP_IF_HANDLING          SL_HANDLING_ASSERT
-#define SL_OSI_RET_OK_HANDLING      SL_HANDLING_ASSERT
-#define SL_MALLOC_OK_HANDLING       SL_HANDLING_ASSERT
-#define SL_USER_ARGS_HANDLING       SL_HANDLING_ASSERT
+
+#if 1
+#define SL_SELF_COND_HANDLING       SL_HANDLING_ERROR
+#define SL_PROTOCOL_HANDLING        SL_HANDLING_ERROR
+#define SL_DRV_RET_CODE_HANDLING    SL_HANDLING_ERROR
+#define SL_NWP_IF_HANDLING          SL_HANDLING_ERROR
+#define SL_OSI_RET_OK_HANDLING      SL_HANDLING_ERROR
+#define SL_MALLOC_OK_HANDLING       SL_HANDLING_ERROR
+#define SL_USER_ARGS_HANDLING       SL_HANDLING_ERROR
+#define SL_ERR_IN_PROGRESS_HANDLING SL_HANDLING_ERROR
+#endif
+
 #else
 #define SL_SELF_COND_HANDLING       SL_HANDLING_NONE
 #define SL_PROTOCOL_HANDLING        SL_HANDLING_NONE
@@ -78,9 +89,16 @@ extern "C" {
 #define SL_OSI_RET_OK_HANDLING      SL_HANDLING_NONE
 #define SL_MALLOC_OK_HANDLING       SL_HANDLING_NONE
 #define SL_USER_ARGS_HANDLING       SL_HANDLING_NONE
+#define SL_ERR_IN_PROGRESS_HANDLING SL_HANDLING_NONE
 #endif
 
 
+#if (SL_ERR_IN_PROGRESS_HANDLING == SL_HANDLING_ERROR)
+#define VERIFY_NO_ERROR_HANDLING_IN_PROGRESS() { \
+      if ( g_bDeviceRestartIsRequired == (_u8)TRUE) return SL_API_ABORTED; }
+#else
+#define VERIFY_NO_ERROR_HANDLING_IN_PROGRESS()
+#endif
 #if (SL_DRV_RET_CODE_HANDLING == SL_HANDLING_ASSERT)
 #define VERIFY_RET_OK(Func)                     {_SlReturnVal_t _RetVal = (Func); _SL_ASSERT((_SlReturnVal_t)SL_OS_RET_CODE_OK == _RetVal)}
 #elif (SL_DRV_RET_CODE_HANDLING == SL_HANDLING_ERROR)
@@ -106,8 +124,8 @@ extern "C" {
 #endif
 
 #if (SL_NWP_IF_HANDLING == SL_HANDLING_ASSERT)
-#define NWP_IF_WRITE_CHECK(fd,pBuff,len)       { _i16 RetSize, ExpSize = (len); RetSize = sl_IfWrite((fd),(pBuff),ExpSize); _SL_ASSERT(ExpSize == RetSize)}
-#define NWP_IF_READ_CHECK(fd,pBuff,len)        { _i16 RetSize, ExpSize = (len); RetSize = sl_IfRead((fd),(pBuff),ExpSize);  _SL_ASSERT(ExpSize == RetSize)}
+#define NWP_IF_WRITE_CHECK(fd,pBuff,len)       { _i16 RetSize, ExpSize = (_i16)(len); RetSize = sl_IfWrite((fd),(pBuff),ExpSize); _SL_ASSERT(ExpSize == RetSize)}
+#define NWP_IF_READ_CHECK(fd,pBuff,len)        { _i16 RetSize, ExpSize = (_i16)(len); RetSize = sl_IfRead((fd),(pBuff),ExpSize);  _SL_ASSERT(ExpSize == RetSize)}
 #elif (SL_NWP_IF_HANDLING == SL_HANDLING_ERROR)
 #define NWP_IF_WRITE_CHECK(fd,pBuff,len)       { _SL_ERROR((len == sl_IfWrite((fd),(pBuff),(len))), SL_RET_CODE_NWP_IF_ERROR);}
 #define NWP_IF_READ_CHECK(fd,pBuff,len)        { _SL_ERROR((len == sl_IfRead((fd),(pBuff),(len))),  SL_RET_CODE_NWP_IF_ERROR);}
@@ -188,7 +206,7 @@ extern "C" {
 #define SL_DBG_LEVEL_3                  4
 #define SL_DBG_LEVEL_MASK               (SL_DBG_LEVEL_2|SL_DBG_LEVEL_3)
 
-#define SL_INCLUDE_DBG_FUNC(Name)		((Name ## _DBG_LEVEL) & SL_DBG_LEVEL_MASK)
+#define SL_INCLUDE_DBG_FUNC(Name)   ((Name ## _DBG_LEVEL) & SL_DBG_LEVEL_MASK)
 
 #define _SlDrvPrintStat_DBG_LEVEL       SL_DBG_LEVEL_3
 #define _SlDrvOtherFunc_DBG_LEVEL       SL_DBG_LEVEL_1
