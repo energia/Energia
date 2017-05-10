@@ -194,7 +194,7 @@ void OneMsTaskTimer_int(void)
 #endif //if defined(__CC3200R1M1RGC__)
 
 
-#if defined(__TM4C123GH6PM__)
+#if defined(__TM4C123GH6PM__) || defined(__TM4C1294NCPDT__) || defined(__TM4C129XNCZAD__)
 
 #include "wiring_private.h"
 #include "inc/hw_ints.h"
