@@ -192,6 +192,8 @@ int EthernetClient::connect(IPAddress ip, uint16_t port, unsigned long timeout) 
 
 	if (cs->cpcb->state != ESTABLISHED) {
 		_connected = false;
+		cs->cpcb = NULL;
+		return false;
 	}
 
 	/* Poll to determine if the peer is still alive */
