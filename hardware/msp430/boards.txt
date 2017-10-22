@@ -46,7 +46,7 @@ lpmsp430fr5739.build.mcu=msp430fr5739
 lpmsp430fr5739.build.f_cpu=16000000L
 lpmsp430fr5739.build.core=msp430
 lpmsp430fr5739.build.variant=fraunchpad
-lpmsp430fr5739.upload.maximum_ram_size=17408
+lpmsp430fr5739.upload.maximum_ram_size=1024
 
 ##############################################################
 
