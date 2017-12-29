@@ -35,39 +35,39 @@
 #define DEFAULT_READ_RESOLUTION 10
 
 #if defined(__MSP430_HAS_ADC10__) && !defined(ADC10ENC)
-#define ADC10ENC ENC 
+    #define ADC10ENC ENC 
 #endif
 #if defined(__MSP430_HAS_ADC10__)
-#define REFV_MAP(x) (x)
-//#define REF_MAP(x)  (x & 0x31)
-#define ADCxMEM0 ADC10MEM
+    #define REFV_MAP(x) (x)
+    //#define REF_MAP(x)  (x & 0x31)
+    #define ADCxMEM0 ADC10MEM
 #endif
 #if defined(__MSP430_HAS_ADC10_A__)
-#define REFV_MAP(x) (x)
-//#define REF_MAP(x)  (x & 0x31)
-#define ADCxMEM0 ADC10MEM 
+    #define REFV_MAP(x) (x)
+    //#define REF_MAP(x)  (x & 0x31)
+    #define ADCxMEM0 ADC10MEM 
 #endif
 #if defined(__MSP430_HAS_ADC10_B__)
-#define REFV_MAP(x) ((x>>8) & 0x70)
-#define REF_MAP(x)  (x & 0x31)
-#define ADCxMEM0 ADC10MEM0 
+    #define REFV_MAP(x) ((x>>8) & 0x70)
+    #define REF_MAP(x)  (x & 0x31)
+    #define ADCxMEM0 ADC10MEM0 
 #endif
 #if defined(__MSP430_HAS_ADC12_PLUS__)
-#define REFV_MAP(x) ((x>>8) & 0x70)
-#define REF_MAP(x)  (x & 0xB1)
-#define ADCxMEM0 ADC12MEM0 
-#define DEFAULT_READ_RESOLUTION 12
+    #define REFV_MAP(x) ((x>>8) & 0x70)
+    #define REF_MAP(x)  (x & 0xB1)
+    #define ADCxMEM0 ADC12MEM0 
+    #define DEFAULT_READ_RESOLUTION 12
 #endif
 #if defined(__MSP430_HAS_ADC12_B__)
-#define REFV_MAP(x) (x & 0xF00)
-#define REF_MAP(x)  (x & 0x31)
-#define ADCxMEM0 ADC12MEM0 
-#define DEFAULT_READ_RESOLUTION 12
+    #define REFV_MAP(x) (x & 0xF00)
+    #define REF_MAP(x)  (x & 0x31)
+    #define ADCxMEM0 ADC12MEM0 
+    #define DEFAULT_READ_RESOLUTION 12
 #endif
-#if defined(__MSP430_HAS_ADC__)
-#define REFV_MAP(x) ((x>>8) & 0x70)
-//#define REF_MAP(x)  (x & 0x31)
-#define ADCxMEM0 ADCMEM0
+    #if defined(__MSP430_HAS_ADC__)
+    #define REFV_MAP(x) ((x>>8) & 0x70)
+    //#define REF_MAP(x)  (x & 0x31)
+    #define ADCxMEM0 ADCMEM0
 #endif
 
 static int _readResolution = DEFAULT_READ_RESOLUTION;
