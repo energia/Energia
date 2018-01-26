@@ -46,28 +46,32 @@ void setup() {
     for (uint8_t i=0; i<20; i++) delay(100);
     
     myScreen.clear();
+    myScreen.clearBuffer();
+    myScreen.setFont(0);
     
     for (uint8_t i=0; i<4; i++)
     {
         myScreen.setOrientation(i);
+        myScreen.text(1, 1, "Orientation");
         myScreen.text(10, 10, String(i));
         myScreen.flush();
+        for (uint8_t i=0; i<20; i++) delay(50);
     }
     for (uint8_t i=0; i<20; i++) delay(100);
     
     Serial.print("myCount = ");
+    myScreen.setOrientation(myOrientation);
 }
 
 // Add loop code
 void loop()
 {
     myCount++;
-    Serial.print(-myCount, DEC);
+    Serial.print(myCount, DEC);
     if (myCount > 16)
     {
         myOrientation++;
- //       if (myOrientation > 4) myOrientation = 0;
-        myOrientation %= 4;
+        myOrientation &= 0x03;
         myScreen.setOrientation(myOrientation);
         myCount = 0;
         Serial.println();
@@ -87,14 +91,8 @@ void loop()
     
     for (uint8_t i=0; i<=20; i++) {
         myScreen.setXY(50+i,30,1);
-        //    }
-        //    for (uint8_t i=0; i<=20; i++) {
         myScreen.setXY(50,30+i,1);
-        //    }
-        //    for (uint8_t i=0; i<=20; i++) {
         myScreen.setXY(50+i,50,1);
-        //    }
-        //    for (uint8_t i=0; i<=20; i++) {
         myScreen.setXY(70,30+i,1);
     }
     

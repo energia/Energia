@@ -87,6 +87,66 @@ uint8_t spi_send(const uint8_t _data)
     return USISRL; // reading clears RXIFG flag
 }
 
+uint16_t spi_send16(const uint16_t data)
+{
+	uint16_t rxdata;
+	rxdata = spi_send(data & 0xFF);
+	rxdata |= (spi_send((data>>8) & 0xFF) << 8);
+	return (rxdata);
+}
+
+void spi_send(void *buf, uint16_t count)
+{
+    uint8_t *p = (uint8_t *)buf;
+	if (count == 0) return;
+	while(count){
+		*p = spi_send(*p);
+		*p++;
+		count--;
+	}
+}
+
+/**
+ * spi_transmit() - send a byte
+ */
+void spi_transmit(const uint8_t _data)
+{
+    USISRL = _data;
+
+    // SPI master generates one additional clock after module reset if USICKPH is set.
+    if ( bResetAdjust == USI5_ADJUST ) {
+        USICNT=7;   // adjust first time send
+        bResetAdjust = USI5_SENT;
+    }
+    else {
+        USICNT = 8;
+    }
+
+    while (!(USICTL1 & USIIFG)) {
+        ; // wait for an USICNT to decrement to 0
+    }
+
+    // clear RXIFG flag
+	USICTL1 &= ~USIIFG;
+}
+
+void spi_transmit16(const uint16_t data)
+{
+	spi_tx(data & 0xFF);
+	spi_tx((data>>8) & 0xFF);
+}
+
+void spi_transmit(void *buf, uint16_t count)
+{
+    uint8_t *p = (uint8_t *)buf;
+	if (count == 0) return;
+	while(count){
+		spi_tx(*p++);
+		count--;
+	}
+}
+
+
 /**
  * spi_set_divisor() - set new clock divider for USI
  *

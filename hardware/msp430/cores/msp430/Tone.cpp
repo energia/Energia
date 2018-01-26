@@ -41,6 +41,8 @@ Version Modified By Date     Comments
 #include "pins_energia.h"
 #include "Energia.h"
 
+#if defined(__MSP430_HAS_TA3__) || defined(__MSP430_HAS_T0A2__) || defined(__MSP430_HAS_T0A3__) || defined(__MSP430_HAS_T0A5__) || defined(__MSP430_HAS_TA5__) 
+
 // local funcions
 static void initTimers();
 static void setTimer(uint8_t n, unsigned int frequency, unsigned long duration);
@@ -221,3 +223,5 @@ void TIMER0_A1_ISR(void)
 #endif
   }  
 }
+
+#endif //#if defined(__MSP430_HAS_TA3__) || defined(__MSP430_HAS_T0A2__) || defined(__MSP430_HAS_T0A3__) || defined(__MSP430_HAS_T0A5__) || defined(__MSP430_HAS_TA5__) 

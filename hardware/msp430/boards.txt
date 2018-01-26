@@ -103,3 +103,25 @@ lpmsp430fr6989.build.variant=launchpad_fr6989
 lpmsp430fr6989.upload.maximum_ram_size=2048
 
 ##############################################################
+lpmsp430fr5994.name=LaunchPad w/ msp430fr5994
+lpmsp430fr5994.upload.protocol=tilib
+lpmsp430fr5994.upload.maximum_size=260096
+lpmsp430fr5994.build.mcu=msp430fr5994
+lpmsp430fr5994.build.f_cpu=16000000L
+#lpmsp430fr5994.build.f_cpu=8000000L
+lpmsp430fr5994.build.core=msp430
+lpmsp430fr5994.build.variant=launchpad_fr5994
+lpmsp430fr5994.upload.maximum_ram_size=2048
+
+##############################################################
+#lpmsp430fr2311.name=LaunchPad w/ msp430fr2311
+#lpmsp430fr2311.upload.protocol=tilib
+#lpmsp430fr2311.upload.maximum_size=3840
+#lpmsp430fr2311.build.mcu=msp430fr2311
+#lpmsp430fr2311.build.f_cpu=16000000L
+##lpmsp430fr2311.build.f_cpu=8000000L
+#lpmsp430fr2311.build.core=msp430
+#lpmsp430fr2311.build.variant=launchpad_fr2311
+#lpmsp430fr2311.upload.maximum_ram_size=1024
+
+##############################################################

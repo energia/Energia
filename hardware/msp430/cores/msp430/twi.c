@@ -76,13 +76,16 @@ static uint8_t twi_my_addr;
 
 
 
-#if defined(__MSP430_HAS_USCI_B0__) || defined(__MSP430_HAS_EUSCI_B0__) || defined(__MSP430_HAS_USCI_B1__) || defined(__MSP430_HAS_EUSCI_B1__)
+#if defined(__MSP430_HAS_USCI_B0__) || defined(__MSP430_HAS_EUSCI_B0__) || defined(__MSP430_HAS_USCI_B1__) || defined(__MSP430_HAS_EUSCI_B1__) || defined(__MSP430_HAS_EUSCI_B2__)
 
 #if defined(__MSP430_HAS_USCI_B0__) || defined(__MSP430_HAS_EUSCI_B0__)
 #define UCB0_BASE ((uint16_t)&UCB0CTLW0)
 #endif
 #if defined(__MSP430_HAS_USCI_B1__) || defined(__MSP430_HAS_EUSCI_B1__)
 #define UCB1_BASE ((uint16_t)&UCB1CTLW0)
+#endif
+#if defined(__MSP430_HAS_USCI_B2__) || defined(__MSP430_HAS_EUSCI_B2__)
+#define UCB2_BASE ((uint16_t)&UCB2CTLW0)
 #endif
   
 #define UCBxCTLW0     (*((volatile uint16_t *)((uint16_t)(I2C_baseAddress + ((uint16_t)&UCB0CTLW0)  - UCB0_BASE))))
@@ -116,7 +119,7 @@ static uint8_t twi_my_addr;
 #define UCBxI2CIE     (*((volatile uint8_t  *)((uint16_t)(I2C_baseAddress + ((uint16_t)&UCB0I2CIE)  - UCB0_BASE))))
 #define UCBxIV        (*((volatile uint8_t  *)((uint16_t)(I2C_baseAddress + ((uint16_t)&UCB0IV)     - UCB0_BASE))))
 
-#else // #if defined(__MSP430_HAS_USCI_B0__) || defined(__MSP430_HAS_EUSCI_B0__) || defined(__MSP430_HAS_USCI_B1__) || defined(__MSP430_HAS_EUSCI_B1__)
+#else // #if defined(__MSP430_HAS_USCI_B0__) || defined(__MSP430_HAS_EUSCI_B0__) || defined(__MSP430_HAS_USCI_B1__) || defined(__MSP430_HAS_EUSCI_B1__) || defined(__MSP430_HAS_EUSCI_B2__)
 
 #if defined(__MSP430_HAS_USCI__)
 #define UCB0_BASE ((uint16_t)&UCB0CTL0)
@@ -153,7 +156,7 @@ static uint8_t twi_my_addr;
 #endif
 
 #endif //#if defined(__MSP430_HAS_USCI__)
-#endif // #if defined(__MSP430_HAS_USCI_B0__) || defined(__MSP430_HAS_EUSCI_B0__) || defined(__MSP430_HAS_USCI_B1__) || defined(__MSP430_HAS_EUSCI_B1__)
+#endif // #if defined(__MSP430_HAS_USCI_B0__) || defined(__MSP430_HAS_EUSCI_B0__) || defined(__MSP430_HAS_USCI_B1__) || defined(__MSP430_HAS_EUSCI_B1__) || defined(__MSP430_HAS_EUSCI_B2__)
 
 
 #if DEFAULT_I2C == -1 // SW I2C implementation on default port
@@ -164,6 +167,9 @@ uint16_t I2C_baseAddress = UCB0_BASE;
 #endif
 #if DEFAULT_I2C == 1
 uint16_t I2C_baseAddress = UCB1_BASE;
+#endif
+#if DEFAULT_I2C == 2
+uint16_t I2C_baseAddress = UCB2_BASE;
 #endif
 
 
@@ -260,6 +266,27 @@ static void twi_init_port(void)
 #endif
 		pinMode_int(TWISDA1, TWISDA1_SET_MODE);
 		pinMode_int(TWISCL1, TWISCL1_SET_MODE);
+	}
+#endif
+#if defined(__MSP430_HAS_USCI_B2__) || defined(__MSP430_HAS_EUSCI_B2__)
+	if (I2C_baseAddress == UCB2_BASE)
+	{
+		/* Set pins to I2C mode */
+		pinMode_int(TWISDA2, INPUT_PULLUP);
+		if (digitalRead(TWISDA2) == 0){ // toggle SCL if SDA is low at startup
+			pinMode_int(TWISCL2, INPUT_PULLUP);
+			digitalWrite(TWISCL2, LOW);
+			pinMode(TWISCL2, OUTPUT);
+			pinMode_int(TWISCL2, INPUT_PULLUP);
+		}
+#if defined(__MSP430_HAS_USCI_B2__)
+		if ((TWISDA2_SET_MODE & INPUT_PULLUP) == 0) {
+			pinMode(TWISDA2, INPUT);          // some device do not allow the pull up to be enabled
+			pinMode(TWISCL2, INPUT);
+		}
+#endif
+		pinMode_int(TWISDA2, TWISDA2_SET_MODE);
+		pinMode_int(TWISCL2, TWISCL2_SET_MODE);
 	}
 #endif
 }

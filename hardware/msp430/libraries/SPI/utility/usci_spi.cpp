@@ -92,6 +92,101 @@ uint8_t spi_send(const uint8_t _data)
 	return UCB0RXBUF; // reading clears RXIFG flag
 }
 
+#ifdef UC0IFG
+/* redefine or older 2xx devices where the flags are in SFR */
+#define UCB0IFG  UC0IFG   
+#define UCRXIFG  UCB0RXIFG
+#define UCTXIFG  UCB0TXIFG
+#endif
+
+uint16_t spi_send16(const uint16_t data)
+{
+	uint16_t datain;
+	/* Wait for previous tx to complete. */
+	while (!(UCB0IFG & UCTXIFG));
+	/* Setting TXBUF clears the TXIFG flag. */
+	UCB0TXBUF = data | 0xFF;
+	/* Wait for previous tx to complete. */
+	while (!(UCB0IFG & UCTXIFG));
+
+	datain = UCB0RXBUF << 8;
+	/* Setting TXBUF clears the TXIFG flag. */
+	UCB0TXBUF = data >> 8;
+
+	/* Wait for a rx character? */
+	while (!(UCB0IFG & UCRXIFG));
+
+	/* Reading clears RXIFG flag. */
+	return (datain | UCB0RXBUF);
+}
+
+void spi_send(void *buf, uint16_t count)
+{
+    uint8_t *ptx = (uint8_t *)buf;
+    uint8_t *prx = (uint8_t *)buf;
+	if (count == 0) return;
+	/* Wait for previous tx to complete. */
+	while (!(UCB0IFG & UCTXIFG));
+	while(count){
+		if (UCB0IFG & UCRXIFG){
+			/* Reading RXBUF clears the RXIFG flag. */
+			*prx++ = UCB0RXBUF;
+		}
+		if (UCB0IFG & UCTXIFG){
+			/* Setting TXBUF clears the TXIFG flag. */
+			UCB0TXBUF = *ptx++;
+			count--;
+		}
+	}
+	/* Wait for last rx character? */
+	while (!(UCB0IFG & UCRXIFG));
+	*prx++ = UCB0RXBUF;
+}
+
+/**
+ * spi_transmit() - send a byte
+ */
+void spi_transmit(const uint8_t _data)
+{
+	UCB0TXBUF = _data; // setting TXBUF clears the TXIFG flag
+
+	while (UCB0STAT & UCBUSY); // wait for SPI TX/RX to finish
+	// clear RXIFG flag
+	UCB0IFG &= ~UCRXIFG;
+}
+
+void spi_transmit16(const uint16_t data)
+{
+	/* Wait for previous tx to complete. */
+	while (!(UCB0IFG & UCTXIFG));
+	/* Setting TXBUF clears the TXIFG flag. */
+	UCB0TXBUF = data | 0xFF;
+	/* Wait for previous tx to complete. */
+	while (!(UCB0IFG & UCTXIFG));
+	/* Setting TXBUF clears the TXIFG flag. */
+	UCB0TXBUF = data >> 8;
+
+	while (UCB0STAT & UCBUSY); // wait for SPI TX/RX to finish
+	// clear RXIFG flag
+	UCB0IFG &= ~UCRXIFG;
+}
+
+void spi_transmit(void *buf, uint16_t count)
+{
+    uint8_t *ptx = (uint8_t *)buf;
+	if (count == 0) return;
+	while(count){
+		if (UCB0IFG & UCTXIFG){
+			/* Setting TXBUF clears the TXIFG flag. */
+			UCB0TXBUF = *ptx++;
+			count--;
+		}
+	}
+	while (UCB0STAT & UCBUSY); // wait for SPI TX/RX to finish
+	// clear RXIFG flag
+	UCB0IFG &= ~UCRXIFG;
+}
+
 /***SPI_MODE_0
  * spi_set_divisor() - set new clock divider for USCI
  *

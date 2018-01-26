@@ -117,6 +117,10 @@ void enableXtal()
 	/* Enable P4.1/2 as XTAL pins = FR4133 */
 	P4SEL0 = BIT1 | BIT2;
    #endif	
+   #if (defined(__MSP430FR2311__))
+	/* Enable P2.6/7 as XTAL pins = FR2311*/
+	P2SEL0 = BIT6 | BIT7;
+   #endif	
  #endif	
 
 	/* LFXT can take up to 1000ms to start.
@@ -303,7 +307,7 @@ void initClocks(void)
 #define NACCESS_2  NWAITS_2
 #endif
 
-#if (defined(__MSP430_HAS_CS__) || defined(__MSP430_HAS_CS_A__)) && defined(__MSP430_HAS_FRAM__) && !defined(__MSP430FR2XX_4XX_FAMILY__)
+#if (defined(__MSP430_HAS_CS__) || defined(__MSP430_HAS_CS_A__)) && (defined(__MSP430_HAS_FRAM__) || defined(__MSP430_HAS_FRCTL_A__)) && !defined(__MSP430FR2XX_4XX_FAMILY__)
     CSCTL0 = CSKEY;                // Enable Access to CS Registers
   
     CSCTL2 &= ~SELM_7;             // Clear selected Main CLK Source
@@ -331,7 +335,7 @@ void initClocks(void)
 #endif // __MSP430_HAS_CS__ & __FR5xxx
 
 // FR4xxx
-#if (defined(__MSP430_HAS_CS__) || defined(__MSP430_HAS_CS_A__)) && defined(__MSP430_HAS_FRAM__) && defined(__MSP430FR2XX_4XX_FAMILY__)
+#if (defined(__MSP430_HAS_CS__) || defined(__MSP430_HAS_CS_A__)) && (defined(__MSP430_HAS_FRAM__) || defined(__MSP430_HAS_FRCTL_A__)) && defined(__MSP430FR2XX_4XX_FAMILY__)
 	/* section for FR2xx and FR4xx devices */
 #if F_CPU >= 16000000L
     FRCTL0 = FWPW | NACCESS_1;     // add 1 waitstaite

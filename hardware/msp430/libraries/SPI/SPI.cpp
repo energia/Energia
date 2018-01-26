@@ -15,5 +15,39 @@
 
 #include "SPI.h"
 
-SPIClass SPI;
+#if defined(DEFAULT_SPI)
+    uint8_t spiModule = DEFAULT_SPI;
+#else
+    uint8_t spiModule = 0;
+#endif
 
+SPIClass::SPIClass(void) {
+#if defined(DEFAULT_SPI)
+   setModule(DEFAULT_SPI);
+#else
+   setModule(0);
+#endif
+}
+
+void SPIClass::setModule(uint8_t module)
+{
+    spiModule = module;
+   if (module == 0)
+   {
+#if defined(__MSP430_HAS_EUSCI_B0__)
+      SPI_baseAddress = UCB0_BASE;
+#endif
+   }
+   if (module == 1)
+   {
+#if defined(__MSP430_HAS_EUSCI_B1__)
+      SPI_baseAddress = UCB1_BASE;
+#endif
+   }
+
+}
+
+/*
+ * Pre-Initialize a SPI instances
+ */
+SPIClass SPI;

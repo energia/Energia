@@ -32,6 +32,9 @@
 #include "Energia.h"
 #include "TimerSerial.h"
 
+#if defined(__MSP430_HAS_TA3__) || defined(__MSP430_HAS_T0A2__) || defined(__MSP430_HAS_T0A3__) || defined(__MSP430_HAS_T0A5__) || defined(__MSP430_HAS_TA5__) 
+
+
 #define SERIAL_BUFFER_SIZE 16
 
 #ifndef TIMERA0_VECTOR
@@ -270,3 +273,4 @@ static void TimerSerial__RxIsr(void)
         }
     }
 }
+#endif  // #if defined(__MSP430_HAS_TA3__) || defined(__MSP430_HAS_T0A2__) || defined(__MSP430_HAS_T0A3__) || defined(__MSP430_HAS_T0A5__) || defined(__MSP430_HAS_TA5__) 

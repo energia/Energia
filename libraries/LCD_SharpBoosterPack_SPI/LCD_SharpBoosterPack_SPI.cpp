@@ -93,7 +93,7 @@ LCD_SharpBoosterPack_SPI::LCD_SharpBoosterPack_SPI(uint8_t pinChipSelect, uint8_
 
 void LCD_SharpBoosterPack_SPI::setOrientation(uint8_t orientation)
 {
-    _orientation = orientation % 4;
+    _orientation = orientation & 0x3;
 }
 
 void LCD_SharpBoosterPack_SPI::setReverse(bool reverse)
@@ -121,18 +121,18 @@ void LCD_SharpBoosterPack_SPI::setXY(uint8_t x, uint8_t y, uint8_t  ulValue)
     switch (_orientation)
     {
         case 1:
-            x0 = LCD_HORIZONTAL_MAX - y;
+            x0 = LCD_HORIZONTAL_MAX - 1 - y;
             y0 = x;
             break;
 
         case 2:
-            x0 = LCD_HORIZONTAL_MAX - x;
-            y0 = LCD_VERTICAL_MAX   - y;
+            x0 = LCD_HORIZONTAL_MAX - 1 - x;
+            y0 = LCD_VERTICAL_MAX - 1   - y;
             break;
             
         case 3:
             x0 = y;
-            y0 = LCD_VERTICAL_MAX   - x;
+            y0 = LCD_VERTICAL_MAX - 1   - x;
             break;
             
         default:
@@ -140,6 +140,9 @@ void LCD_SharpBoosterPack_SPI::setXY(uint8_t x, uint8_t y, uint8_t  ulValue)
             y0 = y;
             break;
     }
+
+    if (x0 > LCD_HORIZONTAL_MAX - 1) x0 = LCD_HORIZONTAL_MAX - 1;
+    if (y0 > LCD_VERTICAL_MAX - 1)   y0 = LCD_VERTICAL_MAX - 1;
 
     if (_reverse) ulValue = (ulValue == 0);
     

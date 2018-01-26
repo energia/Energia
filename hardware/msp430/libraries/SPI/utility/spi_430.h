@@ -14,7 +14,7 @@
 #ifndef _SPI_430_H_
 #define _SPI_430_H_
 
-#if defined(__MSP430_HAS_USCI_B0__) || defined(__MSP430_HAS_USCI_B1__) || defined(__MSP430_HAS_USCI__) || defined(__MSP430_HAS_EUSCI_B0__)
+#if defined(__MSP430_HAS_USCI_B0__) || defined(__MSP430_HAS_USCI_B1__) || defined(__MSP430_HAS_USCI__) || defined(__MSP430_HAS_EUSCI_B0__) || defined(__MSP430_HAS_EUSCI_B1__)
 
 #define SPI_CLOCK_DIV1   1
 #define SPI_CLOCK_DIV2   2
@@ -40,9 +40,16 @@
     #error "SPI not supported by hardware on this chip"
 #endif
 
+extern uint16_t SPI_baseAddress;  
+
 void spi_initialize(void);
 void spi_disable(void);
 uint8_t spi_send(const uint8_t);
+uint16_t spi_send16(const uint16_t);
+void spi_send(void *buf, uint16_t count);
+void spi_transmit(const uint8_t);
+void spi_transmit16(const uint16_t);
+void spi_transmit(void *buf, uint16_t count);
 void spi_set_bitorder(const uint8_t);
 void spi_set_datamode(const uint8_t);
 void spi_set_divisor(const uint16_t clkdivider);
