@@ -169,10 +169,10 @@ void printConfig()
   client.println(" <button onclick=\"location.href='/LED2_L'\">LOW</button><br><br>");
 
   client.println("PUSH1 ");
-  if(digitalRead(PUSH1))client.print("is HIGH<br>");
+  if(digitalRead(D1_LED))client.print("is HIGH<br>");
   else client.print("is LOW<br>");
   client.println("PUSH2 ");
-  if(digitalRead(PUSH2))client.print("is HIGH<br>");
+  if(digitalRead(D2_LED))client.print("is HIGH<br>");
   else client.print("is LOW<br>");  
 
   client.println("<a href=\"/config.html\" >refresh</a> <br>");
