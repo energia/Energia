@@ -67,7 +67,7 @@ public:
         return 0;
     }
 
-private:
+protected:
 
     EthernetClient client;
     

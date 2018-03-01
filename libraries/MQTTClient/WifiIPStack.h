@@ -68,7 +68,7 @@ public:
         return 0;
     }
     
-private:
+protected:
 
     WiFiClient iface;
     
