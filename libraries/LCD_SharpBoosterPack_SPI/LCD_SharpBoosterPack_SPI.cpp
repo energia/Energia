@@ -395,7 +395,11 @@ void LCD_SharpBoosterPack_SPI::setCharXY(uint8_t x, uint8_t y)
 //*****************************************************************************
 // drawImage
 // Draw an Image on the display
-// Image can be generated with ImageDog (check for ImageDog on GitHub)
+// Image can be generated with ImageDog
+//  - part of MSP430Ware: ... \examples\boards\MSP-EXP430F5529\src\ImageDog\
+//  - part of MSPWare   : ... \examples\boards\MSP-EXP430F5529\MSP-EXP430F5529_UE_Demo_Software\Firmware\Source\ImageDog
+//  - google: GitHub ImageDog 
+//    : https://github.com/noccy80/mspdev/tree/master/reference/MSP430ware/examples/boards/MSP-EXP430F5529/src/ImageDog
 // Header : width in pixel
 //          hight in pixel/8
 //
