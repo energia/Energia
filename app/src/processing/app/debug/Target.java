@@ -35,7 +35,7 @@ public class Target {
   private File folder;
   private Map boards;
   private Map programmers;
-  
+
   public Target(String name, File folder) {
     this.name = name;
     this.folder = folder;
@@ -60,6 +60,8 @@ public class Target {
       System.err.println("Error loading boards from " + boardsFile + ": " + e);
     }
 
+
+
     File programmersFile = new File(folder, "programmers.txt");
     try {
       if (programmersFile.exists()) {
@@ -79,7 +81,11 @@ public class Target {
                          programmersFile + ": " + e);
     }    
   }
-  
+
+  public String toString() {
+    return "Target: {name="+getName()+", folder="+getFolder().toString()+"}";
+  }
+
   public String getName() { return name; }
   public File getFolder() { return folder; }
   public Map<String, Map<String, String>> getBoards() {
