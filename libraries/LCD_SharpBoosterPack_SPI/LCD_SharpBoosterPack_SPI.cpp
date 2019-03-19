@@ -3,14 +3,15 @@
 //  Example for library for Sharp BoosterPack LCD with hardware SPI
 //
 //
-//  Author :  Stefan Schauer
+//  Author :  StefanSch
 //  Date   :  Mar 05, 2015
-//  Version:  1.03
+//  Version:  1.04
 //  File   :  LCD_SharpBoosterPack_SPI_main.c
 //
 //  Version:  1.01 : added support for CC3200
 //  Version:  1.02 : added print class
 //  Version:  1.03 : added support for Sharp 128
+//  Version:  1.04 : added support for Data in FRAM
 //
 //  Based on the LCD5110 Library
 //  Created by Rei VILO on 28/05/12
@@ -26,6 +27,9 @@
 //  Added flushReversed() for reversed display and preserved buffer
 //  Simplified Clear function
 //
+//  Edited 2019-03-19 by StefaSch
+//  Added support for smaller memory with put LCD data to FRAM
+//
 
 #include <Energia.h>
 #include "LCD_SharpBoosterPack_SPI.h"
@@ -38,13 +42,16 @@ uint8_t _pinVCC;
 uint8_t _pinChipSelect;
 uint8_t _pinSerialClock;
 bool    _autoVCOM;
+uint8_t lcd_vertical_max;
+uint8_t lcd_horizontal_max;
+
 
 // Booster Pack Pins
-//  7 - P2.2 for SPI_CLK mode
-// 15 - P1.6 for SPI_SIMO mode
-//  6 - P2.4 output pin for SPI_CS
-//  2 - P4.2 as output to supply the LCD
-//  5 - P4.3 as output for DISP
+//  7 - SPI_CLK mode
+// 15 - SPI_SIMO mode
+//  6 - output pin for SPI_CS
+//  2 - output to supply the LCD
+//  5 - output for DISP
 // Set display's VCC and DISP pins to high
 
 
@@ -68,6 +75,7 @@ unsigned char flagSendToggleVCOMCommand = 0;
 #define SHARP_REQUEST_TOGGLE_VCOM           0x02
 
 
+
 static void SendToggleVCOMCommand(void);
 
 uint8_t textx = 0;
@@ -83,35 +91,39 @@ uint16_t LCD_SharpBoosterPack_SPI::_index(uint8_t x, uint8_t y)
 
 LCD_SharpBoosterPack_SPI::LCD_SharpBoosterPack_SPI(uint8_t model)
 {
-    _pinChipSelect  = P_CS;
-    _pinDISP = P_DISP;
-    _pinVCC  = P_VCC;
-    _autoVCOM = true;
-
-    lcd_vertical_max = model;
-    lcd_horizontal_max = model;
-
-    static uint8_t * _frameBuffer;
-    _frameBuffer = new uint8_t[_index(lcd_vertical_max, lcd_horizontal_max)];
-    DisplayBuffer = (uint8_t *) _frameBuffer;
-}
-
-LCD_SharpBoosterPack_SPI::LCD_SharpBoosterPack_SPI(uint8_t pinChipSelect, uint8_t pinDISP, uint8_t pinVCC, bool autoVCOM, uint8_t model)
-{
-    _pinChipSelect  = pinChipSelect;
-    _pinDISP = pinDISP;
-    _pinVCC  = pinVCC;
-    _autoVCOM = autoVCOM;
-
-    digitalWrite(RED_LED, HIGH);
-    lcd_vertical_max = model;
-    lcd_horizontal_max = model;
+    LCD_SharpBoosterPack_SPI(P_CS, P_DISP, P_VCC, true, model);
 }
 
 LCD_SharpBoosterPack_SPI::LCD_SharpBoosterPack_SPI(uint8_t pinChipSelect, uint8_t pinDISP, uint8_t pinVCC, uint8_t model)
 {
     LCD_SharpBoosterPack_SPI(pinChipSelect, pinDISP, pinVCC, true, model);
 }
+
+#ifdef PLACE_IN_FRAM
+    uint8_t _frameBuffer[128][128/8] PLACE_IN_FRAM;
+#else
+    uint8_t * _frameBuffer = 0;
+#endif
+
+LCD_SharpBoosterPack_SPI::LCD_SharpBoosterPack_SPI(uint8_t pinChipSelect, uint8_t pinDISP, uint8_t pinVCC, bool autoVCOM,  uint8_t model)
+{
+
+    _pinChipSelect  = pinChipSelect;
+    _pinDISP = pinDISP;
+    _pinVCC  = pinVCC;
+    _autoVCOM = autoVCOM;
+
+    lcd_vertical_max = model;
+    lcd_horizontal_max = model;
+
+#ifndef PLACE_IN_FRAM
+    if (_frameBuffer == 0){
+        _frameBuffer = new uint8_t[_index(lcd_vertical_max, lcd_horizontal_max)];
+    }
+#endif
+    DisplayBuffer = (uint8_t *) _frameBuffer;
+}
+
 
 void LCD_SharpBoosterPack_SPI::setOrientation(uint8_t orientation)
 {
