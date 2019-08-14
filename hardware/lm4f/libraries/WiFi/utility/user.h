@@ -94,7 +94,7 @@ extern "C" {
     \warning    In case of setting to one, recommend to use non-blocking recv\recvfrom to allow
                 multiple socket recv
 */
-#define MAX_CONCURRENT_ACTIONS 10
+#define MAX_CONCURRENT_ACTIONS 32 //PJL
 
 /*!
  ******************************************************************************

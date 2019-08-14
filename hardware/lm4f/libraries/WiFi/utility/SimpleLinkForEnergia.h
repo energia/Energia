@@ -3,6 +3,9 @@
  *
  * Copyright (C) 2014 Noah Luskey | LuskeyNoah@gmail.com
  *
+ * Contributors:
+ *    Phil LaFayette (MH Electric Motor & Control Corp.) - Upgraded CC31xx/CC32xx Host Driver to v1.0.1.6, May 27, 2016
+ *
  */
 
 
