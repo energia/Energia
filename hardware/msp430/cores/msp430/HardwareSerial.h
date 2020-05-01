@@ -1,6 +1,6 @@
 /*
   ************************************************************************
-  *	TimerSerial.h
+  *	HardwareSerial.h
   *
   *	Arduino core files for MSP430
   *		Copyright (c) 2012 Robert Wessels. All right reserved.
@@ -33,6 +33,12 @@
 #include <inttypes.h>
 #include <Stream.h>
 
+
+// Enable this feature only for larger chips.
+#ifndef __MSP430G2553
+#define HARDWARESERIAL_MSP430_USE_MALLOC 1
+#endif
+
 struct ring_buffer;
 
 class HardwareSerial : public Stream
@@ -57,6 +63,7 @@ class HardwareSerial : public Stream
 		, txPin(txPin) {}
 		void begin(unsigned long);
 		void end();
+		void setBufferSize(unsigned int txSize, unsigned int rxSize);
 		virtual int available(void);
 		virtual int peek(void);
 		virtual int read(void);
