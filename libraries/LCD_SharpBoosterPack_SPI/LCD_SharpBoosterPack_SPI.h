@@ -5,12 +5,12 @@
 //
 //  Author :  Stefan Schauer
 //  Date   :  Mar 05, 2015
-//  Version:  1.02
+//  Version:  1.04
 //  File   :  LCD_SharpBoosterPack_SPI_main.h
 //
 //  Based on the LCD5110 Library
 //  Created by Rei VILO on 28 May 2012
-//  Copyright (c) 2012 http://embeddedcomputing.weebly.com
+//  Copyright (c) 2012 https://embeddedcomputing.weebly.com
 //  Licence CC = BY SA NC
 //
 //  Edited 11 Jul 2015 by ReiVilo
@@ -20,6 +20,12 @@
 //  Edited 15 Oct 2018 by ReiVilo
 //  Added support for Sharp 128 with minimal change
 //  Added flushReversed() for reversed display and preserved buffer
+//
+//  Edited 2019-03-19 by StefaSch
+//  Added support for smaller memory with put LCD data to FRAM
+//
+//  Edited 22 Apr 2020 by ReiVilo
+//  Horrible patch for CC13x0 ENERGIA_ARCH_CC13XX
 //
 
 #ifndef LCD_SharpBoosterPack_SPI_h
@@ -136,7 +142,7 @@ class LCD_SharpBoosterPack_SPI : public Print
 
     ///
     /// @brief    Get size àf the screen
-    /// @return   96 for 96x96 or &28 for 128x128
+    /// @return   96 for 96x96 or 128 for 128x128
     ///
     uint8_t getSize();
 
