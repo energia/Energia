@@ -16,6 +16,8 @@
 const int heartbeatPin = RED_LED;
 int status = 0;
 
+void flash();
+
 OneMsTaskTimer_t myTask ={5,  flash, 0, 0};
 
 void setup()  { 

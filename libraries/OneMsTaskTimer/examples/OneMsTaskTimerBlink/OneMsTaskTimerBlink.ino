@@ -16,6 +16,10 @@
 const int heartbeatPin1 = RED_LED;
 const int heartbeatPin2 = GREEN_LED;
 
+void flash1();
+void flash2();
+void flash3();
+
 OneMsTaskTimer_t myTask1 ={500,  flash1, 0, 0};
 OneMsTaskTimer_t myTask2 ={1000, flash2, 0, 0};
 OneMsTaskTimer_t myTask3 ={2000, flash3, 0, 0};
