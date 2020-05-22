@@ -5,13 +5,14 @@
 //
 //  Author :  StefanSch
 //  Date   :  Mar 05, 2015
-//  Version:  1.04
+//  Version:  1.05
 //  File   :  LCD_SharpBoosterPack_SPI_main.c
 //
 //  Version:  1.01 : added support for CC3200
 //  Version:  1.02 : added print class
 //  Version:  1.03 : added support for Sharp 128
 //  Version:  1.04 : added support for Data in FRAM
+//  Version:  1.05 : added hooks for CC13xx devices to get low power consumption
 //
 //  Based on the LCD5110 Library
 //  Created by Rei VILO on 28/05/12
@@ -30,6 +31,11 @@
 //  Edited 2019-03-19 by StefaSch
 //  Added support for smaller memory with put LCD data to FRAM
 //
+//  Edited 2020-05-02 by StefanSch / Rei VILO 
+//  Added support for CC13xx to support low power consuption
+//  Added powerSave() function
+//  Replaced OneMsTimer with RTOS function if available
+//
 
 #include <Energia.h>
 #include "LCD_SharpBoosterPack_SPI.h"
@@ -42,9 +48,6 @@ uint8_t _pinVCC;
 uint8_t _pinChipSelect;
 uint8_t _pinSerialClock;
 bool    _autoVCOM;
-uint8_t lcd_vertical_max;
-uint8_t lcd_horizontal_max;
-
 
 // Booster Pack Pins
 //  7 - SPI_CLK mode
@@ -75,14 +78,22 @@ unsigned char flagSendToggleVCOMCommand = 0;
 #define SHARP_REQUEST_TOGGLE_VCOM           0x02
 
 
-
-static void SendToggleVCOMCommand(void);
+#if !defined(ti_sysbios_BIOS___VERS)
+static void SendToggleVCOMCommand(uint32_t arg);
+#else
+Clock_Struct clk0Struct;
+static void SendToggleVCOMCommand(UArg arg);
+#endif
 
 uint8_t textx = 0;
 uint8_t texty = 0;
 uint8_t textstartx = 0;
 uint8_t textstarty = 0;
 uint8_t lineSpacing[NUM_OF_FONTS] = {9, 16};
+uint8_t lcd_vertical_max;
+uint8_t lcd_horizontal_max;
+
+tLCDPowerModeType LCDPowerMode = LCDPowerSaveOff;
 
 uint16_t LCD_SharpBoosterPack_SPI::_index(uint8_t x, uint8_t y)
 {
@@ -107,7 +118,6 @@ LCD_SharpBoosterPack_SPI::LCD_SharpBoosterPack_SPI(uint8_t pinChipSelect, uint8_
 
 LCD_SharpBoosterPack_SPI::LCD_SharpBoosterPack_SPI(uint8_t pinChipSelect, uint8_t pinDISP, uint8_t pinVCC, bool autoVCOM,  uint8_t model)
 {
-
     _pinChipSelect  = pinChipSelect;
     _pinDISP = pinDISP;
     _pinVCC  = pinVCC;
@@ -220,7 +230,7 @@ void LCD_SharpBoosterPack_SPI::begin()
 
     if (_autoVCOM)
     {
-        TA0_enableVCOMToggle();
+        LCD_enableVCOMToggle();
     }
 
     clear();
@@ -232,7 +242,7 @@ void LCD_SharpBoosterPack_SPI::begin()
 
 void LCD_SharpBoosterPack_SPI::end()
 {
-	TA0_turnOff();
+	LCD_turnOff();
 }
 
 
@@ -454,6 +464,12 @@ void LCD_SharpBoosterPack_SPI::flush(void)
     //image update mode(1X000000b)
     unsigned char command = SHARP_LCD_CMD_WRITE_LINE;
 
+    if (LCDPowerMode == LCDPowerSaveOn)
+    {
+        // enable SPI first
+        SPI.begin();
+    }
+
     // set flag to indicate command transmit is running
     flagSendToggleVCOMCommand |= SHARP_SEND_COMMAND_RUNNING;
     //COM inversion bit
@@ -480,7 +496,14 @@ void LCD_SharpBoosterPack_SPI::flush(void)
     digitalWrite(_pinChipSelect, LOW);
     // clear flag to indicate command transmit is free
     flagSendToggleVCOMCommand &= ~SHARP_SEND_COMMAND_RUNNING;
-    SendToggleVCOMCommand(); // send toggle if required
+    SendToggleVCOMCommand(0); // send toggle if required
+
+    if (LCDPowerMode == LCDPowerSaveOn)
+    {
+        // enable SPI first
+        SPI.end();
+    }
+
 }
 
 void LCD_SharpBoosterPack_SPI::flushReversed(void)
@@ -490,6 +513,12 @@ void LCD_SharpBoosterPack_SPI::flushReversed(void)
     long xj = 0;
     //image update mode(1X000000b)
     unsigned char command = SHARP_LCD_CMD_WRITE_LINE;
+
+    if (LCDPowerMode == LCDPowerSaveOn)
+    {
+        // enable SPI first
+        SPI.begin();
+    }
     
     // set flag to indicate command transmit is running
     flagSendToggleVCOMCommand |= SHARP_SEND_COMMAND_RUNNING;
@@ -517,10 +546,29 @@ void LCD_SharpBoosterPack_SPI::flushReversed(void)
     digitalWrite(_pinChipSelect, LOW);
     // clear flag to indicate command transmit is free
     flagSendToggleVCOMCommand &= ~SHARP_SEND_COMMAND_RUNNING;
-    SendToggleVCOMCommand(); // send toggle if required
+    SendToggleVCOMCommand(0); // send toggle if required
+    if (LCDPowerMode == LCDPowerSaveOn)
+    {
+        // enable SPI first
+        SPI.end();
+    }
 }
 
-static void SendToggleVCOMCommand(void)
+void LCD_SharpBoosterPack_SPI::powerSave(tLCDPowerModeType mode)
+{
+    if (LCDPowerMode == LCDPowerSaveOn && mode == LCDPowerSaveOff)
+    {
+        SPI.begin();
+    }
+    LCDPowerMode = mode;
+}
+
+
+#if !defined(ti_sysbios_BIOS___VERS)
+static void SendToggleVCOMCommand(uint32_t arg)
+#else
+static void SendToggleVCOMCommand(UArg arg)
+#endif
 {
     if (!(flagSendToggleVCOMCommand & SHARP_REQUEST_TOGGLE_VCOM)) // no request pending ?
     {
@@ -537,6 +585,12 @@ static void SendToggleVCOMCommand(void)
         unsigned char command = SHARP_LCD_CMD_CHANGE_VCOM;
         command |= VCOMbit;                    //COM inversion bit
 
+        if (LCDPowerMode == LCDPowerSaveOn)
+		{
+            // enable SPI first
+			SPI.begin();
+		}
+
         // Set P2.4 High for CS
         digitalWrite(_pinChipSelect, HIGH);
 
@@ -547,25 +601,53 @@ static void SendToggleVCOMCommand(void)
         delayMicroseconds(10);
         // Set P2.4 High for CS
         digitalWrite(_pinChipSelect, LOW);
+
+        if (LCDPowerMode == LCDPowerSaveOn)
+		{
+			// disable SPI again
+			SPI.end();
+		}
+
         // clear request flag
         flagSendToggleVCOMCommand &= ~SHARP_REQUEST_TOGGLE_VCOM;
     }
 }
 
+// trigger task with 50Hz
+#if !defined(ti_sysbios_BIOS___VERS)
 struct OneMsTaskTimer_t timer_task = {1000, SendToggleVCOMCommand, 0, 0};
+#endif
 
-void LCD_SharpBoosterPack_SPI::TA0_enableVCOMToggle()
+void LCD_SharpBoosterPack_SPI::LCD_enableVCOMToggle()
 {
     // generate Int. each 4096*8*32768Hz = 1 sec
     //
     // Base address for first timer
     //
+#if !defined(ti_sysbios_BIOS___VERS)
     OneMsTaskTimer::add(&timer_task);
     OneMsTaskTimer::start();
+#else
+    Clock_Params clkParams;
+    volatile uint32_t clockTickPeriod;
+    clockTickPeriod =  Clock_tickPeriod;
+    Clock_Params_init(&clkParams);
+    clkParams.startFlag = TRUE;
+    clkParams.period = 1000*1000/clockTickPeriod;
+
+     /* Construct a periodic Clock Instance with period = 2 system time units */
+     Clock_construct(&clk0Struct, (Clock_FuncPtr)SendToggleVCOMCommand,
+                     clkParams.period, &clkParams);
+#endif
+
+
 }
 
-
-void LCD_SharpBoosterPack_SPI::TA0_turnOff()
+void LCD_SharpBoosterPack_SPI::LCD_turnOff()
 {
+#if !defined(ti_sysbios_BIOS___VERS)
     OneMsTaskTimer::stop();
+#else
+    Clock_destruct(&clk0Struct);
+#endif
 }
