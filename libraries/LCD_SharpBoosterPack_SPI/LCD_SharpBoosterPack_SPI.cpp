@@ -3,7 +3,7 @@
 //  Example for library for Sharp BoosterPack LCD with hardware SPI
 //
 //
-//  Author :  Stefan Schauer
+//  Author :  StefanSch
 //  Date   :  Mar 05, 2015
 //  Version:  1.05
 //  File   :  LCD_SharpBoosterPack_SPI_main.c
@@ -11,7 +11,8 @@
 //  Version:  1.01 : added support for CC3200
 //  Version:  1.02 : added print class
 //  Version:  1.03 : added support for Sharp 128
-//  version:  1.04 : horrible patch for CC13x0 ENERGIA_ARCH_CC13XX
+//  Version:  1.04 : added support for Data in FRAM
+//                   horrible patch for CC13x0 ENERGIA_ARCH_CC13XX
 //  Version:  1.05 : added hooks for CC13xx devices to get low power consumption
 //
 //  Based on the LCD5110 Library
