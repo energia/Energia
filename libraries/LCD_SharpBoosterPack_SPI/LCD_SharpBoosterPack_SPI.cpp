@@ -3,7 +3,7 @@
 //  Example for library for Sharp BoosterPack LCD with hardware SPI
 //
 //
-//  Author :  StefanSch
+//  Author :  Stefan Schauer
 //  Date   :  Mar 05, 2015
 //  Version:  1.05
 //  File   :  LCD_SharpBoosterPack_SPI_main.c
@@ -11,12 +11,12 @@
 //  Version:  1.01 : added support for CC3200
 //  Version:  1.02 : added print class
 //  Version:  1.03 : added support for Sharp 128
-//  Version:  1.04 : added support for Data in FRAM
+//  version:  1.04 : horrible patch for CC13x0 ENERGIA_ARCH_CC13XX
 //  Version:  1.05 : added hooks for CC13xx devices to get low power consumption
 //
 //  Based on the LCD5110 Library
 //  Created by Rei VILO on 28/05/12
-//  Copyright (c) 2012 http://embeddedcomputing.weebly.com
+//  Copyright (c) 2012 https://embeddedcomputing.weebly.com
 //  Licence CC = BY SA NC
 //
 //  Edited 2015-07-11 by ReiVilo
@@ -90,8 +90,6 @@ uint8_t texty = 0;
 uint8_t textstartx = 0;
 uint8_t textstarty = 0;
 uint8_t lineSpacing[NUM_OF_FONTS] = {9, 16};
-uint8_t lcd_vertical_max;
-uint8_t lcd_horizontal_max;
 
 tLCDPowerModeType LCDPowerMode = LCDPowerSaveOff;
 
@@ -594,9 +592,13 @@ static void SendToggleVCOMCommand(UArg arg)
         // Set P2.4 High for CS
         digitalWrite(_pinChipSelect, HIGH);
 
+#if defined(ENERGIA_ARCH_CC13XX)    // Horrible patch for CC13x0
+        shiftOut(15, 7, MSBFIRST, (char)command);
+        shiftOut(15, 7, MSBFIRST, (char)SHARP_LCD_TRAILER_BYTE);
+#else
         SPI.transfer((char)command);
         SPI.transfer((char)SHARP_LCD_TRAILER_BYTE);
-
+#endif
         // Wait for last byte to be sent, then drop SCS
         delayMicroseconds(10);
         // Set P2.4 High for CS
