@@ -132,6 +132,7 @@ void mon_setup(void)
 {
     Serial.begin(9600);
     Serial.println("Welcome! This is the Serial debug console.");
+    Serial.println("Type help for list of commands");
 }
 
 #define UP_ARROW 0x0b    /* ctrl K */
@@ -152,6 +153,7 @@ void mon_loop()
     int escape_index = 0;
 
     while (true) {
+        if (!Serial.available()) continue;
         char c = Serial.read();
 
         if (escape_index) {
