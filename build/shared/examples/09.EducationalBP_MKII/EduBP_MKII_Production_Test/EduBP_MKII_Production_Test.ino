@@ -475,7 +475,7 @@ void loop()
   float temp = tmp006.readObjTempC();
   char* tempText;
   char ii;
-  tempText = (char*) malloc(10);
+  tempText = (char*) malloc(10);//WHY NOT USE stack memory char tempText[10]?
   for (ii=0;ii<10;ii++)
   tempText[ii] = 0;
   tempText =  ftoa(tempText, temp, 4);
@@ -484,6 +484,8 @@ void loop()
   myScreen.gText(60,20, "*C", colour);
   
   myScreen.gText(0,40, "   RGB LED Test", blueColour);
+  free(tempText);//DO NOT use tempText any more.
+	
   //TEST OPT3001 LIGHT SENSOR
   //To be enabled once OPT3001 is added to future Edu BP MK II Rev.
   // Serial.println("Cover the light sensor to test the OPT3001.");
