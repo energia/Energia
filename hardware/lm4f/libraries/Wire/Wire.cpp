@@ -213,6 +213,9 @@ void (*TwoWire::user_onReceive)(int);
 
 uint8_t TwoWire::i2cModule = NOT_ACTIVE;
 uint8_t TwoWire::slaveAddress = 0;
+
+uint32_t TwoWire::local_timeout = 0;
+uint32_t TwoWire::timeout = 0; // 0 is disabled
 // Constructors ////////////////////////////////////////////////////////////////
 
 TwoWire::TwoWire()
@@ -237,7 +240,12 @@ uint8_t TwoWire::getRxData(unsigned long cmd) {
 
 	if (currentState == IDLE) while(ROM_I2CMasterBusBusy(MASTER_BASE));
 	HWREG(MASTER_BASE + I2C_O_MCS) = cmd;
-	while(ROM_I2CMasterBusy(MASTER_BASE));
+	local_timeout = millis() + timeout;
+    while(ROM_I2CMasterBusy(MASTER_BASE)){
+		if(local_timeout<millis()&timeout>0){
+			return(4);
+		}
+	}
 	uint8_t error = ROM_I2CMasterErr(MASTER_BASE);
 	if (error != I2C_MASTER_ERR_NONE) {
         ROM_I2CMasterControl(MASTER_BASE, I2C_MASTER_CMD_BURST_RECEIVE_ERROR_STOP);
@@ -256,7 +264,12 @@ uint8_t TwoWire::sendTxData(unsigned long cmd, uint8_t data) {
     ROM_I2CMasterDataPut(MASTER_BASE, data);
 
     HWREG(MASTER_BASE + I2C_O_MCS) = cmd;
-    while(ROM_I2CMasterBusy(MASTER_BASE));
+    local_timeout = millis() + timeout;
+    while(ROM_I2CMasterBusy(MASTER_BASE)){
+		if(local_timeout<millis()&timeout>0){
+			return(4);
+		}
+	}
     uint8_t error = ROM_I2CMasterErr(MASTER_BASE);
     if (error != I2C_MASTER_ERR_NONE)
 		  ROM_I2CMasterControl(MASTER_BASE, I2C_MASTER_CMD_BURST_SEND_ERROR_STOP);
@@ -447,14 +460,28 @@ uint8_t TwoWire::endTransmission(uint8_t sendStop)
 
   if(TX_BUFFER_EMPTY) return 0;
   //Wait for any previous transaction to complete
-  while(ROM_I2CMasterBusBusy(MASTER_BASE));
-  while(ROM_I2CMasterBusy(MASTER_BASE));
-
+  local_timeout = millis() + timeout;
+	while(ROM_I2CMasterBusBusy(MASTER_BASE)){
+		if(local_timeout<millis()&timeout>0){
+			return(4);
+		}
+	};
+  local_timeout = millis() + timeout;
+    while(ROM_I2CMasterBusy(MASTER_BASE)){
+		if(local_timeout<millis()&timeout>0){
+			return(4);
+		}
+	}
   //Select which slave we are requesting data from
   //false indicates we are writing to the slave
   ROM_I2CMasterSlaveAddrSet(MASTER_BASE, txAddress, false);
 
-  while(ROM_I2CMasterBusy(MASTER_BASE));
+  local_timeout = millis() + timeout;
+    while(ROM_I2CMasterBusy(MASTER_BASE)){
+		if(local_timeout<millis()&timeout>0){
+			return(4);
+		}
+	}
   unsigned long cmd = RUN_BIT | START_BIT;
 
   error = sendTxData(cmd,txBuffer[txReadIndex]);
@@ -663,6 +690,11 @@ void TwoWire::setModule(unsigned long _i2cModule)
     i2cModule = _i2cModule;
     if(slaveAddress != 0) begin(slaveAddress);
     else begin();
+}
+
+void TwoWire::setTimeout(unsigned int user_timeout)
+{
+	timeout = user_timeout;
 }
 
 //Preinstantiate Object

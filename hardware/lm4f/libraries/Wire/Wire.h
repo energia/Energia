@@ -29,6 +29,9 @@ class TwoWire : public Stream
 
 		static uint8_t i2cModule;
 		static uint8_t slaveAddress;
+		
+		static uint32_t local_timeout;
+		static uint32_t timeout;
 
 		static uint8_t transmitting;
 		static uint8_t currentState;
@@ -74,6 +77,7 @@ class TwoWire : public Stream
 		//Stellarpad-specific functions
 		void I2CIntHandler(void);
 		void setModule(unsigned long);
+		void setTimeout(unsigned int);
 
 };
 
