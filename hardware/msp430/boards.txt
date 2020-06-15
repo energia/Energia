@@ -103,3 +103,13 @@ lpmsp430fr6989.build.variant=launchpad_fr6989
 lpmsp430fr6989.upload.maximum_ram_size=2048
 
 ##############################################################
+lpmsp430f2274.name=eZ430-RF2500 w/ msp430f2274 (16MHz)
+lpmsp430f2274.upload.protocol=rf2500
+lpmsp430f2274.upload.maximum_size=32768
+lpmsp430f2274.build.mcu=msp430f2274
+lpmsp430f2274.build.f_cpu=16000000L
+lpmsp430f2274.build.core=msp430
+lpmsp430f2274.build.variant=ez430-RF2500T
+lpmsp430f2274.upload.maximum_ram_size=1024
+
+##############################################################
