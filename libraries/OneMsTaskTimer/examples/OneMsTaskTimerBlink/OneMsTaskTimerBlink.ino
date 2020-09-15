@@ -46,7 +46,7 @@ void flash1(){
 
 // interrupt handler passed to OneMsTaskTimer
 void flash2(){
-  // log every time the handler is called should be every 500msec
+  // log every time the handler is called should be every 1000msec
   // Practically not a good idea as this function inside an ISR should be as short as possilbe
   Serial.print(":2");
   //heartbeatPinOn2 = !heartbeatPinOn2;
@@ -55,7 +55,7 @@ void flash2(){
   
 // interrupt handler passed to OneMsTaskTimer
 void flash3(){
-  // log every time the handler is called should be every 500msec
+  // log every time the handler is called should be every 2000msec
   // Practically not a good idea as this function inside an ISR should be as short as possilbe
   Serial.println(":3");
   //heartbeatPinOn2 = !heartbeatPinOn2;
