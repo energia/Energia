@@ -373,7 +373,7 @@ void initClocks(void)
 #endif
 #endif // __MSP430_HAS_CS__ & __FR4xxx
 
-#if defined(__MSP430_HAS_UCS__)
+#if defined(__MSP430_HAS_UCS__) || defined(__MSP430_HAS_UCS_RF__)
      PMMCTL0_H = PMMPW_H;             // open PMM
 	 SVSMLCTL &= ~SVSMLRRL_7;         // reset
 	 PMMCTL0_L = PMMCOREV_0;          //
