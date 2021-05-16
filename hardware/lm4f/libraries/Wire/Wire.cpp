@@ -295,7 +295,8 @@ void TwoWire::begin(void)
   }
 
   ROM_SysCtlPeripheralEnable(g_uli2cPeriph[i2cModule]);
-
+  while (!ROM_SysCtlPeripheralReady(g_uli2cPeriph[i2cModule]))
+          {}
   //Configure GPIO pins for I2C operation
   ROM_GPIOPinConfigure(g_uli2cConfig[i2cModule][0]);
   ROM_GPIOPinConfigure(g_uli2cConfig[i2cModule][1]);
